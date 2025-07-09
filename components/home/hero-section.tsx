@@ -41,7 +41,7 @@ export function HeroSection({
   }
 
   return (
-    <section className="relative h-[600px] overflow-hidden">
+    <section className="relative h-[100vh] overflow-hidden">
       {heroSlides.map((image, index) => (
         <div
           key={index}

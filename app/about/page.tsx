@@ -5,10 +5,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 
 export const metadata: Metadata = {
   title: "About ICA",
-  description: "Learn about the Indonesia Cheer Association, our mission, and organizational structure.",
+  description: "Learn about the Indonesian Cheer Association, our mission, and organizational structure.",
   openGraph: {
-    title: "About ICA - Indonesia Cheer Association",
-    description: "Learn about the Indonesia Cheer Association, our mission, and organizational structure.",
+    title: "About ICA - Indonesian Cheer Association",
+    description: "Learn about the Indonesian Cheer Association, our mission, and organizational structure.",
   },
 }
 
@@ -27,7 +27,7 @@ export default function AboutPage() {
               </CardHeader>
               <CardContent>
                 <p className="text-gray-700 leading-relaxed">
-                  The Indonesia Cheer Association (ICA) is dedicated to promoting excellence in cheerleading
+                  The Indonesian Cheer Association (ICA) is dedicated to promoting excellence in cheerleading
                   through competitive events, educational programs, and community building. We provide a platform for
                   athletes, coaches, and judges to showcase their skills and advance the sport of cheerleading globally.
                 </p>

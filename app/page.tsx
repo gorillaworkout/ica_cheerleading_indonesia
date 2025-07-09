@@ -9,11 +9,11 @@ import { TeamLogoSlider } from "@/components/home/team-logo-section"
 export const metadata: Metadata = {
   title: "Home",
   description:
-    "Welcome to the Indonesia Cheer Association - Your gateway to competitive cheerleading excellence.",
+    "Welcome to the Indonesian Cheer Association - Your gateway to competitive cheerleading excellence.",
   openGraph: {
-    title: "ICA - Indonesia Cheer Association",
+    title: "ICA - Indonesian Cheer Association",
     description:
-      "Welcome to the Indonesia Cheer Association - Your gateway to competitive cheerleading excellence.",
+      "Welcome to the Indonesian Cheer Association - Your gateway to competitive cheerleading excellence.",
   },
 }
 

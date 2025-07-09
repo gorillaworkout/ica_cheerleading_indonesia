@@ -1,4 +1,5 @@
 import Link from "next/link"
+import  Image  from 'next/image'
 
 export function Footer() {
   return (
@@ -7,13 +8,11 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
             <div className="flex items-center space-x-2 mb-4">
-              <div className="w-8 h-8 bg-red-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">ICA</span>
-              </div>
-              <span className="font-bold text-xl">ICA</span>
+              <Image src="/ica-rounded.png" alt="ICA Logo" width={200} height={200}/>
+              {/* <span className="font-bold text-xl">ICA</span> */}
             </div>
             <p className="text-gray-400 text-sm">
-              Indonesia Cheer Association - Promoting excellence in cheerleading worldwide.
+              Indonesian Cheer Association - Promoting excellence in cheerleading worldwide.
             </p>
           </div>
 
@@ -65,7 +64,7 @@ export function Footer() {
         </div>
 
         <div className="border-t border-gray-800 mt-8 pt-8 text-center text-sm text-gray-400">
-          <p>&copy; {new Date().getFullYear()} Indonesia Cheer Association. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} Indonesian Cheer Association. All rights reserved.</p>
         </div>
       </div>
     </footer>
