@@ -1,3 +1,9 @@
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Trophy, Medal, Award } from "lucide-react"
@@ -6,19 +12,18 @@ interface CompetitionResultsProps {
   competitionId: string
 }
 
-// Mock results data - replace with actual data fetching
 const mockResults = {
   "1": [
     {
-      division: "Senior Level 5",
+      division: "Team Cheer Coed Premiere",
       results: [
-        { placement: 1, team: "Elite All Stars", score: 98.5, coach: "Sarah Johnson" },
-        { placement: 2, team: "Thunder Bolts", score: 96.2, coach: "Mike Davis" },
-        { placement: 3, team: "Lightning Strike", score: 94.8, coach: "Emma Wilson" },
+        { placement: 1, team: "Crown Allstars", score: 98.5, coach: "CB" },
+        { placement: 2, team: "Ace Allstars", score: 96.2, coach: "CB" },
+        { placement: 3, team: "Stars Allstars", score: 94.8, coach: "CB" },
       ],
     },
     {
-      division: "Junior Level 1",
+      division: "Team Cheer Coed Elite",
       results: [
         { placement: 1, team: "Rising Stars", score: 92.1, coach: "Lisa Chen" },
         { placement: 2, team: "Dream Team", score: 90.7, coach: "John Smith" },
@@ -86,16 +91,19 @@ export function CompetitionResults({ competitionId }: CompetitionResultsProps) {
           <p className="text-lg text-gray-600">Congratulations to all participating teams!</p>
         </div>
 
-        <div className="space-y-8">
+        <Accordion type="multiple" className="space-y-4 bg-white p-4 rounded-lg">
           {results.map((divisionResult, index) => (
-            <Card key={index}>
-              <CardHeader>
-                <CardTitle className="text-xl">{divisionResult.division}</CardTitle>
-              </CardHeader>
-              <CardContent>
+            <AccordionItem key={index} value={`division-${index}`}>
+              <AccordionTrigger className="text-lg font-bold text-gray-900">
+                {divisionResult.division}
+              </AccordionTrigger>
+              <AccordionContent>
                 <div className="space-y-3">
                   {divisionResult.results.map((result, resultIndex) => (
-                    <div key={resultIndex} className={`border rounded-lg p-4 ${getPlacementColor(result.placement)}`}>
+                    <div
+                      key={resultIndex}
+                      className={`border rounded-lg p-4 ${getPlacementColor(result.placement)}`}
+                    >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-4">
                           {getPlacementIcon(result.placement)}
@@ -110,20 +118,20 @@ export function CompetitionResults({ competitionId }: CompetitionResultsProps) {
                             {result.placement === 1
                               ? "1st Place"
                               : result.placement === 2
-                                ? "2nd Place"
-                                : result.placement === 3
-                                  ? "3rd Place"
-                                  : `${result.placement}th Place`}
+                              ? "2nd Place"
+                              : result.placement === 3
+                              ? "3rd Place"
+                              : `${result.placement}th Place`}
                           </Badge>
                         </div>
                       </div>
                     </div>
                   ))}
                 </div>
-              </CardContent>
-            </Card>
+              </AccordionContent>
+            </AccordionItem>
           ))}
-        </div>
+        </Accordion>
       </div>
     </div>
   )

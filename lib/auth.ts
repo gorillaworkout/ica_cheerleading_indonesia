@@ -1,3 +1,4 @@
+import { User } from "@supabase/supabase-js"
 import { createServerSupabaseClient } from "./supabase-server"
 
 export async function checkAdminAccess(): Promise<boolean> {
@@ -162,4 +163,41 @@ export async function ensureUserProfile(userId: string, email: string, displayNa
     console.error("Error ensuring user profile:", error)
     return null
   }
+}
+
+
+
+
+/**
+ * Get the current logged-in user on the client side.
+ * Uses Supabase session and localStorage fallback.
+ */
+export async function getClientUser(): Promise<User | null> {
+  // Optional: try from localStorage cache first
+  const supabase = await createServerSupabaseClient()
+  const cached = localStorage.getItem("user")
+  if (cached) {
+    try {
+      const parsed = JSON.parse(cached)
+      if (parsed?.id) return parsed as User
+    } catch (err) {
+      console.warn("⚠️ Failed to parse local user cache", err)
+    }
+  }
+
+  // Get session from Supabase
+  const {
+    data: { session },
+    error,
+  } = await supabase.auth.getSession()
+
+  if (error || !session?.user) {
+    console.log("❌ No Supabase session or user found", error)
+    return null
+  }
+
+  // Cache in localStorage for next time
+  localStorage.setItem("user", JSON.stringify(session.user))
+
+  return session.user
 }

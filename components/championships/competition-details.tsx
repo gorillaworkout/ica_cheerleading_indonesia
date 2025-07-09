@@ -4,7 +4,8 @@ import { Badge } from "@/components/ui/badge"
 import { Calendar, MapPin, Users, Clock, Trophy } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
-
+import { HeroSection } from "../home/hero-section"
+import {championshipHeroSlides} from "@/lib/hero"
 interface Division {
   id: string
   name: string
@@ -34,7 +35,7 @@ export function CompetitionDetails({ competition }: CompetitionDetailsProps) {
     <div className="py-12 bg-white">
       <div className="container mx-auto px-4">
         {/* Hero Section */}
-        <div className="relative h-64 rounded-lg overflow-hidden mb-8">
+        {/* <div className="relative h-64 rounded-lg overflow-hidden mb-8">
           <Image src="/placeholder.svg?height=300&width=1200" alt={competition.name} fill className="object-cover" />
           <div className="absolute inset-0 bg-black bg-opacity-40" />
           <div className="absolute inset-0 flex items-center justify-center">
@@ -43,7 +44,8 @@ export function CompetitionDetails({ competition }: CompetitionDetailsProps) {
               <p className="text-xl">{competition.description}</p>
             </div>
           </div>
-        </div>
+        </div> */}
+        <HeroSection heroSlides={championshipHeroSlides} />
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content */}

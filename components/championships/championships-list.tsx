@@ -1,16 +1,21 @@
+"use client"
+
+import { useState, useMemo } from "react"
+import Image from "next/image"
+import Link from "next/link"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Calendar, MapPin, Users, DollarSign } from "lucide-react"
-import Link from "next/link"
-import Image from "next/image"
+import { Calendar, MapPin, Users, DollarSign, Search } from "lucide-react"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
-// Mock data - replace with actual data fetching
 const competitions = [
   {
     id: "1",
     name: "2024 World Championships",
-    description: "The premier international cheerleading competition featuring teams from around the globe.",
+    description: "The premier Indonesian cheerleading competition featuring teams from around the globe.",
     date: "2024-06-15",
     location: "Orlando, Florida, USA",
     image: "/placeholder.svg?height=300&width=400",
@@ -35,26 +40,26 @@ const competitions = [
   },
   {
     id: "3",
-    name: "Spring Classic 2024",
+    name: "Spring Classic 2023",
     description: "A competitive spring event for all skill levels and age groups.",
-    date: "2024-03-10",
+    date: "2023-03-10",
     location: "Las Vegas, Nevada, USA",
     image: "/placeholder.svg?height=300&width=400",
     registrationOpen: false,
-    registrationDeadline: "2024-02-01",
+    registrationDeadline: "2023-02-01",
     divisions: 12,
     priceRange: "$100 - $200",
     status: "Registration Closed",
   },
   {
     id: "4",
-    name: "Summer Showcase 2024",
+    name: "Summer Showcase 2022",
     description: "End-of-season showcase featuring the best teams from across the country.",
-    date: "2024-07-25",
+    date: "2022-07-25",
     location: "Los Angeles, California, USA",
     image: "/placeholder.svg?height=300&width=400",
     registrationOpen: false,
-    registrationDeadline: "2024-06-15",
+    registrationDeadline: "2022-06-15",
     divisions: 6,
     priceRange: "$180 - $250",
     status: "Coming Soon",
@@ -62,6 +67,21 @@ const competitions = [
 ]
 
 export function ChampionshipsList() {
+  const [searchTerm, setSearchTerm] = useState("")
+  const [yearFilter, setYearFilter] = useState<string>("all")
+
+  const filteredCompetitions = useMemo(() => {
+    return competitions.filter((comp) => {
+      const matchYear = yearFilter === "all" || new Date(comp.date).getFullYear().toString() === yearFilter
+      const matchName = comp.name.toLowerCase().includes(searchTerm.toLowerCase())
+      return matchYear && matchName
+    })
+  }, [searchTerm, yearFilter])
+
+  const uniqueYears = Array.from(new Set(competitions.map((c) => new Date(c.date).getFullYear().toString()))).sort(
+    (a, b) => Number(b) - Number(a)
+  )
+
   return (
     <section id="competitions" className="py-16 bg-gray-50">
       <div className="container mx-auto px-4">
@@ -73,8 +93,43 @@ export function ChampionshipsList() {
           </p>
         </div>
 
+        {/* Filters */}
+        <div className="flex flex-col md:flex-row md:items-end gap-4 mb-8">
+          <div className="flex-1">
+            <Label htmlFor="search" className="text-sm text-gray-700">Search by name</Label>
+            <div className="relative">
+              <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-500" />
+              <Input
+                id="search"
+                placeholder="Enter competition name..."
+                className="pl-10"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+          </div>
+
+          <div className="w-full md:w-40">
+            <Label htmlFor="year" className="text-sm text-gray-700">Filter by year</Label>
+            <Select value={yearFilter} onValueChange={setYearFilter}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select year" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Years</SelectItem>
+                {uniqueYears.map((year) => (
+                  <SelectItem key={year} value={year}>
+                    {year}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+
+        {/* Results */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {competitions.map((competition) => (
+          {filteredCompetitions.map((competition) => (
             <Card key={competition.id} className="overflow-hidden hover:shadow-lg transition-shadow">
               <div className="relative h-48">
                 <Image
@@ -148,14 +203,15 @@ export function ChampionshipsList() {
           ))}
         </div>
 
-        <div className="text-center mt-12">
+        {/* Archive CTA */}
+        {/* <div className="text-center mt-12">
           <p className="text-gray-600 mb-4">Looking for past competitions or results?</p>
           <Link href="/championships/archive">
             <Button variant="outline" size="lg" className="bg-transparent">
               View Archive
             </Button>
           </Link>
-        </div>
+        </div> */}
       </div>
     </section>
   )

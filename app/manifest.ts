@@ -2,9 +2,9 @@ import type { MetadataRoute } from "next"
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "ICA - International Cheerleading Association",
+    name: "ICA - Indonesia Cheer Association",
     short_name: "ICA",
-    description: "Official platform for International Cheerleading Association competitions, education, and community.",
+    description: "Official platform for Indonesia Cheer Association competitions, education, and community.",
     start_url: "/",
     display: "standalone",
     background_color: "#ffffff",

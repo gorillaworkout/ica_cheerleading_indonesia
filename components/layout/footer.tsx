@@ -13,7 +13,7 @@ export function Footer() {
               <span className="font-bold text-xl">ICA</span>
             </div>
             <p className="text-gray-400 text-sm">
-              International Cheerleading Association - Promoting excellence in cheerleading worldwide.
+              Indonesia Cheer Association - Promoting excellence in cheerleading worldwide.
             </p>
           </div>
 
@@ -65,7 +65,7 @@ export function Footer() {
         </div>
 
         <div className="border-t border-gray-800 mt-8 pt-8 text-center text-sm text-gray-400">
-          <p>&copy; {new Date().getFullYear()} International Cheerleading Association. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} Indonesia Cheer Association. All rights reserved.</p>
         </div>
       </div>
     </footer>

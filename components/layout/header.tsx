@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Menu, X, User, AlertCircle, ChevronDown, Settings, Shield, Users, Loader2 } from "lucide-react"
 import { useAuth } from "@/hooks/use-auth"
+import  Image  from 'next/image'
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -35,15 +36,32 @@ export function Header() {
   const isAdmin = profile?.role === "admin"
   const isCoach = profile?.role === "coach" || profile?.role === "admin"
 
+  // sticky header
+  const [scrolled, setScrolled] = useState(false) // ← New state
+
+  // Scroll listener
+  useEffect(() => {
+    const onScroll = () => {
+      setScrolled(window.scrollY > 10) // change threshold as needed
+    }
+
+    window.addEventListener("scroll", onScroll)
+    return () => window.removeEventListener("scroll", onScroll)
+  }, [])
+
   return (
-    <header className="bg-white shadow-sm border-b">
+    <header
+      className={`sticky top-0 z-50 transition-all duration-300  ${scrolled ? "bg-white/50 backdrop-blur shadow-sm" : "bg-white border-b"
+        }`}
+    >
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center h-16">
           <Link href="/" className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-red-600 rounded-lg flex items-center justify-center">
+            {/* <div className="w-8 h-8 bg-red-600 rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-sm">ICA</span>
-            </div>
-            <span className="font-bold text-xl text-gray-900">ICA</span>
+            </div> */}
+            <Image src="/ica-text.png" alt="ICA Logo" width={200} height={200}/>
+            {/* <span className="font-bold text-xl text-gray-900">ICA</span> */}
           </Link>
 
           {/* Desktop Navigation */}

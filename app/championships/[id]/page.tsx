@@ -14,15 +14,14 @@ const competitions = [
   {
     id: "1",
     name: "2024 World Championships",
-    description: "The premier international cheerleading competition featuring teams from around the globe.",
+    description: "The premier Indonesian cheerleading competition featuring teams from around the globe.",
     date: "2024-06-15",
     location: "Orlando, Florida, USA",
     registrationOpen: true,
     registrationDeadline: "2024-05-01",
     divisions: [
-      { id: "1", name: "Junior Level 1", ageGroup: "12-14", skillLevel: "Beginner", price: 150, maxTeams: 32 },
-      { id: "2", name: "Senior Level 5", ageGroup: "15-18", skillLevel: "Elite", price: 250, maxTeams: 24 },
-      { id: "3", name: "Open Level 6", ageGroup: "18+", skillLevel: "Elite", price: 300, maxTeams: 16 },
+      { id: "1", name: "Team Cheer Coed Premiere", ageGroup: "12-14", skillLevel: "Beginner", price: 150, maxTeams: 32 },
+      { id: "2", name: "Team Cheer Coed Elite", ageGroup: "15-18", skillLevel: "Elite", price: 250, maxTeams: 24 },
     ],
   },
   {

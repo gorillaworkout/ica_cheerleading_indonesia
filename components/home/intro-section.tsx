@@ -30,7 +30,7 @@ export function IntroSection() {
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold text-gray-900 mb-4">
-            Welcome to the International Cheerleading Association
+            Welcome to the Indonesia Cheer Association
           </h2>
           <p className="text-lg text-gray-600 max-w-3xl mx-auto">
             We are dedicated to promoting excellence in cheerleading through competitive events, educational programs,

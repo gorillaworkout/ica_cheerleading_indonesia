@@ -87,8 +87,10 @@ export function useAuth() {
           },
         },
       })
-
+      console.log(data, 'data')
+      
       if (error) {
+        console.log(error, 'error 93 use auth')
         throw error
       }
 

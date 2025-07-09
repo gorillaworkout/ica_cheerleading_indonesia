@@ -1,28 +1,28 @@
-import type React from "react"
-import { redirect } from "next/navigation"
-import { CoachSidebar } from "@/components/coach/coach-sidebar"
-import { getCurrentUser } from "@/lib/auth"
-import { createServerSupabaseClient } from "@/lib/supabase-server"
+"use client"
 
-export default async function CoachLayout({
+import type React from "react"
+import { useRouter } from "next/navigation"
+import { CoachSidebar } from "@/components/coach/coach-sidebar"
+import { useAuthContext } from "@/components/providers/auth-provider"
+import { useEffect } from "react"
+
+export default function CoachLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
-  // Check if user is authenticated
-  const user = await getCurrentUser()
+  const { user, profile, loading } = useAuthContext()
+  const router = useRouter()
 
-  if (!user) {
-    redirect("/login")
-  }
+  useEffect(() => {
+    if (!loading && (!user || profile?.role !== "coach")) {
+      console.log("🔒 Access denied: not logged in or not coach")
+      router.push("/")
+    }
+  }, [user, profile, loading, router])
 
-  // Check if user has coach or admin role
-  const supabase = await createServerSupabaseClient()
-  const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).single()
-
-  if (!profile || (profile.role !== "coach" && profile.role !== "admin")) {
-    redirect("/")
-  }
+  if (loading) return <p>Loading...</p>
+  if (!user || profile?.role !== "coach") return null
 
   return (
     <div className="flex h-screen bg-gray-50">
