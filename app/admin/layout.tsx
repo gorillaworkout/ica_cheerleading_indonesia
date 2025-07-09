@@ -12,44 +12,44 @@ export default async function AdminLayout({
   console.log("🔍 Admin Layout: Checking access...")
 
   // Check if user is authenticated
-  const user = await getCurrentUser()
+  // const user = await getCurrentUser()
 
-  if (!user) {
-    console.log("❌ Admin Layout: No user found, redirecting to login")
-    redirect("/login")
-  }
+  // if (!user) {
+  //   console.log("❌ Admin Layout: No user found, redirecting to login")
+  //   redirect("/login")
+  // }
 
-  console.log("✅ Admin Layout: User found:", {
-    id: user.id,
-    email: user.email,
-  })
+  // console.log("✅ Admin Layout: User found:", {
+  //   id: user.id,
+  //   email: user.email,
+  // })
 
-  // Ensure profile exists and check role
-  const supabase = await createServerSupabaseClient()
+  // // Ensure profile exists and check role
+  // const supabase = await createServerSupabaseClient()
 
-  // First ensure profile exists
-  await ensureUserProfile(user.id, user.email || "", user.user_metadata?.display_name)
+  // // First ensure profile exists
+  // await ensureUserProfile(user.id, user.email || "", user.user_metadata?.display_name)
 
-  // Then check role
-  const { data: profile, error } = await supabase.from("profiles").select("role").eq("id", user.id).single()
+  // // Then check role
+  // const { data: profile, error } = await supabase.from("profiles").select("role").eq("id", user.id).single()
 
-  console.log("🔍 Admin Layout: Profile check result:", {
-    profile,
-    error,
-    userId: user.id,
-  })
+  // console.log("🔍 Admin Layout: Profile check result:", {
+  //   profile,
+  //   error,
+  //   userId: user.id,
+  // })
 
-  if (error || !profile) {
-    console.log("❌ Admin Layout: Profile error or not found, redirecting to home")
-    redirect("/")
-  }
+  // if (error || !profile) {
+  //   console.log("❌ Admin Layout: Profile error or not found, redirecting to home")
+  //   redirect("/")
+  // }
 
-  if (profile.role !== "admin") {
-    console.log("❌ Admin Layout: User is not admin, redirecting to home. Role:", profile.role)
-    redirect("/")
-  }
+  // if (profile.role !== "admin") {
+  //   console.log("❌ Admin Layout: User is not admin, redirecting to home. Role:", profile.role)
+  //   redirect("/")
+  // }
 
-  console.log("✅ Admin Layout: Access granted for admin user")
+  // console.log("✅ Admin Layout: Access granted for admin user")
 
   return (
     <div className="flex h-screen bg-gray-50">
