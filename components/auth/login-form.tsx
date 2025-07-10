@@ -387,7 +387,7 @@ export function LoginForm() {
                 </div>
 
                 <div className="space-y-1">
-                  <Label htmlFor="birthDate">Birth Date</Label>
+                  <Label htmlFor="birthDate">Date of Birth</Label>
                   <Input
                     id="birthDate"
                     type="date"
