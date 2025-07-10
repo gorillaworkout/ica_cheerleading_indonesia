@@ -5,12 +5,14 @@ import Image from "next/image"
 import { Calendar } from "lucide-react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
+import { HeroSection } from "@/components/home/hero-section"
+import { newsImageProps } from "@/utils/dummyhero"
 
 interface Article {
   title: string
   slug: string
   date: string
-  image?: string
+  image?: newsImageProps[]
   category?: string
   content: string
 }
@@ -56,15 +58,12 @@ export function NewsDetailClient({ article }: { article: Article }) {
         </Link>
 
         <div className="relative w-full h-64 md:h-96 rounded overflow-hidden mb-6 shadow-md">
-          <Image
-            src={article.image || "/placeholder.svg"}
-            alt={article.title}
-            fill
-            className="object-cover"
-          />
-          <span className="absolute top-4 left-4 bg-red-600 text-white px-3 py-1 rounded font-semibold text-sm">
+            <div className="w-full h-full">
+                <HeroSection showTextAndButtons={false} heroSlides={article.image || []} />
+            </div>
+            <span className="absolute top-4 left-4 bg-red-600 text-white px-3 py-1 rounded font-semibold text-sm">
             {article.category}
-          </span>
+            </span>
         </div>
 
         <h1 className="text-4xl font-bold mb-4 text-gray-900">{article.title}</h1>

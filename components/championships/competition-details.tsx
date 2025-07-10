@@ -45,7 +45,9 @@ export function CompetitionDetails({ competition }: CompetitionDetailsProps) {
             </div>
           </div>
         </div> */}
-        <HeroSection heroSlides={championshipHeroSlides} showTextAndButtons={false} />
+        <div className="w-full h-full">
+          <HeroSection heroSlides={championshipHeroSlides} showTextAndButtons={false} />
+        </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content */}

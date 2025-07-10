@@ -44,3 +44,31 @@ export const championshipHeroSlides = [
     // subtitle: "Learn from certified coaches and experienced judges",
   },
 ]
+
+
+
+export interface newsImageProps {
+  src:string;
+  alt:string;
+}
+export const jurnasHeroSlides:newsImageProps[] = [
+  {
+    src: "/icanc2025/athlete.jpg",
+    alt: "ICA ATHLETE",
+    // title: "Excellence in Motion",
+    // subtitle: "Join the premier cheerleading competitions worldwide",
+  },
+  {
+    src: "/icanc2025/judge.jpg",
+    alt: "ICA JUDGE",
+    // title: "Achieve Greatness",
+    // subtitle: "Compete at the highest level and showcase your skills",
+  },
+  {
+    src: "/icanc2025/bdg.jpg",
+    alt: "BDG",
+    // title: "Train with the Best",
+    // subtitle: "Learn from certified coaches and experienced judges",
+  },
+]
+

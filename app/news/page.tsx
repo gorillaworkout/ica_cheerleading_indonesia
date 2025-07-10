@@ -23,7 +23,7 @@ export default function NewsPage() {
                         <Card key={article.id} className="overflow-hidden hover:shadow-lg transition-shadow bg-white">
                             <div className="relative h-48">
                                 <Image
-                                    src={article.image || "/placeholder.svg"}
+                                    src={article.image[0].src || "/placeholder.svg"}
                                     alt={article.title}
                                     fill
                                     className="object-cover"

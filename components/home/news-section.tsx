@@ -20,7 +20,7 @@ export function NewsSection() {
           {news.map((article) => (
             <Card key={article.id} className="overflow-hidden hover:shadow-lg transition-shadow">
               <div className="relative h-48">
-                <Image src={article.image || "/placeholder.svg"} alt={article.title} fill className="object-cover" />
+                <Image src={article.image[0].src || "/placeholder.svg"} alt={article.title} fill className="object-cover" />
                 <div className="absolute top-4 left-4">
                   <span className="bg-red-600 text-white px-2 py-1 rounded text-xs font-medium">
                     {article.category}

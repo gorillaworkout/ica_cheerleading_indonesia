@@ -22,7 +22,9 @@ export default function HomePage() {
     <div className="min-h-screen bg-white">
       <Header />
       <main>
-        <HeroSection showTextAndButtons={false} />
+        <div className="w-[99.6vw] h-screen">
+          <HeroSection showTextAndButtons={false} />
+        </div>
         <IntroSection />
         <TeamLogoSlider />  
         <NewsSection />

@@ -1,3 +1,4 @@
+import { jurnasHeroSlides } from "./dummyhero"
 export const news = [
     {
         id: 1,
@@ -12,7 +13,7 @@ export const news = [
             ICA NC 2025 ditutup dengan pengumuman pemenang dan penyerahan hadiah, di mana piala bergilir pada divisi team cheer berhasil diraih oleh Provinsi Jawa Barat sebanyak 4 piala, Provinsi Jawa Tengah sebanyak 4 piala, Provinsi Sumatera Selatan sebanyak 1 piala, dan Provinsi DKI Jakarta sebanyak 1 piala.
             `,
         date: "2025-06-28",
-        image: "/icanc2025/judge.jpg",
+        image: jurnasHeroSlides,
         category: "Competition",
     },
     // {
