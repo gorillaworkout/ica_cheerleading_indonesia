@@ -5,7 +5,7 @@ import { Calendar, MapPin, Users, Clock, Trophy } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 import { HeroSection } from "../home/hero-section"
-import {championshipHeroSlides} from "@/lib/hero"
+import {championshipHeroSlides} from "@/utils/dummyhero"
 interface Division {
   id: string
   name: string

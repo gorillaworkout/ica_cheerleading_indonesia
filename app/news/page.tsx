@@ -7,33 +7,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Calendar, ArrowRight } from "lucide-react"
 import { Header } from "@/components/layout/header"
+import {news} from "@/utils/dummyNews"
 
-const news = [
-    {
-        id: 1,
-        title: "2024 World Championships Registration Now Open",
-        excerpt: "Join us for the biggest cheerleading event of the year. Registration is now open for teams worldwide.",
-        date: "2024-01-15",
-        image: "/placeholder.svg?height=200&width=300",
-        category: "Competition",
-    },
-    {
-        id: 2,
-        title: "New Judging Certification Program Launched",
-        excerpt: "We're excited to announce our new comprehensive judging certification program for aspiring judges.",
-        date: "2024-01-10",
-        image: "/placeholder.svg?height=200&width=300",
-        category: "Education",
-    },
-    {
-        id: 3,
-        title: "Coach Development Workshop Series",
-        excerpt: "Join our monthly workshop series designed to help coaches improve their skills and knowledge.",
-        date: "2024-01-05",
-        image: "/placeholder.svg?height=200&width=300",
-        category: "Training",
-    },
-]
 
 export default function NewsPage() {
     return (
@@ -62,11 +37,11 @@ export default function NewsPage() {
                                     <Calendar className="h-4 w-4 mr-1" />
                                     {new Date(article.date).toLocaleDateString()}
                                 </div>
-                                <CardTitle className="text-xl line-clamp-2">{article.title}</CardTitle>
+                                <CardTitle className="text-xl line-clamp-2" dangerouslySetInnerHTML={{ __html: article.title }}></CardTitle>
                             </CardHeader>
                             <CardContent>
-                                <p className="text-gray-700 mb-4 line-clamp-3">{article.excerpt}</p>
-                                <Link href={`/news/${article.id}`}>
+                                <p className="text-gray-400 mb-4 line-clamp-3" dangerouslySetInnerHTML={{ __html: article.content }}></p>
+                                <Link href={`/news/${article.slug}`}>
                                     <Button variant="outline" className="w-full group bg-transparent">
                                         Read More
                                         <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />

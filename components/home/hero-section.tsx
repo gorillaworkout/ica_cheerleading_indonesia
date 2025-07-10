@@ -5,7 +5,7 @@ import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import Link from "next/link"
-import { defaultHeroSlides } from "@/lib/hero"
+import { defaultHeroSlides } from "@/utils/dummyhero"
 
 interface Slide {
   src: string
