@@ -47,7 +47,7 @@ export default function RootLayout({
       <head>
         <link rel="manifest" href="/manifest.json" />
         <meta name="theme-color" content="#e11d48" />
-        <link rel="apple-touch-icon" href="/favicon.ico" />
+        <link rel="apple-touch-icon" href="/ica-rounded.png" />
       </head>
       <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>

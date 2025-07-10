@@ -35,7 +35,7 @@ export function NewsSection() {
                 <CardTitle className="text-xl line-clamp-2">{article.title}</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-gray-600 mb-4 line-clamp-3">{article.content}</p>
+                <p className="text-gray-400 mb-4 line-clamp-3"dangerouslySetInnerHTML={{ __html: article.content }}></p>
                 <Link href={`/news/${article.slug}`}>
                   <Button variant="outline" className="w-full group bg-transparent">
                     Read More
