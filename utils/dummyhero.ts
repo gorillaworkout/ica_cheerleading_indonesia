@@ -72,3 +72,24 @@ export const jurnasHeroSlides:newsImageProps[] = [
   },
 ]
 
+export const americaHeroSlides:newsImageProps[] = [
+  {
+    src: "/amerika/amerika-1.jpg",
+    alt: "ICA ATHLETE",
+    // title: "Excellence in Motion",
+    // subtitle: "Join the premier cheerleading competitions worldwide",
+  },
+  {
+    src: "/amerika/amerika-2.jpg",
+    alt: "ICA JUDGE",
+    // title: "Achieve Greatness",
+    // subtitle: "Compete at the highest level and showcase your skills",
+  },
+  {
+    src: "/amerika/amerika-3.jpg",
+    alt: "BDG",
+    // title: "Train with the Best",
+    // subtitle: "Learn from certified coaches and experienced judges",
+  },
+]
+

@@ -1,4 +1,4 @@
-import { jurnasHeroSlides } from "./dummyhero"
+import { jurnasHeroSlides,americaHeroSlides } from "./dummyhero"
 export const news = [
     {
         id: 1,
@@ -16,14 +16,29 @@ export const news = [
         image: jurnasHeroSlides,
         category: "Competition",
     },
-    // {
-    //     id: 2,
-    //     title: "New Judging Certification Program Launched",
-    //     excerpt: "We're excited to announce our new comprehensive judging certification program for aspiring judges.",
-    //     date: "2024-01-10",
-    //     image: "/placeholder.svg?height=200&width=300",
-    //     category: "Education",
-    // },
+    {
+        id: 2,
+        slug:"tim-cheerleader-indonesia-persiapan-ke-amerika",
+        title: "Tim Cheerleader Indonesia Persiapan ke Amerika",
+        content: `
+            <strong>Tim cheerleading "Crown All Star"</strong> asuhan <strong>Indonesian Cheerleading Association (ICA)</strong> melakukan gerakan akrobatik saat latihan di Lapangan Voli Alko, Pasar Kosambi, Jalan Ahmad Yani, Kota Bandung, Jumat (18/4/2014).
+
+            Tim cheerleader yang beranggotakan <strong>5 orang</strong> ini tengah mempersiapkan diri menghadapi <strong>World Cup Cheerleading 2014</strong> di <strong>Florida, Amerika Serikat</strong> untuk kategori <strong>All Female Group Stunt</strong> pada <strong>24–25 April 2014</strong>.
+
+            <strong>Crown All Star</strong> akan menjadi salah satu <strong>wakil resmi Indonesia</strong> dalam ajang <strong>ICU World Cheerleading Championship</strong>, sebuah <strong>kejuaraan dunia bergengsi</strong> yang diikuti oleh tim-tim terbaik dari seluruh dunia, dan diselenggarakan oleh <strong>International Cheer Union (ICU)</strong>.
+
+            Kehadiran mereka di Amerika Serikat tidak hanya menjadi simbol <strong>dedikasi dan kerja keras</strong>, namun juga membawa <strong>harapan besar</strong> untuk <strong>mengharumkan nama bangsa Indonesia</strong> di panggung internasional.
+
+            Selama beberapa bulan terakhir, tim terus melakukan latihan intensif, membangun <strong>kekompakan, kekuatan fisik, dan mental</strong> untuk menghadapi kompetisi yang penuh tantangan.
+
+            <strong>Crown All Star</strong> merupakan wujud nyata dari semangat juang generasi muda dalam <strong>membanggakan Indonesia</strong> melalui prestasi olahraga. Dukungan dari masyarakat, pemerintah, serta komunitas cheerleading nasional diharapkan menjadi <strong>motivasi tambahan</strong> bagi para atlet untuk memberikan <strong>penampilan terbaik</strong>.
+
+            Dengan semangat pantang menyerah dan tekad kuat, <strong>tim Crown All Star</strong> siap membuktikan bahwa <strong>cheerleader Indonesia mampu bersaing di level dunia</strong>.
+            `,
+        date: "2014-04-24",
+        image: americaHeroSlides,
+        category: "Competition",
+    },
     // {
     //     id: 3,
     //     title: "Coach Development Workshop Series",
