@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Calendar, ArrowRight, MapPin, Users, DollarSign } from "lucide-react"
+import { Calendar, ArrowRight, MapPin, Users, Banknote } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 import { news } from "@/utils/dummyNews"
@@ -63,9 +63,10 @@ export function ChampionshipSection() {
                     <Users className="h-4 w-4 text-red-600" />
                     <span>{competition.divisions} Divisions</span>
                   </div>
-                  <div className="flex items-center space-x-2">
-                    <DollarSign className="h-4 w-4 text-red-600" />
-                    <span>{competition.priceRange}</span>
+                <div className="flex items-center space-x-2">
+                    <Banknote className="h-4 w-4 text-red-600" />
+                    {/* {getPriceRangeInRupiah(competition.divisions)} */}
+                    <span>RP {competition.priceRange}</span>
                   </div>
                 </div>
 

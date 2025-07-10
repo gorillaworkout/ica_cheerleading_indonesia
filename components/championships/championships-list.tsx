@@ -6,11 +6,13 @@ import Link from "next/link"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Calendar, MapPin, Users, DollarSign, Search } from "lucide-react"
+import { Calendar, MapPin, Users, Banknote, Search } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { competitions } from "@/utils/dummyChampionship"
+import { getPriceRangeInRupiah } from "@/lib/utils"
+import { CompetitionProps } from "@/lib/types"
 
 export function ChampionshipsList() {
   const [searchTerm, setSearchTerm] = useState("")
@@ -120,8 +122,9 @@ export function ChampionshipsList() {
                     <span>{competition.divisions} Divisions</span>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <DollarSign className="h-4 w-4 text-red-600" />
-                    <span>{competition.priceRange}</span>
+                    <Banknote className="h-4 w-4 text-red-600" />
+                    {/* {getPriceRangeInRupiah(competition.divisions)} */}
+                    <span>RP {competition.priceRange}</span>
                   </div>
                 </div>
 

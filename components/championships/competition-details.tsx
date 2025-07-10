@@ -7,28 +7,29 @@ import Image from "next/image"
 import { HeroSection } from "../home/hero-section"
 import {championshipHeroSlides} from "@/utils/dummyhero"
 import { convertToRupiah, getPriceRangeInRupiah } from "@/lib/utils"
-interface Division {
-  id: string
-  name: string
-  ageGroup: string
-  skillLevel: string
-  price: string
-  maxTeams: number
-}
+import { CompetitionProps } from "@/lib/types"
+// interface DivisionDetailsProps {
+//   id: string
+//   name: string
+//   ageGroup: string
+//   skillLevel: string
+//   price: string
+//   maxTeams: number
+// }
 
-interface Competition {
-  id: string
-  name: string
-  description: string
-  date: string
-  location: string
-  registrationOpen: boolean
-  registrationDeadline: string
-  divisions: Division[]
-}
+// interface Competition {
+//   id: string
+//   name: string
+//   description: string
+//   date: string
+//   location: string
+//   registrationOpen: boolean
+//   registrationDeadline: string
+//   divisions: DivisionDetailsProps[]
+// }
 
 interface CompetitionDetailsProps {
-  competition: Competition
+  competition: CompetitionProps
 }
 
 export function CompetitionDetails({ competition }: CompetitionDetailsProps) {

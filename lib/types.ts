@@ -87,3 +87,24 @@ export interface Database {
     }
   }
 }
+
+
+export interface DivisionDetailsProps {
+  id: string
+  name: string
+  ageGroup: string
+  skillLevel: string
+  price: string
+  maxTeams: number
+}
+
+export interface CompetitionProps {
+  id: string
+  name: string
+  description: string
+  date: string
+  location: string
+  registrationOpen: boolean
+  registrationDeadline: string
+  divisions: DivisionDetailsProps[]
+}

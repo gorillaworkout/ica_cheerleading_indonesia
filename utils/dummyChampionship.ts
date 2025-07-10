@@ -9,7 +9,7 @@ export const competitions = [
         registrationOpen: false,
         registrationDeadline: "2024-05-01",
         divisions: 31,
-        priceRange: "RP 1000000 - RP 5.000.000",
+        priceRange: "1.000.000 - 5.000.000",
         status: "Registration Closed",
     },
     //   {
