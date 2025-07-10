@@ -45,9 +45,8 @@ export function HeroSection({
       {heroSlides.map((image, index) => (
         <div
           key={index}
-          className={`absolute inset-0 transition-opacity duration-1000 ${
-            index === currentSlide ? "opacity-100" : "opacity-0"
-          }`}
+          className={`absolute inset-0 transition-opacity duration-1000 ${index === currentSlide ? "opacity-100" : "opacity-0"
+            }`}
         >
           <Image
             src={image.src || "/placeholder.svg"}
@@ -56,32 +55,37 @@ export function HeroSection({
             className="object-cover"
             priority={index === 0}
           />
-          <div className="absolute inset-0 bg-black bg-opacity-40" />
-          {showTextAndButtons && (
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="text-center text-white max-w-4xl px-4">
-                <h1 className="text-5xl md:text-6xl font-bold mb-4">{image.title}</h1>
-                <p className="text-xl md:text-2xl mb-8">{image.subtitle}</p>
-                <div className="space-x-4">
-                  <Link href="/championships">
-                    <Button size="lg" className="bg-red-600 hover:bg-red-700">
-                      View Championships
-                    </Button>
-                  </Link>
-                  <Link href="/about">
-                    <Button
-                      size="lg"
-                      variant="outline"
-                      className="text-white border-white hover:bg-white hover:text-gray-900 bg-transparent"
-                    >
-                      Learn More
-                    </Button>
-                  </Link>
+          {
+            showTextAndButtons && (
+              <>
+                <div className={`absolute inset-0 bg-black bg-opacity-40`} /> 
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="text-center text-white max-w-4xl px-4">
+                    <h1 className="text-5xl md:text-6xl font-bold mb-4">{image.title}</h1>
+                    <p className="text-xl md:text-2xl mb-8">{image.subtitle}</p>
+                    <div className="space-x-4">
+                      <Link href="/championships">
+                        <Button size="lg" className="bg-red-600 hover:bg-red-700">
+                          View Championships
+                        </Button>
+                      </Link>
+                      <Link href="/about">
+                        <Button
+                          size="lg"
+                          variant="outline"
+                          className="text-white border-white hover:bg-white hover:text-gray-900 bg-transparent"
+                        >
+                          Learn More
+                        </Button>
+                      </Link>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
-          )}
+              </>
+            )
+          }
         </div>
+
       ))}
 
       {/* Navigation Arrows */}
@@ -104,9 +108,8 @@ export function HeroSection({
           <button
             key={index}
             onClick={() => setCurrentSlide(index)}
-            className={`w-3 h-3 rounded-full transition-all ${
-              index === currentSlide ? "bg-white" : "bg-white bg-opacity-50"
-            }`}
+            className={`w-3 h-3 rounded-full transition-all ${index === currentSlide ? "bg-white" : "bg-white bg-opacity-50"
+              }`}
           />
         ))}
       </div>
