@@ -1,4 +1,4 @@
-import { jurnasHeroSlides,americaHeroSlides } from "./dummyhero"
+import { jurnasHeroSlides,americaHeroSlides,apccHeroSlides } from "./dummyhero"
 export const news = [
     {
         id: 1,
@@ -20,31 +20,46 @@ export const news = [
         id: 2,
         slug:"tim-cheerleader-indonesia-persiapan-ke-amerika",
         title: "Tim Cheerleader Indonesia Persiapan ke Amerika",
-        content: `
-            <strong>Tim cheerleading "Crown All Star"</strong> asuhan <strong>Indonesian Cheerleading Association (ICA)</strong> melakukan gerakan akrobatik saat latihan di Lapangan Voli Alko, Pasar Kosambi, Jalan Ahmad Yani, Kota Bandung, Jumat (18/4/2014).
+        content:  `
+            <strong>Tim cheerleading "Crown All Star"</strong> asuhan <strong>Indonesian Cheerleading Association (ICA)</strong> melakukan <strong>gerakan akrobatik</strong> saat melakukan latihan di <strong>Lapangan Voli Alko, Pasar Kosambi, Jalan Ahmad Yani, Kota Bandung</strong>, Jumat (18/4/2014).
 
             Tim cheerleader yang beranggotakan <strong>5 orang</strong> ini tengah mempersiapkan diri menghadapi <strong>World Cup Cheerleading 2014</strong> di <strong>Florida, Amerika Serikat</strong> untuk kategori <strong>All Female Group Stunt</strong> pada <strong>24–25 April 2014</strong>.
 
-            <strong>Crown All Star</strong> akan menjadi salah satu <strong>wakil resmi Indonesia</strong> dalam ajang <strong>ICU World Cheerleading Championship</strong>, sebuah <strong>kejuaraan dunia bergengsi</strong> yang diikuti oleh tim-tim terbaik dari seluruh dunia, dan diselenggarakan oleh <strong>International Cheer Union (ICU)</strong>.
+            <strong>Crown All Star</strong> akan menjadi salah satu <strong>wakil Indonesia</strong> dalam ajang <strong>ICU World Cheerleading Championship</strong>, kejuaraan dunia bergengsi yang diikuti oleh negara-negara dari seluruh dunia, yang diselenggarakan oleh <strong>International Cheer Union (ICU)</strong> di <strong>Amerika Serikat</strong>. Kehadiran mereka membawa harapan besar untuk <strong>mengharumkan nama bangsa</strong> di kancah internasional.
 
-            Kehadiran mereka di Amerika Serikat tidak hanya menjadi simbol <strong>dedikasi dan kerja keras</strong>, namun juga membawa <strong>harapan besar</strong> untuk <strong>mengharumkan nama bangsa Indonesia</strong> di panggung internasional.
-
-            Selama beberapa bulan terakhir, tim terus melakukan latihan intensif, membangun <strong>kekompakan, kekuatan fisik, dan mental</strong> untuk menghadapi kompetisi yang penuh tantangan.
-
-            <strong>Crown All Star</strong> merupakan wujud nyata dari semangat juang generasi muda dalam <strong>membanggakan Indonesia</strong> melalui prestasi olahraga. Dukungan dari masyarakat, pemerintah, serta komunitas cheerleading nasional diharapkan menjadi <strong>motivasi tambahan</strong> bagi para atlet untuk memberikan <strong>penampilan terbaik</strong>.
-
-            Dengan semangat pantang menyerah dan tekad kuat, <strong>tim Crown All Star</strong> siap membuktikan bahwa <strong>cheerleader Indonesia mampu bersaing di level dunia</strong>.
+            Sumber : <a href="https://www.tribunnews.com/images/regional/view/1122512/tim-cheerleader-persiapan-ke-amerika" target="_blank" rel="noopener noreferrer">tribunnews.com</a>
             `,
         date: "2014-04-24",
         image: americaHeroSlides,
         category: "Competition",
     },
-    // {
-    //     id: 3,
-    //     title: "Coach Development Workshop Series",
-    //     excerpt: "Join our monthly workshop series designed to help coaches improve their skills and knowledge.",
-    //     date: "2024-01-05",
-    //     image: "/placeholder.svg?height=200&width=300",
-    //     category: "Training",
-    // },
+    {
+        id: 3,
+        slug:"sebanyak-1000-atlet-dari-9-negara-berlaga-dalam-lomba-cheerleading-internasional-di-kuta",
+        title: "Sebanyak 1000 Atlet dari 9 Negara Berlaga dalam Lomba Cheerleading Internasional di Kuta",
+        content:  `
+            <strong>Redaksi9.com</strong> – <strong>Indonesia Cheer Association (ICA)</strong> dan <strong>International Cheer Union (ICU)</strong> kembali menggelar perlombaan <strong>cheerleading internasional terbesar</strong> di Indonesia. Bertempat di <strong>Amphitheater Discovery Mall, Bali</strong> menjadi tuan rumah acara olahraga internasional yang sudah diselenggarakan untuk ke <strong>4 kalinya</strong> di Indonesia.
+
+            Kegiatan yang diselenggarakan pada <strong>14–15 September 2024</strong> ini diikuti oleh lebih dari <strong>1.000 atlet</strong> dari <strong>9 negara</strong>: <strong>Indonesia, Malaysia, Jepang, RRT, Chinese Taipei, Thailand, Mongolia, Bosnia</strong>, dan <strong>Polandia</strong>.
+
+            Diselenggarakan selama dua hari, kegiatan ini terbagi menjadi <strong>Asian Pacific Cheer Cup (APCC)</strong> pada <strong>14 September</strong> dan <strong>ICU Asian Cheerleading Championship (ACC)</strong> pada <strong>15 September</strong>. Divisi yang diperlombakan pada APCC adalah <strong>group stunt, partner stunt, performance cheer</strong>, dan <strong>team cheer</strong>, sedangkan untuk ICU ACC adalah <strong>performance cheer</strong> dan <strong>team cheer</strong>.
+
+            Acara ini juga dihadiri oleh para tamu kehormatan dari berbagai instansi: <strong>Komite Olahraga Masyarakat Indonesia (KORMI)</strong>, <strong>Dinas Pemuda dan Olahraga (Dispora)</strong>, dan <strong>Kementerian Pariwisata dan Ekonomi Kreatif (Kemenparekraf)</strong>.
+
+            <strong>Menteri Pariwisata dan Ekonomi Kreatif, Sandiaga Uno</strong> dalam sambutannya secara online pada pembukaan <strong>Sabtu (14/9)</strong>, mengatakan bahwa perlombaan ini tidak hanya mempromosikan cheerleading sebagai cabang olahraga yang <strong>penuh semangat dan energi</strong>, tetapi juga sebagai ajang bagi para atlet untuk <strong>menampilkan keterampilan, kekuatan, dan kreativitas luar biasa</strong> mereka dalam <strong>performa tim</strong>.
+
+            “Dengan partisipasi dari berbagai negara, acara ini diharapkan mempererat <strong>persahabatan antarnegara</strong> melalui semangat <strong>sportivitas</strong> dan <strong>kerja sama tim</strong>. Juga diharapkan menjadi <strong>daya tarik pariwisata</strong> bagi wisatawan lokal dan mancanegara untuk datang ke Bali,” ujarnya.
+
+            Sementara itu, <strong>Ketua Panitia</strong> sekaligus <strong>Ketua ICA, Dian Anggraini</strong>, menyampaikan bahwa selain perlombaan utama, kegiatan ini juga akan diisi dengan <strong>workshop penyuluhan cheerleading</strong> dan <strong>edukasi kesehatan</strong>. Lokasi acara yang berada di <strong>pinggir pantai Kuta</strong> juga bertujuan mempromosikan <strong>keindahan Bali</strong> sebagai <strong>destinasi pariwisata internasional</strong>.
+
+            "Kami sangat antusias melihat banyaknya <strong>atlet dari berbagai negara</strong> yang berpartisipasi. Pertandingan ini tidak hanya menonjolkan <strong>skill cheerleading</strong>, tetapi juga menyatukan <strong>kebersamaan</strong> dan <strong>solidaritas antarnegara</strong>," kata Dian Anggraini.
+
+            Dian juga menambahkan, asosiasi ini berdiri sejak <strong>2007</strong> dengan perwakilan di <strong>14 provinsi</strong> dan memiliki lebih dari <strong>3.000 atlet</strong>. Untuk wilayah Bali, <strong>Ketua ICA Bali</strong> adalah <strong>Patricia Bernadette</strong>.
+
+            Sumber : <a href="https://www.redaksi9.com/read/14298/sebanyak-1000-atlet-dari-9-negara-berlaga-dalam-lomba-cheerleading-internasional-di-kuta.html#google_vignette" target="_blank" rel="noopener noreferrer">Redaksi 9</a>
+            `,
+        date: "2014-09-14",
+        image: apccHeroSlides,
+        category: "Competition",
+    },
 ]

@@ -99,7 +99,7 @@ export function HeroSection({
       ))}
 
       {/* Navigation Arrows */}
-      <button
+      {/* <button
         onClick={prevSlide}
         className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-20 hover:bg-opacity-30 rounded-full p-2 transition-all z-20"
       >
@@ -110,7 +110,7 @@ export function HeroSection({
         className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-20 hover:bg-opacity-30 rounded-full p-2 transition-all z-20"
       >
         <ChevronRight className="h-6 w-6 text-white" />
-      </button>
+      </button> */}
 
       {/* Slide Indicators */}
       <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2 z-20">

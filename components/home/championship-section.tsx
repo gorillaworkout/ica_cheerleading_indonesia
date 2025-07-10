@@ -1,81 +1,25 @@
-"use client"
-
-import { useState, useMemo } from "react"
-import Image from "next/image"
-import Link from "next/link"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Calendar, MapPin, Users, DollarSign, Search } from "lucide-react"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Calendar, ArrowRight, MapPin, Users, DollarSign } from "lucide-react"
+import Link from "next/link"
+import Image from "next/image"
+import { news } from "@/utils/dummyNews"
 import { competitions } from "@/utils/dummyChampionship"
-
-export function ChampionshipsList() {
-  const [searchTerm, setSearchTerm] = useState("")
-  const [yearFilter, setYearFilter] = useState<string>("all")
-
-  const filteredCompetitions = useMemo(() => {
-    return competitions.filter((comp) => {
-      const matchYear = yearFilter === "all" || new Date(comp.date).getFullYear().toString() === yearFilter
-      const matchName = comp.name.toLowerCase().includes(searchTerm.toLowerCase())
-      return matchYear && matchName
-    })
-  }, [searchTerm, yearFilter])
-
-  const uniqueYears = Array.from(new Set(competitions.map((c) => new Date(c.date).getFullYear().toString()))).sort(
-    (a, b) => Number(b) - Number(a)
-  )
+import { Badge } from "../ui/badge"
+export function ChampionshipSection() {
 
   return (
-    <section id="competitions" className="py-16 bg-gray-50">
+    <section className="py-16 bg-white">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">Upcoming Championships</h2>
-          <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-            Join thousands of athletes from around the world in our premier cheerleading competitions. From regional
-            qualifiers to world championships, find the perfect competition for your team.
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">Latest News & Updates</h2>
+          <p className="text-lg text-gray-600">
+            Stay informed about the latest developments in the cheerleading community
           </p>
         </div>
 
-        {/* Filters */}
-        <div className="flex flex-col md:flex-row md:items-end gap-4 mb-8">
-          <div className="flex-1">
-            <Label htmlFor="search" className="text-sm text-gray-700">Search by name</Label>
-            <div className="relative">
-              <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-500" />
-              <Input
-                id="search"
-                placeholder="Enter competition name..."
-                className="pl-10"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </div>
-          </div>
-
-          <div className="w-full md:w-40">
-            <Label htmlFor="year" className="text-sm text-gray-700">Filter by year</Label>
-            <Select value={yearFilter} onValueChange={setYearFilter}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select year" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Years</SelectItem>
-                {uniqueYears.map((year) => (
-                  <SelectItem key={year} value={year}>
-                    {year}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-
-        {/* Results */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {filteredCompetitions.map((competition) => (
+          {competitions.slice(0,2).map((competition) => (
             <Card key={competition.id} className="overflow-hidden hover:shadow-lg transition-shadow">
               <div className="relative h-48">
                 <Image
@@ -149,15 +93,13 @@ export function ChampionshipsList() {
           ))}
         </div>
 
-        {/* Archive CTA */}
-        {/* <div className="text-center mt-12">
-          <p className="text-gray-600 mb-4">Looking for past competitions or results?</p>
-          <Link href="/championships/archive">
-            <Button variant="outline" size="lg" className="bg-transparent">
-              View Archive
+        <div className="text-center mt-12">
+          <Link href="/championships">
+            <Button size="lg" className="bg-red-600 hover:bg-red-700">
+              View All Championship
             </Button>
           </Link>
-        </div> */}
+        </div>
       </div>
     </section>
   )

@@ -7,31 +7,12 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Trophy, Medal, Award } from "lucide-react"
-
+import { mockResults } from "@/utils/dummyChampionship"
 interface CompetitionResultsProps {
   competitionId: string
 }
 
-const mockResults = {
-  "1": [
-    {
-      division: "Team Cheer Coed Premiere",
-      results: [
-        { placement: 1, team: "Crown Allstars", score: 98.5, coach: "CB" },
-        { placement: 2, team: "Ace Allstars", score: 96.2, coach: "CB" },
-        { placement: 3, team: "Stars Allstars", score: 94.8, coach: "CB" },
-      ],
-    },
-    {
-      division: "Team Cheer Coed Elite",
-      results: [
-        { placement: 1, team: "Rising Stars", score: 92.1, coach: "Lisa Chen" },
-        { placement: 2, team: "Dream Team", score: 90.7, coach: "John Smith" },
-        { placement: 3, team: "Victory Squad", score: 89.3, coach: "Amy Brown" },
-      ],
-    },
-  ],
-}
+
 
 export function CompetitionResults({ competitionId }: CompetitionResultsProps) {
   const results = mockResults[competitionId as keyof typeof mockResults]
@@ -73,11 +54,11 @@ export function CompetitionResults({ competitionId }: CompetitionResultsProps) {
   const getPlacementColor = (placement: number) => {
     switch (placement) {
       case 1:
-        return "bg-yellow-50 border-yellow-200"
+        return "bg-gradient-to-r from-yellow-100 via-yellow-200 to-yellow-300 border-yellow-400 shadow-lg"
       case 2:
-        return "bg-gray-50 border-gray-200"
+        return "bg-gradient-to-r from-gray-100 via-gray-200 to-gray-300 border-gray-400 shadow-md"
       case 3:
-        return "bg-amber-50 border-amber-200"
+        return "bg-gradient-to-r from-amber-100 via-amber-200 to-amber-300 border-gray-400 shadow-md"
       default:
         return "bg-white border-gray-200"
     }
@@ -109,7 +90,7 @@ export function CompetitionResults({ competitionId }: CompetitionResultsProps) {
                           {getPlacementIcon(result.placement)}
                           <div>
                             <h3 className="font-semibold text-lg">{result.team}</h3>
-                            <p className="text-sm text-gray-600">Coach: {result.coach}</p>
+                            <p className="text-sm text-gray-600">Province: {result.province}</p>
                           </div>
                         </div>
                         <div className="text-right">

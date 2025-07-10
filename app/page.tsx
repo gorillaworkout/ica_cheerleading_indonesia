@@ -5,6 +5,8 @@ import { NewsSection } from "@/components/home/news-section"
 import { Header } from "@/components/layout/header"
 import { Footer } from "@/components/layout/footer"
 import { TeamLogoSlider } from "@/components/home/team-logo-section"
+import { SocialMedia } from "@/components/layout/socialMedia"
+import { ChampionshipSection } from "@/components/home/championship-section"
 
 export const metadata: Metadata = {
   title: "Home",
@@ -20,6 +22,7 @@ export const metadata: Metadata = {
 export default function HomePage() {
   return (
     <div className="min-h-screen bg-white">
+      <SocialMedia/>
       <Header />
       <main>
         <div className="w-[99.6vw] h-screen">
@@ -27,6 +30,7 @@ export default function HomePage() {
         </div>
         <IntroSection />
         <TeamLogoSlider />  
+        <ChampionshipSection/>
         <NewsSection />
       </main>
       <Footer />

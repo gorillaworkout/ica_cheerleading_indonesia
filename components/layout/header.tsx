@@ -57,11 +57,7 @@ export function Header() {
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center h-16">
           <Link href="/" className="flex items-center space-x-2">
-            {/* <div className="w-8 h-8 bg-red-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">ICA</span>
-            </div> */}
             <Image src="/ica-text.png" alt="ICA Logo" width={200} height={200}/>
-            {/* <span className="font-bold text-xl text-gray-900">ICA</span> */}
           </Link>
 
           {/* Desktop Navigation */}

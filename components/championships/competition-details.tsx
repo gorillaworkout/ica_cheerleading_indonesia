@@ -6,12 +6,13 @@ import Link from "next/link"
 import Image from "next/image"
 import { HeroSection } from "../home/hero-section"
 import {championshipHeroSlides} from "@/utils/dummyhero"
+import { convertToRupiah, getPriceRangeInRupiah } from "@/lib/utils"
 interface Division {
   id: string
   name: string
   ageGroup: string
   skillLevel: string
-  price: number
+  price: string
   maxTeams: number
 }
 
@@ -100,12 +101,12 @@ export function CompetitionDetails({ competition }: CompetitionDetailsProps) {
                 <CardTitle>Competition Divisions</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
+                <div className="space-y-4 max-h-[500px] overflow-scroll">
                   {competition.divisions.map((division) => (
                     <div key={division.id} className="border rounded-lg p-4 hover:bg-gray-50 transition-colors">
                       <div className="flex justify-between items-start mb-2">
                         <h3 className="font-semibold text-lg">{division.name}</h3>
-                        <Badge variant="outline">${division.price}</Badge>
+                        <Badge variant="outline">{convertToRupiah(division.price)}</Badge>
                       </div>
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-600">
                         <div>
@@ -181,8 +182,7 @@ export function CompetitionDetails({ competition }: CompetitionDetailsProps) {
                 <div className="flex justify-between">
                   <span className="text-gray-600">Price Range:</span>
                   <span className="font-medium">
-                    ${Math.min(...competition.divisions.map((d) => d.price))} - $
-                    {Math.max(...competition.divisions.map((d) => d.price))}
+                    {getPriceRangeInRupiah(competition.divisions)}
                   </span>
                 </div>
                 <div className="flex justify-between">

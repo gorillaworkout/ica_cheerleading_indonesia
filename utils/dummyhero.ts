@@ -8,7 +8,7 @@ export const defaultHeroSlides = [
     subtitle: "Join the premier cheerleading competitions worldwide",
   },
   {
-    src: "/bali-ica.jpeg?height=600&width=1200",
+    src: "/apcc/bali-ica.jpeg?height=600&width=1200",
     alt: "Championship Victory",
     title: "Achieve Greatness",
     subtitle: "Compete at the highest level and showcase your skills",
@@ -90,6 +90,21 @@ export const americaHeroSlides:newsImageProps[] = [
     alt: "BDG",
     // title: "Train with the Best",
     // subtitle: "Learn from certified coaches and experienced judges",
+  },
+]
+
+export const apccHeroSlides:newsImageProps[] = [
+  {
+    src: "/apcc/bali-ica.jpeg",
+    alt: "ICA ATHLETE",
+    // title: "Excellence in Motion",
+    // subtitle: "Join the premier cheerleading competitions worldwide",
+  },
+  {
+    src: "/apcc/redaksi-apcc.jpg",
+    alt: "ICA JUDGE",
+    // title: "Achieve Greatness",
+    // subtitle: "Compete at the highest level and showcase your skills",
   },
 ]
 
