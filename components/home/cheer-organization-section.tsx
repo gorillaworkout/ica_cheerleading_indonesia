@@ -35,11 +35,11 @@ export default function CheerOrganizationsSection() {
             <motion.div
               key={logo.short}
               className="bg-white rounded-2xl p-6 flex flex-col items-center justify-center border shadow-lg hover:shadow-2xl transition-all"
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.15, duration: 0.6, ease: "easeOut" }}
-              whileHover={{ scale: 1.05, rotate: index % 2 === 0 ? 1 : -1 }}
+               initial={{ opacity: 0, y: 60 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ type: "spring", stiffness: 120, damping: 20 }}
+                whileHover={{ scale: 1.08 }}
             >
               <div className="relative w-36 h-36 md:w-48 md:h-48 mb-4">
                 <Image

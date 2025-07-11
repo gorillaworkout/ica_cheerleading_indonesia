@@ -12,9 +12,9 @@ export function ChampionshipSection() {
     <section className="py-16 bg-white">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">Latest News & Updates</h2>
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">Latest Cheerleading Championships and Results</h2>
           <p className="text-lg text-gray-600">
-            Stay informed about the latest developments in the cheerleading community
+            Explore the Latest Cheerleading Championships Across Indonesia
           </p>
         </div>
 

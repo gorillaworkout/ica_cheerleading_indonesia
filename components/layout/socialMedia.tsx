@@ -1,6 +1,6 @@
 'use client'
 
-import { Instagram, Facebook, Youtube } from "lucide-react";
+import { Instagram, Facebook, Youtube, Linkedin } from "lucide-react";
 
 export const SocialMedia = () => {
   const handleInstagramClick = () => {
@@ -13,6 +13,9 @@ export const SocialMedia = () => {
 
   const handleYoutubeClick = () => {
     window.open("https://www.youtube.com/@Cheerleadingindonesia", "_blank");
+  };
+    const handleLinkedinClick = () => {
+    window.open("https://www.linkedin.com/in/indonesian-cheer-association-association-07a2a3339/", "_blank");
   };
 
   return (
@@ -35,6 +38,12 @@ export const SocialMedia = () => {
           className="text-white w-7 h-7 hover:cursor-pointer"
         >
           <Youtube />
+        </div>
+         <div
+          onClick={handleLinkedinClick}
+          className="text-white w-7 h-7 hover:cursor-pointer"
+        >
+          <Linkedin />
         </div>
       </div>
     </div>
