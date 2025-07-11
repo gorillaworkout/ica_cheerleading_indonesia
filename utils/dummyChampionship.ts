@@ -183,7 +183,7 @@ export const mockResults = {
       results: [
         { placement: 1, team: "Spiders", score: 65.2, province: "Central Java" },
         { placement: 2, team: "Barstwo", score: 64.0, province: "West Java" },
-        { placement: 3, team: "Spears Blue", score: 51.7, province: "Cental Java" },
+        { placement: 3, team: "Spears Blue", score: 51.7, province: "Central Java" },
       ],
     },
     {

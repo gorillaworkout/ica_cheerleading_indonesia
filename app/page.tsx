@@ -7,6 +7,7 @@ import { Footer } from "@/components/layout/footer"
 import { TeamLogoSlider } from "@/components/home/team-logo-section"
 import { SocialMedia } from "@/components/layout/socialMedia"
 import { ChampionshipSection } from "@/components/home/championship-section"
+import CheerOrganizationsSection from "@/components/home/cheer-organization-section"
 
 export const metadata: Metadata = {
   title: "Home",
@@ -30,6 +31,7 @@ export default function HomePage() {
         </div>
         <IntroSection />
         <TeamLogoSlider />  
+        <CheerOrganizationsSection/>
         <ChampionshipSection/>
         <NewsSection />
       </main>

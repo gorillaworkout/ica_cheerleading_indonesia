@@ -8,6 +8,7 @@ import {competitionsDetails} from '@/utils/dummyChampionship'
 import BestTeamSummary from "@/components/championships/best-team-medal-result"
 import { HeroSection } from "@/components/home/hero-section"
 import { jurnasHeroSlides } from "@/utils/dummyhero"
+import ProvinceRankingPage from "@/components/championships/province-point"
 interface Props {
   params: Promise<{ id: string }>
 }
@@ -48,6 +49,7 @@ export default async function CompetitionPage({ params }: Props) {
           <HeroSection heroSlides={jurnasHeroSlides} showTextAndButtons={false} />
         </div>
         <CompetitionDetails competition={competition} />
+        <ProvinceRankingPage/>
         <BestTeamSummary/>
         <CompetitionResults competitionId={id} />
       </main>

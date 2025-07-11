@@ -1,70 +1,90 @@
-import type { Metadata } from "next"
-import { Header } from "@/components/layout/header"
-import { Footer } from "@/components/layout/footer"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-
-export const metadata: Metadata = {
-  title: "About ICA",
-  description: "Learn about the Indonesian Cheer Association, our mission, and organizational structure.",
-  openGraph: {
-    title: "About ICA - Indonesian Cheer Association",
-    description: "Learn about the Indonesian Cheer Association, our mission, and organizational structure.",
-  },
-}
+import { Header } from "@/components/layout/header";
+import { Footer } from "@/components/layout/footer";
+import { provinces, structure, aboutICA } from "@/utils/about";
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen flex flex-col bg-neutral-100">
       <Header />
-      <main className="container mx-auto px-4 py-12">
-        <div className="max-w-4xl mx-auto">
-          <h1 className="text-4xl font-bold text-gray-900 mb-8">About ICA</h1>
-
-          <div className="space-y-8">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-red-600">What does ICA do?</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-gray-700 leading-relaxed">
-                  The Indonesian Cheer Association (ICA) is dedicated to promoting excellence in cheerleading
-                  through competitive events, educational programs, and community building. We provide a platform for
-                  athletes, coaches, and judges to showcase their skills and advance the sport of cheerleading globally.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-red-600">Organization Structure</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <div className="text-center">
-                    <div className="bg-red-50 rounded-lg p-6 mb-4">
-                      <h3 className="font-semibold text-gray-900">Administration</h3>
-                    </div>
-                    <p className="text-sm text-gray-600">Executive team managing operations and strategic decisions</p>
-                  </div>
-                  <div className="text-center">
-                    <div className="bg-red-50 rounded-lg p-6 mb-4">
-                      <h3 className="font-semibold text-gray-900">Coaches</h3>
-                    </div>
-                    <p className="text-sm text-gray-600">Certified coaches leading teams and training athletes</p>
-                  </div>
-                  <div className="text-center">
-                    <div className="bg-red-50 rounded-lg p-6 mb-4">
-                      <h3 className="font-semibold text-gray-900">Judges</h3>
-                    </div>
-                    <p className="text-sm text-gray-600">Qualified judges ensuring fair competition standards</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+      <main className="flex-1">
+        <section className="relative bg-gradient-to-r from-red-700 to-red-500 text-white py-20">
+          <div className="container mx-auto px-4 text-center max-w-4xl">
+            <h1 className="text-5xl font-extrabold mb-4">{aboutICA.name}</h1>
+            <p className="text-lg opacity-90">
+              Empowering Cheerleading in Indonesia through Unity and Excellence
+            </p>
           </div>
-        </div>
+        </section>
+
+        <section className="container mx-auto px-4 py-16 grid gap-12 md:grid-cols-2">
+          <div className="space-y-6">
+            <h2 className="text-3xl font-bold">About ICA</h2>
+            <p>
+              {aboutICA.introduction}
+            </p>
+            <ul className="space-y-2">
+              <li><strong>Founded:</strong> {aboutICA.established}</li>
+              <li><strong>Founder:</strong> {aboutICA.founder}</li>
+              <li><strong>Sanctioned by:</strong> {aboutICA.sanctionedBy}</li>
+            </ul>
+          </div>
+
+          <div className="flex items-center justify-center">
+            <div className="rounded-xl shadow-lg bg-white w-full h-64 flex items-center justify-center text-gray-500">
+              About ICA Image
+            </div>
+          </div>
+        </section>
+
+        <section className="container mx-auto px-4 py-16">
+          <div className="grid gap-12 md:grid-cols-2">
+            <div>
+              <h2 className="text-3xl font-bold mb-4">Vision & Mission</h2>
+              <p className="whitespace-pre-line">
+                {aboutICA.visionMission}
+              </p>
+            </div>
+
+            <div>
+              <h2 className="text-3xl font-bold mb-4">Our Goal</h2>
+              <p className="whitespace-pre-line">
+                {aboutICA.goal}
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section className="container mx-auto px-4 py-16">
+          <h2 className="text-3xl font-bold text-center mb-12">Organizational Structure</h2>
+          <div className="flex flex-wrap justify-center gap-8">
+            {structure.map((item, i) => (
+              <div
+                key={i}
+                className="bg-white rounded-xl shadow-lg p-6 w-64 text-center hover:scale-105 transition-transform"
+              >
+                <h3 className="font-bold text-lg mb-2">{item.position}</h3>
+                <p className="text-sm text-neutral-600">{item.name}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="container mx-auto px-4 py-16">
+          <h2 className="text-3xl font-bold text-center mb-8">Provinces Joined ICA</h2>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
+            {provinces.map((province, index) => (
+              <div
+                key={index}
+                className="bg-gradient-to-br from-red-700 to-red-500 text-white rounded-xl shadow-md p-4 text-center font-semibold hover:scale-105 transition-transform"
+              >
+                {province}
+              </div>
+            ))}
+          </div>
+        </section>
       </main>
       <Footer />
     </div>
-  )
+  );
 }
+
