@@ -157,3 +157,20 @@ export function useAuth() {
     resetPassword,
   }
 }
+
+
+// import { useSelector, useDispatch } from "react-redux";
+// import { useEffect } from "react";
+// import type { RootState, AppDispatch } from "@/lib/store";
+// import { fetchSessionAndProfile } from "@/features/auth/authSlice";
+
+// export const useAuth = () => {
+//   const dispatch = useDispatch<AppDispatch>();
+//   const auth = useSelector((state: RootState) => state.auth);
+
+//   useEffect(() => {
+//     dispatch(fetchSessionAndProfile());
+//   }, [dispatch]);
+
+//   return auth;
+// };
