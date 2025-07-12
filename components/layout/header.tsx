@@ -57,6 +57,7 @@ export function Header() {
     { name: "About", href: "/about" },
     { name: "Championships", href: "/championships" },
     { name: "Education", href: "/education" },
+    { name: "Age Grid", href: "/age-grid" },
   ]
 
   const [hasMounted, setHasMounted] = useState(false)
