@@ -7,7 +7,7 @@ import Image from "next/image"
 import { HeroSection } from "../home/hero-section"
 import {championshipHeroSlides} from "@/utils/dummyhero"
 import { convertToRupiah, getPriceRangeInRupiah } from "@/lib/utils"
-import { CompetitionProps } from "@/lib/types"
+import { CompetitionProps } from "@/types/types"
 // interface DivisionDetailsProps {
 //   id: string
 //   name: string

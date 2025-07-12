@@ -8,6 +8,7 @@ import { TeamLogoSlider } from "@/components/home/team-logo-section"
 import { SocialMedia } from "@/components/layout/socialMedia"
 import { ChampionshipSection } from "@/components/home/championship-section"
 import CheerOrganizationsSection from "@/components/home/cheer-organization-section"
+import { Counter } from "@/components/counter/counter"
 
 export const metadata: Metadata = {
   title: "Home",
@@ -23,6 +24,7 @@ export const metadata: Metadata = {
 export default function HomePage() {
   return (
     <div className="min-h-screen bg-white">
+      {/* <Counter /> */}
       <SocialMedia/>
       <Header />
       <main>

@@ -1,10 +1,12 @@
+// app/layout.tsx
 import type React from "react"
 import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
+import { ReduxProvider } from "@/components/providers/redux-provider"
+import { AuthInitWrapper } from "@/components/auth/auth-init-wrapper"
 import { Toaster } from "@/components/ui/toaster"
-import { AuthProvider } from "@/components/providers/auth-provider"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -34,14 +36,10 @@ export const metadata: Metadata = {
     index: true,
     follow: true,
   },
-    generator: 'v0.dev'
+  generator: "v0.dev",
 }
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -51,10 +49,12 @@ export default function RootLayout({
       </head>
       <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
-          <AuthProvider>
-            {children}
-            <Toaster />
-          </AuthProvider>
+          <ReduxProvider>
+            <AuthInitWrapper>
+              {children}
+              <Toaster />
+            </AuthInitWrapper>
+          </ReduxProvider>
         </ThemeProvider>
       </body>
     </html>

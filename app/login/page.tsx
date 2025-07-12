@@ -16,12 +16,12 @@ export const metadata: Metadata = {
 
 export default async function LoginPage() {
   // Check if user is already logged in
-  const user = await getCurrentUser()
+  // const user = await getCurrentUser()
 
-  if (user) {
-    // User is already logged in, redirect to home
-    redirect("/")
-  }
+  // if (user) {
+  //   // User is already logged in, redirect to home
+  //   redirect("/")
+  // }
 
   return (
     <div className="min-h-screen bg-white">

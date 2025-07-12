@@ -12,7 +12,7 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { competitions } from "@/utils/dummyChampionship"
 import { getPriceRangeInRupiah } from "@/lib/utils"
-import { CompetitionProps } from "@/lib/types"
+import { CompetitionProps } from "@/types/types"
 
 export function ChampionshipsList() {
   const [searchTerm, setSearchTerm] = useState("")
