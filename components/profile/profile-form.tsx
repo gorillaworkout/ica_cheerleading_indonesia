@@ -10,9 +10,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
-import { Mail, Shield, User, Calendar, Phone, ImageIcon, BadgeCheck } from "lucide-react"
+import { Mail, Shield, User, Calendar, Phone, ImageIcon, BadgeCheck, BadgeX } from "lucide-react"
 import Link from "next/link"
 import { getPublicImageUrl } from "@/utils/getPublicImageUrl"
+import { DatePicker } from "../ui/date-picker"
 
 export function ProfileForm() {
   const { user, profile } = useAppSelector((state) => state.auth)
@@ -24,16 +25,24 @@ export function ProfileForm() {
     phoneNumber: "",
     gender: "",
     birthDate: "",
+    is_edit_allowed:false
   })
-
-  useEffect(() => {
+  const [tempBirthDate, setTempBirthDate] = useState<Date | undefined>(
+    formData.birthDate ? new Date(formData.birthDate) : undefined
+  )
+    useEffect(() => {
     if (user && profile) {
       setFormData({
         displayName: profile.display_name || "",
         phoneNumber: profile.phone_number || "",
         gender: profile.gender || "",
         birthDate: profile.birth_date || "",
+        is_edit_allowed: profile.is_edit_allowed ?? true,
       })
+
+      setTempBirthDate(
+        profile.birth_date ? new Date(profile.birth_date) : undefined
+      )
     }
   }, [user, profile])
 
@@ -83,6 +92,7 @@ export function ProfileForm() {
     )
   }
 
+
   return (
     <div className="space-y-6">
       {/* Profile Info */}
@@ -97,7 +107,8 @@ export function ProfileForm() {
           <div className="flex items-center space-x-4">
             {profile?.profile_photo_url ? (
               <Image
-                src={profile.profile_photo_url}
+                src={getPublicImageUrl(profile.profile_photo_url)}
+                // getPublicImageUrl(profile.id_photo_url)
                 alt="Profile Photo"
                 width={64}
                 height={64}
@@ -119,12 +130,19 @@ export function ProfileForm() {
                   {profile.role}
                 </Badge>
               )}
-              {profile?.is_verified && (
-                <Badge variant="default" className="ml-2">
-                  <BadgeCheck className="mr-1 h-3 w-3" />
-                  Verified Member
-                </Badge>
-              )}
+              <Badge variant="default" className="ml-2">
+                {
+                  profile?.is_verified ?
+                    <>
+                      <BadgeCheck className="mr-1 h-3 w-3" />
+                      Verified Member
+                    </> :
+                    <>
+                      <BadgeX className="mr-1 h-3 w-3" />
+                      Not Verified Member
+                    </>
+                }
+              </Badge>
             </div>
           </div>
         </CardContent>
@@ -145,6 +163,7 @@ export function ProfileForm() {
                 onChange={(e) =>
                   setFormData({ ...formData, displayName: e.target.value })
                 }
+                disabled={!formData.is_edit_allowed}
               />
             </div>
 
@@ -157,10 +176,11 @@ export function ProfileForm() {
                 onChange={(e) =>
                   setFormData({ ...formData, phoneNumber: e.target.value })
                 }
+                disabled={!formData.is_edit_allowed}
               />
             </div>
 
-            <div className="space-y-2">
+            {/* <div className="space-y-2">
               <Label htmlFor="gender">Gender</Label>
               <Input
                 id="gender"
@@ -170,23 +190,35 @@ export function ProfileForm() {
                 }
                 placeholder="e.g. Male or Female"
               />
+            </div> */}
+            <div className="space-y-1">
+              <Label>Gender</Label>
+              <select  disabled={!formData.is_edit_allowed} value={formData.gender} onChange={(e) => setFormData({ ...formData, gender: e.target.value })} required className="w-full border rounded px-2 py-2">
+                <option value="">Choose Gender</option>
+                <option value="lakilaki">Laki Laki</option>
+                <option value="perempuan">Perempuan</option>
+              </select>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="birthDate">Birth Date</Label>
-              <Input
-                id="birthDate"
-                type="date"
-                value={formData.birthDate}
-                onChange={(e) =>
-                  setFormData({ ...formData, birthDate: e.target.value })
-                }
+              <Label>Date of Birth</Label>
+              <DatePicker
+                disabled={!formData.is_edit_allowed}
+                date={tempBirthDate}
+                onChange={(date) => {
+                  setTempBirthDate(date)
+                  setFormData({ ...formData, birthDate: date ? date.toISOString().split("T")[0] : "" })
+                }}
               />
             </div>
-
-            <Button type="submit" disabled={isUpdating} className="bg-red-600 hover:bg-red-700">
-              {isUpdating ? "Updating..." : "Update Profile"}
-            </Button>
+            
+            {
+              formData.is_edit_allowed && (
+                <Button type="submit" disabled={isUpdating} className="bg-red-600 hover:bg-red-700">
+                  {isUpdating ? "Updating..." : "Update Profile"}
+                </Button>
+              )
+            }
           </form>
         </CardContent>
       </Card>

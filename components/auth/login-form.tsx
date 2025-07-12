@@ -19,6 +19,7 @@ import { useRouter } from "next/navigation"
 import { supabase } from "@/lib/supabase"
 import { provinces } from "@/utils/dummyprovince" // pastikan import ini sesuai path kamu
 import { profile } from "console"
+import { DatePicker } from "../ui/date-picker"
 
 async function generateMemberId(provinceCode: string) {
   const year = new Date().getFullYear().toString().slice(-2)
@@ -61,6 +62,10 @@ export function LoginForm() {
 
   const [localError, setLocalError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
+
+  const [cooldown, setCooldown] = useState(false)
+  const [remainingTime, setRemainingTime] = useState(0)
+
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -126,6 +131,7 @@ export function LoginForm() {
 
   const handleResendEmail = async () => {
     setLocalError(null)
+
     try {
       const { error } = await supabase.auth.resend({
         type: "signup",
@@ -133,14 +139,36 @@ export function LoginForm() {
       })
 
       if (error) {
-        setLocalError("Failed to resend confirmation email.")
+        setLocalError("Gagal mengirim ulang email verifikasi.")
       } else {
-        setSuccess("Confirmation email has been resent. Please check your inbox.")
+        setSuccess("Email verifikasi berhasil dikirim ulang.")
+        setCooldown(true)
+        setRemainingTime(120) // 2 menit
       }
-    } catch (err) {
-      setLocalError("Unexpected error occurred.")
+    } catch {
+      setLocalError("Terjadi kesalahan tak terduga.")
     }
   }
+
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout
+
+    if (cooldown && remainingTime > 0) {
+      timer = setInterval(() => {
+        setRemainingTime((prev) => {
+          if (prev <= 1) {
+            setCooldown(false)
+            clearInterval(timer)
+            return 0
+          }
+          return prev - 1
+        })
+      }, 1000)
+    }
+
+    return () => clearInterval(timer)
+  }, [cooldown, remainingTime])
 
 
   useEffect(() => {
@@ -157,6 +185,10 @@ export function LoginForm() {
       }
     }
   }, [error])
+
+  const [tempBirthDate, setTempBirthDate] = useState<Date | undefined>(
+    signUpData.birthDate ? new Date(signUpData.birthDate) : undefined
+  )
   return (
     <Card className={`w-full transition-all duration-300 ${activeTab === "signup" ? "max-w-3xl" : "max-w-lg"}`}>
       <CardHeader>
@@ -200,13 +232,16 @@ export function LoginForm() {
             <div className="flex justify-end">
               <button
                 onClick={handleResendEmail}
-                className="px-4 py-2 rounded-md text-white bg-blue-600 hover:bg-blue-700 transition"
+                disabled={cooldown}
+                className={`px-4 py-2 rounded-md text-white transition ${cooldown ? "bg-gray-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"
+                  }`}
               >
-                Kirim Ulang Email
+                {cooldown ? `Tunggu ${remainingTime}s` : "Kirim Ulang Email"}
               </button>
             </div>
           </div>
         )}
+
 
 
 
@@ -261,7 +296,13 @@ export function LoginForm() {
 
                 <div className="space-y-1">
                   <Label>Date of Birth</Label>
-                  <Input type="date" max={today} value={signUpData.birthDate} onChange={(e) => setSignUpData({ ...signUpData, birthDate: e.target.value })} required />
+                  <DatePicker
+                    date={tempBirthDate}
+                    onChange={(date) => {
+                      setTempBirthDate(date)
+                      setSignUpData({ ...signUpData, birthDate: date ? date.toISOString().split("T")[0] : "" })
+                    } } disabled={false}
+                    />
                 </div>
 
                 <div className="space-y-1">
@@ -281,10 +322,6 @@ export function LoginForm() {
                   <Input type="password" value={signUpData.password} onChange={(e) => setSignUpData({ ...signUpData, password: e.target.value })} required />
                 </div>
 
-                {/* <div className="space-y-1">
-                  <Label>Gender</Label>
-                  <Input value={signUpData.gender} onChange={(e) => setSignUpData({ ...signUpData, gender: e.target.value })} required />
-                </div> */}
                 <div className="space-y-1">
                   <Label>Gender</Label>
                   <select value={signUpData.gender} onChange={(e) => setSignUpData({ ...signUpData, gender: e.target.value })} required className="w-full border rounded px-2 py-2">

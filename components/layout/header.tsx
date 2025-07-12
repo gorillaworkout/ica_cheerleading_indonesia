@@ -32,13 +32,16 @@ export function Header() {
   try {
     setIsSigningOut(true)
     await supabase.auth.signOut()
+
+    router.push("/") // ⬅️ pindahkan di sini lebih awal
+
     dispatch(clearAuth())
     localStorage.removeItem("lastSignInEmail")
-    router.push("/") // ✅ Redirect ke home atau /login
   } finally {
     setIsSigningOut(false)
   }
 }
+
 
   // Scroll sticky effect
   const [scrolled, setScrolled] = useState(false)

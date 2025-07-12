@@ -154,6 +154,7 @@ export const signUpWithEmailThunk = createAsyncThunk(
       is_verified: false,
       created_at: now,
       updated_at: now,
+      is_edit_allowed: false
     });
 
     if (profileError) return rejectWithValue(profileError.message);
@@ -176,7 +177,7 @@ const authSlice = createSlice({
       state.profile = null;
       state.loading = false;
       state.error = null;
-      state.hydrated = false // ✅ Reset
+      // state.hydrated = false // ✅ Reset
 
     },
     setAuthState(state, action: PayloadAction<{ session: Session | null; user: User | null }>) {

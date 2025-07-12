@@ -22,6 +22,28 @@ const logos = [
   },
 ];
 
+// Animation Variants
+const containerVariants = {
+  hidden: {},
+  visible: {
+    transition: {
+      staggerChildren: 0.2,
+    },
+  },
+};
+
+const cardVariants = {
+  hidden: { opacity: 0, y: 40 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.6,
+      ease: [0.25, 0.1, 0.25, 1] as const, // ✅ SOLUSI TYPE
+    },
+  },
+}
+
 export default function CheerOrganizationsSection() {
   return (
     <section className="py-12 bg-gray-50">
@@ -30,16 +52,19 @@ export default function CheerOrganizationsSection() {
           Official Cheerleading Organizations
         </h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {logos.map((logo, index) => (
+        <motion.div
+          className="grid grid-cols-1 md:grid-cols-3 gap-8"
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.3 }}
+        >
+          {logos.map((logo) => (
             <motion.div
               key={logo.short}
-              className="bg-white rounded-2xl p-6 flex flex-col items-center justify-center border shadow-lg hover:shadow-2xl transition-all"
-               initial={{ opacity: 0, y: 60 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ type: "spring", stiffness: 120, damping: 20 }}
-                whileHover={{ scale: 1.08 }}
+              className="bg-white rounded-2xl p-6 flex flex-col items-center justify-center border shadow-md hover:shadow-xl transition-all"
+              variants={cardVariants}
+              whileHover={{ scale: 1.03 }}
             >
               <div className="relative w-36 h-36 md:w-48 md:h-48 mb-4">
                 <Image
@@ -54,7 +79,7 @@ export default function CheerOrganizationsSection() {
               <p className="text-center text-gray-600">{logo.name}</p>
             </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );

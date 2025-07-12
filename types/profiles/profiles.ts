@@ -16,4 +16,5 @@ export interface Profile {
   is_verified: boolean | null;
   province_code: string | null;
   member_code: string | null;
+  is_edit_allowed: boolean
 }
