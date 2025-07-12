@@ -4,14 +4,22 @@ import Image from "next/image"
 import { useEffect, useRef } from "react"
 
 const teamLogos = [
-    { src: "/ica-rounded.png", alt: "Team 1" },
-    { src: "/ica-rounded.png", alt: "Team 2" },
-    { src: "/ica-rounded.png", alt: "Team 3" },
-    { src: "/ica-rounded.png", alt: "Team 4" },
-    { src: "/ica-rounded.png", alt: "Team 5" },
-    { src: "/ica-rounded.png", alt: "Team 6" },
-    { src: "/ica-rounded.png", alt: "Team 7" },
-    { src: "/ica-rounded.png", alt: "Team 8" },
+    { src: "/ica-province/BALI.png", alt: "Bali" },
+    { src: "/ica-province/BANTEN.png", alt: "Banten" },
+    { src: "/ica-province/DIYOGYAKARTA.png", alt: "DI Yogyakarta" },
+    { src: "/ica-province/JAKARTA.png", alt: "Jakarta" },
+    { src: "/ica-province/JAWABARAT.png", alt: "Jawa Barat" },
+    { src: "/ica-province/JAWATENGAH.png", alt: "Jawa Tengah" },
+    { src: "/ica-province/JAWATIMUR.png", alt: "Jawa Timur" },
+    { src: "/ica-province/KALIMANTANBARAT.png", alt: "Kalimantan Barat" },
+    { src: "/ica-province/KALIMANTANSELATAN.png", alt: "Kalimantan Selatan" },
+    { src: "/ica-province/KALIMANTANTIMUR.png", alt: "Kalimantan Timur" },
+    { src: "/ica-province/KEPULAUANRIAU.png", alt: "Kepulauan Riau" },
+    { src: "/ica-province/NTB.png", alt: "NTB" },
+    { src: "/ica-province/PAPUA.png", alt: "Papua" },
+    { src: "/ica-province/RIAU.png", alt: "Riau" },
+    { src: "/ica-province/SUMATERASELATAN.png", alt: "Sumatra Selatan" },
+    { src: "/ica-province/SUMATERAUTARA.png", alt: "Sumatra Utara" },
 ]
 
 export function TeamLogoSlider() {
@@ -61,9 +69,9 @@ export function TeamLogoSlider() {
                             <Image
                                 src={logo.src}
                                 alt={logo.alt}
-                                width={120}
-                                height={120}
-                                className="object-contain grayscale hover:grayscale-0 transition duration-300"
+                                width={150}
+                                height={150}
+                                className="object-contain transition duration-300"
                             />
                         </div>
                     ))}

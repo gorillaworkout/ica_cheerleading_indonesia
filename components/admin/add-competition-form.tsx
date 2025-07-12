@@ -238,7 +238,7 @@ export function AddCompetitionForm() {
                     required
                   />
                 </div>
-                <div className="space-y-2">
+                {/* <div className="space-y-2">
                   <Label>Price ($) *</Label>
                   <Input
                     type="number"
@@ -249,8 +249,8 @@ export function AddCompetitionForm() {
                     step="0.01"
                     required
                   />
-                </div>
-                <div className="space-y-2">
+                </div> */}
+                {/* <div className="space-y-2">
                   <Label>Max Teams</Label>
                   <Input
                     type="number"
@@ -261,7 +261,7 @@ export function AddCompetitionForm() {
                     placeholder="32"
                     min="0"
                   />
-                </div>
+                </div> */}
               </div>
             </div>
           ))}

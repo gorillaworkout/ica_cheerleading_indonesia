@@ -107,7 +107,6 @@ export function CompetitionDetails({ competition }: CompetitionDetailsProps) {
                     <div key={division.id} className="border rounded-lg p-4 hover:bg-gray-50 transition-colors">
                       <div className="flex justify-between items-start mb-2">
                         <h3 className="font-semibold text-lg">{division.name}</h3>
-                        <Badge variant="outline">{convertToRupiah(division.price)}</Badge>
                       </div>
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-600">
                         <div>
@@ -115,10 +114,7 @@ export function CompetitionDetails({ competition }: CompetitionDetailsProps) {
                         </div>
                         <div>
                           <span className="font-medium">Skill Level:</span> {division.skillLevel}
-                        </div>
-                        <div>
-                          <span className="font-medium">Max Teams:</span> {division.maxTeams}
-                        </div>
+                        </div>        
                       </div>
                     </div>
                   ))}
@@ -180,16 +176,16 @@ export function CompetitionDetails({ competition }: CompetitionDetailsProps) {
                   <span className="text-gray-600">Total Divisions:</span>
                   <span className="font-medium">{competition.divisions.length}</span>
                 </div>
-                <div className="flex justify-between">
+                {/* <div className="flex justify-between">
                   <span className="text-gray-600">Price Range:</span>
                   <span className="font-medium">
                     {getPriceRangeInRupiah(competition.divisions)}
                   </span>
-                </div>
-                <div className="flex justify-between">
+                </div> */}
+                {/* <div className="flex justify-between">
                   <span className="text-gray-600">Max Teams:</span>
                   <span className="font-medium">{competition.divisions.reduce((sum, d) => sum + d.maxTeams, 0)}</span>
-                </div>
+                </div> */}
               </CardContent>
             </Card>
           </div>

@@ -1,0 +1,16 @@
+export const provinces = [
+  { name: "JAWA BARAT", code: "001" },
+  { name: "KALIMANTAN TIMUR", code: "002" },
+  { name: "JAWA TENGAH", code: "003" },
+  { name: "DI YOGYAKARTA", code: "004" },
+  { name: "JAWA TIMUR", code: "005" },
+  { name: "RIAU", code: "006" },
+  { name: "SUMATERA SELATAN", code: "007" },
+  { name: "PAPUA", code: "008" },
+  { name: "RIAU", code: "009" },
+  { name: "DKI JAKATA", code: "010" },
+  { name: "BALI", code: "011" },
+  { name: "KALIMANTAN BARAT", code: "012" },
+  { name: "KALIMANTAN SELATAN", code: "013" },
+  { name: "NUSA TENGGARA BARAT", code: "014" },
+]

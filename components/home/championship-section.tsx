@@ -63,11 +63,6 @@ export function ChampionshipSection() {
                     <Users className="h-4 w-4 text-red-600" />
                     <span>{competition.divisions} Divisions</span>
                   </div>
-                <div className="flex items-center space-x-2">
-                    <Banknote className="h-4 w-4 text-red-600" />
-                    {/* {getPriceRangeInRupiah(competition.divisions)} */}
-                    <span>RP {competition.priceRange}</span>
-                  </div>
                 </div>
 
                 {competition.registrationOpen && (

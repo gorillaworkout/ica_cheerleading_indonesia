@@ -49,29 +49,27 @@ export function useAuth() {
   }
 
   const signInWithEmail = async (email: string, password: string) => {
-    setIsSigningIn(true)
-    setAuthError(null)
+  setIsSigningIn(true)
+  setAuthError(null)
 
-    try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      })
+  try {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    })
 
-      if (error) {
-        throw error
-      }
+    if (error) throw error
 
-      router.push("/")
-      return data
-    } catch (error: any) {
-      console.error("Error signing in with email:", error)
-      setAuthError(error.message || "Failed to sign in")
-      throw error
-    } finally {
-      setIsSigningIn(false)
-    }
+    return data // biarkan pemanggil yang memutuskan redirect
+  } catch (error: any) {
+    console.error("Error signing in with email:", error)
+    setAuthError(error.message || "Failed to sign in")
+    throw error
+  } finally {
+    setIsSigningIn(false)
   }
+}
+
 
   const signUpWithEmail = async (email: string, password: string, displayName?: string) => {
     setIsSigningIn(true)

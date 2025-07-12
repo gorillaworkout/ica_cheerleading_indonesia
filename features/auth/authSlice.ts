@@ -51,12 +51,18 @@ export const fetchSessionAndProfile = createAsyncThunk("auth/fetchSessionAndProf
 export const signInWithEmailThunk = createAsyncThunk(
   "auth/signInWithEmail",
   async ({ email, password }: { email: string; password: string }, { rejectWithValue }) => {
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) return rejectWithValue(error.message);
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password })
 
-    return { session: data.session, user: data.user };
+    if (error) return rejectWithValue(error.message)
+
+    if (!data.user?.email_confirmed_at) {
+      return rejectWithValue("Email belum dikonfirmasi. Silakan cek email kamu untuk aktivasi.")
+    }
+
+    return { session: data.session, user: data.user }
   }
-);
+)
+
 
 // Tambahan: Sign In with Google
 export const signInWithGoogleThunk = createAsyncThunk(
@@ -85,6 +91,8 @@ export const signUpWithEmailThunk = createAsyncThunk(
       gender,
       birth_date,
       phone_number,
+      province_code,
+      profile_photo_file,
       role,
       id_photo_file,
     }: {
@@ -95,8 +103,10 @@ export const signUpWithEmailThunk = createAsyncThunk(
       gender: string
       birth_date: string
       phone_number: string
+      province_code: string
       role: string
       id_photo_file?: File
+      profile_photo_file?: File
     },
     { rejectWithValue }
   ) => {
@@ -107,7 +117,7 @@ export const signUpWithEmailThunk = createAsyncThunk(
     if (!userId) return rejectWithValue("User ID not found");
 
     let id_photo_url: string | null = null;
-
+    let profile_photo_url:string | null = null
     if (id_photo_file) {
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from("uploads")
@@ -115,6 +125,15 @@ export const signUpWithEmailThunk = createAsyncThunk(
 
       if (uploadError) return rejectWithValue(uploadError.message);
       id_photo_url = uploadData?.path ?? null;
+    }
+
+     if (profile_photo_file) {
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from("uploads")
+        .upload(`profile-photos/${userId}-${Date.now()}`, profile_photo_file);
+
+      if (uploadError) return rejectWithValue(uploadError.message);
+      profile_photo_url = uploadData?.path ?? null;
     }
 
     const now = new Date().toISOString();
@@ -128,9 +147,10 @@ export const signUpWithEmailThunk = createAsyncThunk(
       gender,
       birth_date,
       phone_number,
+      province_code,
       role,
       id_photo_url,
-      profile_photo_url: null,
+      profile_photo_url,
       is_verified: false,
       created_at: now,
       updated_at: now,

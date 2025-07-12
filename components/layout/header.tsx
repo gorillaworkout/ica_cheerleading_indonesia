@@ -33,6 +33,7 @@ export function Header() {
     setIsSigningOut(true)
     await supabase.auth.signOut()
     dispatch(clearAuth())
+    localStorage.removeItem("lastSignInEmail")
     router.push("/") // ✅ Redirect ke home atau /login
   } finally {
     setIsSigningOut(false)

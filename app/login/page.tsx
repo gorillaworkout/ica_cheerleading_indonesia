@@ -1,27 +1,24 @@
-import type { Metadata } from "next"
+"use client"
+
+import { useAppSelector } from "@/lib/redux/hooks"
+import { useEffect } from "react"
+import { useRouter } from "next/navigation"
 import { LoginForm } from "@/components/auth/login-form"
 import { Header } from "@/components/layout/header"
 import { Footer } from "@/components/layout/footer"
-import { getCurrentUser } from "@/lib/auth"
-import { redirect } from "next/navigation"
 
-export const metadata: Metadata = {
-  title: "Login",
-  description: "Sign in to your ICA account to access competitions, education, and community features.",
-  robots: {
-    index: false,
-    follow: false,
-  },
-}
+export default function LoginPage() {
+  const { user, hydrated } = useAppSelector((state) => state.auth)
+  const router = useRouter()
 
-export default async function LoginPage() {
-  // Check if user is already logged in
-  // const user = await getCurrentUser()
+  useEffect(() => {
+    if (!hydrated) return
+    if (user) {
+      router.push("/")
+    }
+  }, [hydrated, user, router])
 
-  // if (user) {
-  //   // User is already logged in, redirect to home
-  //   redirect("/")
-  // }
+  if (!hydrated) return null // ⏳ Optional: show spinner here
 
   return (
     <div className="min-h-screen bg-white">

@@ -14,5 +14,6 @@ export interface Profile {
   id_photo_url: string | null;
   profile_photo_url: string | null;
   is_verified: boolean | null;
+  province_code: string | null;
   member_code: string | null;
 }
