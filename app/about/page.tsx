@@ -55,21 +55,6 @@ export default function AboutPage() {
         </section>
 
         <section className="container mx-auto px-4 py-16">
-          <h2 className="text-3xl font-bold text-center mb-12">Organizational Structure</h2>
-          <div className="flex flex-wrap justify-center gap-8">
-            {structure.map((item, i) => (
-              <div
-                key={i}
-                className="bg-white rounded-xl shadow-lg p-6 w-64 text-center hover:scale-105 transition-transform"
-              >
-                <h3 className="font-bold text-lg mb-2">{item.position}</h3>
-                <p className="text-sm text-neutral-600">{item.name}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        <section className="container mx-auto px-4 py-16">
           <h2 className="text-3xl font-bold text-center mb-8">Provinces Joined ICA</h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
             {provinces.map((province, index) => (
