@@ -37,6 +37,7 @@ const getTopTeams = (data: MockResults) => {
     .map(([team, stats]) => ({
       team,
       ...stats,
+      total: stats.gold + stats.silver + stats.bronze,
     }))
     .sort((a, b) => {
       if (b.gold !== a.gold) return b.gold - a.gold;
@@ -97,25 +98,27 @@ export default function BestTeamRanking() {
                   </div>
                   <div>
                     <h2 className="text-2xl font-bold">{teamData.team}</h2>
-                    {/* <p className="text-sm text-gray-700">
-                      {teamData.gold} Gold, {teamData.silver} Silver, {teamData.bronze} Bronze
-                    </p> */}
                   </div>
                 </div>
 
-                <div className="flex items-center gap-6 text-xl font-semibold">
-                  <div className="flex items-center gap-2 text-yellow-500">
-                    <Medal size={28} strokeWidth={2.5} />
-                    {teamData.gold}
+                <div className="flex flex-col items-end text-right">
+                  <div className="flex items-center gap-4 font-semibold text-xl">
+                    <div className="flex items-center gap-2 text-yellow-500">
+                      <Medal size={28} strokeWidth={2.5} />
+                      {teamData.gold}
+                    </div>
+                    <div className="flex items-center gap-2 text-gray-400">
+                      <Medal size={24} strokeWidth={2.2} />
+                      {teamData.silver}
+                    </div>
+                    <div className="flex items-center gap-2 text-amber-700">
+                      <Medal size={22} strokeWidth={2} />
+                      {teamData.bronze}
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2 text-gray-400">
-                    <Medal size={24} strokeWidth={2.2} />
-                    {teamData.silver}
-                  </div>
-                  <div className="flex items-center gap-2 text-amber-700">
-                    <Medal size={22} strokeWidth={2} />
-                    {teamData.bronze}
-                  </div>
+                  <span className="text-sm text-gray-600 mt-1">
+                    Total Medals: {teamData.total}
+                  </span>
                 </div>
               </div>
             );

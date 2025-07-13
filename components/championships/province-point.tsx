@@ -23,6 +23,7 @@ type ProvinceStats = {
   gold: number;
   silver: number;
   bronze: number;
+  total: number;
 };
 
 const getProvincePoints = (data: MockResults): ProvinceStats[] => {
@@ -36,6 +37,7 @@ const getProvincePoints = (data: MockResults): ProvinceStats[] => {
           gold: 0,
           silver: 0,
           bronze: 0,
+          total: 0,
         });
       }
 
@@ -44,6 +46,8 @@ const getProvincePoints = (data: MockResults): ProvinceStats[] => {
       if (placement === 1) provinceData.gold += 1;
       else if (placement === 2) provinceData.silver += 1;
       else if (placement === 3) provinceData.bronze += 1;
+
+      provinceData.total = provinceData.gold + provinceData.silver + provinceData.bronze;
     });
   });
 
@@ -105,25 +109,27 @@ export default function ProvinceRankingPage() {
                   </div>
                   <div>
                     <h2 className="text-2xl font-bold">{provinceData.province}</h2>
-                    {/* <p className="text-sm text-gray-700">
-                      {provinceData.gold} Gold, {provinceData.silver} Silver, {provinceData.bronze} Bronze
-                    </p> */}
                   </div>
                 </div>
 
-                <div className="flex items-center gap-6 text-xl font-semibold">
-                  <div className="flex items-center gap-2 text-yellow-500">
-                    <Medal className="text-yellow-500" size={28} strokeWidth={2.5} />
-                    {provinceData.gold}
+                <div className="flex flex-col items-end text-right">
+                  <div className="flex items-center gap-6 text-xl font-semibold">
+                    <div className="flex items-center gap-2 text-yellow-500">
+                      <Medal size={28} strokeWidth={2.5} />
+                      {provinceData.gold}
+                    </div>
+                    <div className="flex items-center gap-2 text-gray-400">
+                      <Medal size={24} strokeWidth={2.2} />
+                      {provinceData.silver}
+                    </div>
+                    <div className="flex items-center gap-2 text-amber-700">
+                      <Medal size={22} strokeWidth={2} />
+                      {provinceData.bronze}
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2 text-gray-400">
-                    <Medal className="text-gray-400" size={24} strokeWidth={2.2} />
-                    {provinceData.silver}
-                  </div>
-                  <div className="flex items-center gap-2 text-amber-700">
-                    <Medal className="text-amber-700" size={22} strokeWidth={2} />
-                    {provinceData.bronze}
-                  </div>
+                  <span className="text-sm text-gray-600 mt-1">
+                    Total Medals: {provinceData.total}
+                  </span>
                 </div>
               </div>
             );
