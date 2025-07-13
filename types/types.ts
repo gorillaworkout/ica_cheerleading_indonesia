@@ -94,8 +94,8 @@ export interface DivisionDetailsProps {
   name: string
   ageGroup: string
   skillLevel: string
-  price: string
-  maxTeams: number
+  // price: string
+  // maxTeams: number
 }
 
 export interface CompetitionProps {

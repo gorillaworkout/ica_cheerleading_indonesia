@@ -20,40 +20,38 @@ interface MockResults {
 
 type ProvinceStats = {
   province: string;
-  totalPoints: number;
   gold: number;
   silver: number;
   bronze: number;
 };
 
 const getProvincePoints = (data: MockResults): ProvinceStats[] => {
-  const provinceMap = new Map<
-    string,
-    { totalPoints: number; gold: number; silver: number; bronze: number }
-  >();
+  const provinceMap = new Map<string, ProvinceStats>();
 
   Object.values(data).flat().forEach((division) => {
     division.results.forEach(({ province, placement }) => {
-      const points = placement === 1 ? 3 : placement === 2 ? 2 : placement === 3 ? 1 : 0;
-
       if (!provinceMap.has(province)) {
-        provinceMap.set(province, { totalPoints: 0, gold: 0, silver: 0, bronze: 0 });
+        provinceMap.set(province, {
+          province,
+          gold: 0,
+          silver: 0,
+          bronze: 0,
+        });
       }
 
       const provinceData = provinceMap.get(province)!;
-      provinceData.totalPoints += points;
+
       if (placement === 1) provinceData.gold += 1;
-      if (placement === 2) provinceData.silver += 1;
-      if (placement === 3) provinceData.bronze += 1;
+      else if (placement === 2) provinceData.silver += 1;
+      else if (placement === 3) provinceData.bronze += 1;
     });
   });
 
-  return [...provinceMap.entries()]
-    .map(([province, stats]) => ({
-      province,
-      ...stats,
-    }))
-    .sort((a, b) => b.totalPoints - a.totalPoints);
+  return [...provinceMap.values()].sort((a, b) => {
+    if (b.gold !== a.gold) return b.gold - a.gold;
+    if (b.silver !== a.silver) return b.silver - a.silver;
+    return b.bronze - a.bronze;
+  });
 };
 
 const cardStyles = [
@@ -62,24 +60,18 @@ const cardStyles = [
     border: "border-yellow-400",
     shadow: "shadow-lg",
     text: "text-yellow-700",
-    iconColor: "text-yellow-500",
-    iconSize: 40,
   },
   {
     bg: "bg-gradient-to-r from-gray-100 via-gray-200 to-gray-300",
     border: "border-gray-400",
     shadow: "shadow-md",
     text: "text-gray-700",
-    iconColor: "text-gray-400",
-    iconSize: 32,
   },
   {
     bg: "bg-gradient-to-r from-amber-100 via-amber-200 to-amber-300",
     border: "border-amber-400",
     shadow: "shadow-md",
     text: "text-amber-700",
-    iconColor: "text-amber-600",
-    iconSize: 28,
   },
 ];
 
@@ -90,12 +82,8 @@ export default function ProvinceRankingPage() {
     <div className="container mx-auto py-8 px-4">
       <div className="flex flex-col">
         <h1 className="text-3xl font-bold mb-8 flex items-center gap-3 justify-center">
-          <Trophy className="text-yellow-500 w-10 h-10" /> Province Medal Points Ranking
+          <Trophy className="text-yellow-500 w-10 h-10" /> Province Medal Ranking
         </h1>
-
-        <p className="mb-6 text-center text-sm text-gray-600">
-          Gold = 3 points, Silver = 2 points, Bronze = 1 point
-        </p>
 
         <div className="space-y-6">
           {provinceRanking.map((provinceData, index) => {
@@ -104,8 +92,6 @@ export default function ProvinceRankingPage() {
               border: "border-gray-200",
               shadow: "shadow-sm",
               text: "text-gray-700",
-              iconColor: "text-gray-300",
-              iconSize: 24,
             };
 
             return (
@@ -114,22 +100,30 @@ export default function ProvinceRankingPage() {
                 className={`${style.bg} border ${style.border} ${style.shadow} rounded-xl p-6 flex items-center justify-between transition-transform transform hover:scale-105`}
               >
                 <div className="flex items-center gap-6">
-                  <div className={`font-extrabold text-4xl ${style.text}`}>#{index + 1}</div>
+                  <div className={`font-extrabold text-4xl ${style.text}`}>
+                    #{index + 1}
+                  </div>
                   <div>
                     <h2 className="text-2xl font-bold">{provinceData.province}</h2>
-                    <p className="text-sm text-gray-700">
+                    {/* <p className="text-sm text-gray-700">
                       {provinceData.gold} Gold, {provinceData.silver} Silver, {provinceData.bronze} Bronze
-                    </p>
+                    </p> */}
                   </div>
                 </div>
 
-                <div className="flex items-center gap-4">
-                  <Medal
-                    className={style.iconColor}
-                    size={style.iconSize}
-                    strokeWidth={2.5}
-                  />
-                  <span className="font-bold text-2xl">{provinceData.totalPoints} pts</span>
+                <div className="flex items-center gap-6 text-xl font-semibold">
+                  <div className="flex items-center gap-2 text-yellow-500">
+                    <Medal className="text-yellow-500" size={28} strokeWidth={2.5} />
+                    {provinceData.gold}
+                  </div>
+                  <div className="flex items-center gap-2 text-gray-400">
+                    <Medal className="text-gray-400" size={24} strokeWidth={2.2} />
+                    {provinceData.silver}
+                  </div>
+                  <div className="flex items-center gap-2 text-amber-700">
+                    <Medal className="text-amber-700" size={22} strokeWidth={2} />
+                    {provinceData.bronze}
+                  </div>
                 </div>
               </div>
             );

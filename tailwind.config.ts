@@ -8,7 +8,7 @@ const config: Config = {
     "./app/**/*.{ts,tsx}",
     "./src/**/*.{ts,tsx}",
     "*.{js,ts,jsx,tsx,mdx}",
-  ],
+],
   theme: {
     container: {
       center: true,

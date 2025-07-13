@@ -8,7 +8,7 @@ export const competitions = [
         image: "/icanc2025/jurnasbg.webp",
         registrationOpen: false,
         registrationDeadline: "2024-05-01",
-        divisions: 31,
+        divisions: 33,
         // priceRange: "1.000.000 - 5.000.000",
         status: "Registration Closed",
     },
@@ -63,32 +63,42 @@ export const competitionsDetails = [
         registrationOpen: false,
         registrationDeadline: "2024-05-01",
         divisions: [
-            //   { id: "1", name: "Team Cheer Coed Premiere", ageGroup: "12-14", skillLevel: "Beginner", price: 150, maxTeams: 32 },
-            //   { id: "2", name: "Team Cheer Coed Elite", ageGroup: "15-18", skillLevel: "Elite", price: 250, maxTeams: 24 },
             { id: "1", name: "Team Cheer Beginner", ageGroup: "7-10", skillLevel: "Beginner",  },
             { id: "2", name: "Team Cheer Novice", ageGroup: "8-12", skillLevel: "Novice",  },
-            { id: "3", name: "Team Cheer New Comers Novice", ageGroup: "12-15", skillLevel: "Novice",  },
-            { id: "4", name: "Team Cheer New Comers Intermediate", ageGroup: "13+", skillLevel: "Intermediate",  },
-            { id: "5", name: "Team Cheer Intermediate All Girl & Coed", ageGroup: "12-15", skillLevel: "Intermediate",  },
-            { id: "6", name: "Team Cheer Median All Girl & Coed", ageGroup: "13-18", skillLevel: "Median",  },
-            { id: "7", name: "Team Cheer Advanced All Girl & Coed", ageGroup: "13+", skillLevel: "Advanced",  },
-            { id: "8", name: "Team Cheer Elite All Girl & Coed", ageGroup: "14+", skillLevel: "Elite",  },
-            { id: "9", name: "Team Cheer Premier All Girl & Coed", ageGroup: "15+", skillLevel: "Premier",  },
+            { id: "3", name: "Team Cheer New Comer Novice", ageGroup: "12-15", skillLevel: "Novice",  },
+            { id: "4", name: "Team Cheer New Comer Intermediate", ageGroup: "13+", skillLevel: "Intermediate",  },
+            { id: "5", name: "Team Cheer All Girl Intermediate", ageGroup: "12-15", skillLevel: "Intermediate",},
+            { id: "6", name: "Team Cheer Coed Intermediate", ageGroup: "12-15", skillLevel: "Intermediate",},
+            { id: "7", name: "Team Cheer All Girl Median", ageGroup: "13-18", skillLevel: "Median",  },
+            { id: "8", name: "Team Cheer Coed Median", ageGroup: "13-18", skillLevel: "Median",  },
+            { id: "9", name: "Team Cheer All Girl Advanced", ageGroup: "13+", skillLevel: "Advanced",  },
+            { id: "10", name: "Team Cheer Coed Advanced", ageGroup: "13+", skillLevel: "Advanced",  },
+            { id: "11", name: "Team Cheer All Girl Elite", ageGroup: "14+", skillLevel: "Elite",  },
+            { id: "12", name: "Team Cheer Coed Elite", ageGroup: "14+", skillLevel: "Elite",  },
+            { id: "13", name: "Team Cheer All Girl Premier", ageGroup: "15+", skillLevel: "Premier",  },
+            { id: "14", name: "Team Cheer Coed Premier", ageGroup: "15+", skillLevel: "Premier",  },
 
-            { id: "10", name: "Group Stunt Novice", ageGroup: "8-12", skillLevel: "Novice", },
-            { id: "11", name: "Group Stunt Intermediate All Girl & Coed", ageGroup: "12-15", skillLevel: "Intermediate", },
-            { id: "12", name: "Group Stunt Median All Girl & Coed", ageGroup: "13-18", skillLevel: "Median", },
-            { id: "13", name: "Group Stunt Advanced All Girl & Coed", ageGroup: "13+", skillLevel: "Advanced", },
-            { id: "14", name: "Group Stunt Elite All Girl & Coed", ageGroup: "14+", skillLevel: "Elite", },
-            { id: "15", name: "Group Stunt Premier All Girl & Coed", ageGroup: "15+", skillLevel: "Premier", },
+            { id: "15", name: "Group Stunt Novice", ageGroup: "8-12", skillLevel: "Novice", },
+            { id: "16", name: "Group Stunt All Girl Intermediate", ageGroup: "12-15", skillLevel: "Intermediate", },
+            { id: "17", name: "Group Stunt Coed Intermediate", ageGroup: "12-15", skillLevel: "Intermediate", },
+            { id: "18", name: "Group Stunt All Girl Median", ageGroup: "13-18", skillLevel: "Median", },
+            { id: "19", name: "Group Stunt Coed Median", ageGroup: "13-18", skillLevel: "Median", },
+            { id: "20", name: "Group Stunt All Girl Advanced", ageGroup: "13+", skillLevel: "Advanced", },
+            { id: "21", name: "Group Stunt Coed Advanced", ageGroup: "13+", skillLevel: "Advanced", },
+            { id: "22", name: "Group Stunt All Girl Elite", ageGroup: "14+", skillLevel: "Elite", },
+            { id: "23", name: "Group Stunt Coed Elite", ageGroup: "14+", skillLevel: "Elite", },
+            { id: "24", name: "Group Stunt All Girl Premier", ageGroup: "15+", skillLevel: "Premier", },
+            { id: "25", name: "Group Stunt Coed Premier", ageGroup: "15+", skillLevel: "Premier", },
 
-            { id: "16", name: "Partner Stunt Elite", ageGroup: "14+", skillLevel: "Elite" },
-            { id: "17", name: "Partner Stunt Premier", ageGroup: "15+", skillLevel: "Premier" },
+            { id: "26", name: "Partner Stunt Elite", ageGroup: "14+", skillLevel: "Elite" },
+            { id: "27", name: "Partner Stunt Premier", ageGroup: "15+", skillLevel: "Premier" },
 
-            { id: "18", name: "Performance Cheer Double Freestyle Pom Novice", ageGroup: "5-12", skillLevel: "Novice" },
-            { id: "19", name: "Performance Cheer Double Freestyle Pom Premier", ageGroup: "12+", skillLevel: "Premier" },
-            { id: "20", name: "Performance Cheer Double Hip Hop Novice", ageGroup: "5-12", skillLevel: "Novice" },
-            { id: "21", name: "Performance Cheer Double Hip Hop Premier", ageGroup: "12+", skillLevel: "Premier" },
+            { id: "28", name: "Double Performance Cheer Freestyle Pom Novice", ageGroup: "10-15", skillLevel: "Novice" },
+            { id: "29", name: "Double Performance Cheer Freestyle Pom Mini Novice", ageGroup: "5-9", skillLevel: "Novice" },
+            { id: "30", name: "Double Performance Cheer Freestyle Pom Premier", ageGroup: "16+", skillLevel: "Premier" },
+            { id: "31", name: "Double Performance Cheer Hip Hop Novice", ageGroup: "10-15", skillLevel: "Novice" },
+            { id: "32", name: "Double Performance Cheer Hip Hop Mini Novice", ageGroup: "5-9", skillLevel: "Novice" },
+            { id: "33", name: "Double Performance Cheer Hip Hop Premier", ageGroup: "16+", skillLevel: "Premier" },
 
         ],
     },
@@ -136,10 +146,66 @@ export const competitionsDetails = [
 
 export const mockResults = {
   "1": [
+      {
+      division:"Double Performance Cheer Freestyle Pom Novice",
+      results:[
+        {placement: 1, team:"ORACLE", score: 68.8, province: "West Java"},
+        {placement: 2, team:"MAC", score: 61.3, province: "East Java"},
+        {placement: 3, team:"SCARLET MACAROON", score: 55.2, province: "South Kalimantan"},
+      ]
+    },
+     {
+      division:"Double Performance Cheer Freestyle Pom Premier",
+      results:[
+        {placement: 1, team:"FOX", score: 70.3, province: "DKI Jakarta"},
+        {placement: 2, team:"MIDS DIAMOND", score: 65.2, province: "DKI Jakarta"},
+        {placement: 3, team:"MAC", score: 62.7, province: "East Java"},
+      ]
+    },
+    {
+    division:"Double Performance Cheer Hip Hop Novice",
+      results:[
+        {placement: 1, team:"ATHENA", score: 68.2, province: "DKI Jakarta"},
+        {placement: 2, team:"W-QUEEN", score: 67.8, province: "West Java"},
+        {placement: 3, team:"CHARTS", score: 65, province: "West Java"},
+      ]
+    },
+      {
+    division:"Double Performance Cheer Hip Hop Premier",
+      results:[
+        {placement: 1, team:"FORTES HYPEGENE", score: 74.5, province: "Central Java"},
+        {placement: 2, team:"PISCES LAVA", score: 71, province: "East Java"},
+        {placement: 3, team:"VENTBION GLAMZ", score: 70.2, province: "DKI Jakarta"},
+      ]
+    },
+     {
+    division:"Double Performance Cheer Freestyle Pom Mini Novice",
+      results:[
+        {placement: 1, team:"SKY ZONE", score: 65.5, province: "DKI Jakarta"},
+        {placement: 2, team:"FORCE SMART CHEER", score: 57.7, province: "DKI Jakarta"},
+        {placement: 3, team:"SCARLET GUMMY BEAR", score: 53.3, province: "South Kalimantan"},
+      ]
+    },
+      {
+    division:"Double Performance Cheer Hip Hop Mini Novice ",
+      results:[
+        {placement: 1, team:"LITTLE B", score: 67.7, province: "South Kalimantan"},
+        {placement: 2, team:"FORCE SMART CHEER", score: 65.5, province: "DKI Jakarta"},
+        {placement: 3, team:"LITTLE C", score: 53.3, province: "South Kalimantan"},
+      ]
+    },
+      {
+      division: "Group Stunt All Girl Advanced",
+      results: [
+        {placement: 1, team:"CROWN ALLSTAR", score: 72.8, province: "West Java"},
+        {placement: 2, team:"CHARTS", score: 65.8, province: "West Java"},
+        {placement: 3, team:"SWAG SILVER", score: 45.2, province: "East Java"},
+      ],
+    },
     {
       division: "Group Stunt All Girl Elite",
       results: [
-        { placement: 1, team: "Arrow Allstar", score: 55.2, province: "Central Java" },
+        { placement: 1, team: "Arrow Allstar", score: 55.2, province: "DI Yogyakarta" },
       ],
     },
     {
@@ -203,8 +269,8 @@ export const mockResults = {
     {
       division: "Group Stunt Novice",
       results: [
-        { placement: 1, team: "Pisces Pretty", score: 63.7, province: "Central Java" },
-        { placement: 2, team: "Pisces Pixie", score: 62.0, province: "Central Java" },
+        { placement: 1, team: "Pisces Pretty", score: 63.7, province: "East Java" },
+        { placement: 2, team: "Pisces Pixie", score: 62.0, province: "East Java" },
         { placement: 3, team: "Falcon Arthemis", score: 61.2, province: "East Java" },
       ],
     },
@@ -250,17 +316,17 @@ export const mockResults = {
     {
       division: "Team Cheer Coed Advanced",
       results: [
-        { placement: 1, team: "Lions", score: 61.7, province: "West Java" },
-        { placement: 2, team: "Eagles", score: 58.7, province: "West Java" },
+        { placement: 1, team: "Lions", score: 61.7, province: "Central Java" },
+        { placement: 2, team: "Eagles", score: 58.7, province: "Central Java" },
         { placement: 3, team: "FOX", score: 58.5, province: "DKI Jakarta" },
       ],
     },
     {
       division: "Team Cheer Coed Elite",
       results: [
-        { placement: 1, team: "Funtastic", score: 45.7, province: "West Java" },
+        { placement: 1, team: "Funtastic", score: 45.7, province: "Central Java" },
         { placement: 2, team: "Scarlet All-Stars", score: 38.8, province: "South Kalimantan" },
-        { placement: 3, team: "Arrow Allstar", score: 20.2, province: "West Java" },
+        { placement: 3, team: "Arrow Allstar", score: 20.2, province: "DI Yogyakarta" },
       ],
     },
     {
@@ -288,7 +354,7 @@ export const mockResults = {
       ],
     },
     {
-      division: "Team Cheer Newcomer Intermediate",
+      division: "Team Cheer New Comer Intermediate",
       results: [
         { placement: 1, team: "Vingt", score: 61.5, province: "West Java" },
         { placement: 2, team: "Phoenix", score: 58.8, province: "Central Java" },
@@ -296,7 +362,7 @@ export const mockResults = {
       ],
     },
     {
-      division: "Team Cheer Newcomer Novice",
+      division: "Team Cheer New Comer Novice",
       results: [
         { placement: 1, team: "Oracle", score: 67.8, province: "West Java" },
         { placement: 2, team: "Python", score: 61.3, province: "Central Java" },
