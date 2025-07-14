@@ -17,6 +17,9 @@ import { DatePicker } from "../ui/date-picker"
 import { useAppDispatch } from "@/lib/redux/hooks";
 import { fetchSessionAndProfile } from "@/features/auth/authSlice"
 import { Alert, AlertDescription } from "@/components/ui/alert"
+import { provinces } from "@/utils/dummyprovince"
+import { addYears } from "date-fns"
+import ChangePasswordForm from "./change-password"
 export function ProfileForm() {
   const { user, profile } = useAppSelector((state) => state.auth)
   const { toast } = useToast()
@@ -29,7 +32,10 @@ export function ProfileForm() {
     gender: "",
     birthDate: "",
     is_edit_allowed: false,
-    is_request_edit: false
+    is_request_edit: false,
+    provinceCode: "",
+    id_photo_file: null as File | string | null,
+    profile_photo_file: null as File | null | string
   })
   const [tempBirthDate, setTempBirthDate] = useState<Date | undefined>(
     formData.birthDate ? new Date(formData.birthDate) : undefined
@@ -42,7 +48,10 @@ export function ProfileForm() {
         gender: profile.gender || "",
         birthDate: profile.birth_date || "",
         is_edit_allowed: profile.is_edit_allowed ?? true,
-        is_request_edit: profile.is_request_edit ?? false
+        is_request_edit: profile.is_request_edit ?? false,
+        provinceCode:profile.province_code || "",
+        id_photo_file: profile.id_photo_url!,
+        profile_photo_file: profile.profile_photo_url!,
       })
       if(profile.is_request_edit){
         setLocalError("Request berhasil dikirim. Tunggu persetujuan admin.")
@@ -68,6 +77,12 @@ export function ProfileForm() {
           gender: formData.gender,
           birth_date: formData.birthDate,
           updated_at: new Date().toISOString(),
+          is_edit_allowed:false,
+          is_request_editL:false,
+          is_verified:false,
+          provinceCode:formData.provinceCode,
+          id_photo_file: formData.id_photo_file,
+          profile_photo_file: formData.profile_photo_file
         })
         .eq("id", user.id)
 
@@ -127,7 +142,6 @@ export function ProfileForm() {
       </Card>
     )
   }
-
 
   return (
     <div className="space-y-6">
@@ -223,17 +237,6 @@ export function ProfileForm() {
               />
             </div>
 
-            {/* <div className="space-y-2">
-              <Label htmlFor="gender">Gender</Label>
-              <Input
-                id="gender"
-                value={formData.gender}
-                onChange={(e) =>
-                  setFormData({ ...formData, gender: e.target.value })
-                }
-                placeholder="e.g. Male or Female"
-              />
-            </div> */}
             <div className="space-y-1">
               <Label>Gender</Label>
               <select disabled={!formData.is_edit_allowed} value={formData.gender} onChange={(e) => setFormData({ ...formData, gender: e.target.value })} required className="w-full border rounded px-2 py-2">
@@ -249,9 +252,63 @@ export function ProfileForm() {
                 disabled={!formData.is_edit_allowed}
                 date={tempBirthDate}
                 onChange={(date) => {
-                  setTempBirthDate(date)
-                  setFormData({ ...formData, birthDate: date ? date.toISOString().split("T")[0] : "" })
+                setTempBirthDate(date)
+                setFormData({ ...formData, birthDate: date ? date.toISOString().split("T")[0] : "" });
+
                 }}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Province</Label>
+              <select value={formData.provinceCode} onChange={(e) => setFormData({ ...formData, provinceCode: e.target.value })} required className="w-full border rounded px-2 py-2">
+                <option value="">Choose Province</option>
+                {provinces.map((prov) => (
+                  <option key={prov.code} value={prov.code}>
+                    {prov.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="space-y-2">
+              <Label>ID Photo (KTP/KK/KIA) </Label>
+              <Input
+                type="file"
+                accept="image/*"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) {
+                    if (file.size > 2 * 1024 * 1024) {
+                      setLocalError("Ukuran gambar maksimal 2MB.")
+                      e.target.value = ""; // Reset input file
+                      return;
+                    }
+                    setFormData({ ...formData, id_photo_file: file });
+                  } else {
+                    setFormData({ ...formData, id_photo_file: null });
+                  }
+                }}
+                required
+              />
+            </div>
+           <div className="space-y-2">
+              <Label>Profile Photo</Label>
+              <Input
+                type="file"
+                accept="image/*"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) {
+                    if (file.size > 2 * 1024 * 1024) {
+                      setLocalError("Ukuran gambar maksimal 2MB.")
+                      e.target.value = ""; // Reset input file
+                      return;
+                    }
+                    setFormData({ ...formData, profile_photo_file: file });
+                  } else {
+                    setFormData({ ...formData, profile_photo_file: null });
+                  }
+                }}
+                required
               />
             </div>
 
@@ -270,6 +327,12 @@ export function ProfileForm() {
               )
             }
           </form>
+        </CardContent>
+      </Card>
+      <Card>
+        <CardHeader>Change Password</CardHeader>
+        <CardContent className="space-y-3 text-sm text-gray-700">
+          <ChangePasswordForm/>
         </CardContent>
       </Card>
 

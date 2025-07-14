@@ -242,9 +242,6 @@ export function LoginForm() {
           </div>
         )}
 
-
-
-
         <Tabs value={activeTab} className="w-full">
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="signin" onClick={() => setActiveTab("signin")}>Sign In</TabsTrigger>
@@ -260,7 +257,7 @@ export function LoginForm() {
               </Button>
             </form>
 
-            <Button
+            {/* <Button
               onClick={async () => {
                 setLocalError(null)
                 try {
@@ -273,7 +270,12 @@ export function LoginForm() {
               variant="outline"
             >
               <Chrome className="mr-2 h-4 w-4" /> Continue with Google
-            </Button>
+            </Button> */}
+            <p className="text-center text-sm text-gray-500 mt-4">
+              <a href="/forgot-password" className="underline text-red-600 hover:text-red-700">
+                Forgot your password?
+              </a>
+            </p>
           </TabsContent>
 
           <TabsContent value="signup">
@@ -301,9 +303,9 @@ export function LoginForm() {
                     onChange={(date) => {
                       setTempBirthDate(date)
                       setSignUpData({ ...signUpData, birthDate: date ? date.toISOString().split("T")[0] : "" })
-                    } } 
+                    }}
                     disabled={false}
-                    />
+                  />
                 </div>
 
                 <div className="space-y-1">
@@ -332,13 +334,55 @@ export function LoginForm() {
                   </select>
                 </div>
 
-                <div className="space-y-1">
+                {/* <div className="space-y-1">
                   <Label>ID Photo (KTP/KK/KIA) </Label>
                   <Input type="file" accept="image/*" onChange={(e) => setSignUpData({ ...signUpData, idPhoto: e.target.files?.[0] || null })} required />
-                </div>
+                </div> */}
                 <div className="space-y-1">
+                  <Label>ID Photo (KTP/KK/KIA) </Label>
+                  <Input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        if (file.size > 2 * 1024 * 1024) {
+                          setLocalError("Ukuran gambar maksimal 2MB.")
+                          e.target.value = ""; // Reset input file
+                          return;
+                        }
+                        setSignUpData({ ...signUpData, idPhoto: file });
+                      } else {
+                        setSignUpData({ ...signUpData, idPhoto: null });
+                      }
+                    }}
+                    required
+                  />
+                </div>
+                {/* <div className="space-y-1">
                   <Label>Profile Photo</Label>
                   <Input type="file" accept="image/*" onChange={(e) => setSignUpData({ ...signUpData, profilePhoto: e.target.files?.[0] || null })} required />
+                </div> */}
+                <div className="space-y-2">
+                  <Label>Profile Photo</Label>
+                  <Input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        if (file.size > 2 * 1024 * 1024) {
+                          setLocalError("Ukuran gambar maksimal 2MB.")
+                          e.target.value = ""; // Reset input file
+                          return;
+                        }
+                        setSignUpData({ ...signUpData, profilePhoto: file });
+                      } else {
+                        setSignUpData({ ...signUpData, profilePhoto: null });
+                      }
+                    }}
+                    required
+                  />
                 </div>
                 <div className="space-y-1">
                   <Label>Province</Label>

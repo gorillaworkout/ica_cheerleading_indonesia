@@ -3,7 +3,7 @@
 "use client"
 
 import * as React from "react"
-import { format } from "date-fns"
+import { addYears, format } from "date-fns"
 import { CalendarIcon } from "lucide-react"
 
 import { cn } from "@/lib/utils"
@@ -22,11 +22,14 @@ interface DatePickerProps {
 }
 
 export function DatePicker({ date, onChange, disabled }: DatePickerProps) {
+  const today = new Date();
+  const maxDate = addYears(today, -5);
+
   return (
     <Popover>
       <PopoverTrigger asChild>
         <Button
-        disabled= {disabled}
+          disabled={disabled}
           variant={"outline"}
           className={cn(
             "w-full justify-start text-left font-normal",
@@ -44,10 +47,13 @@ export function DatePicker({ date, onChange, disabled }: DatePickerProps) {
           onSelect={onChange}
           captionLayout="dropdown"
           fromYear={1950}
-          toYear={new Date().getFullYear()}
+          toYear={today.getFullYear()}
           initialFocus
+          disabled={{
+            after: maxDate, // ✅ Ini yang membatasi
+          }}
         />
       </PopoverContent>
     </Popover>
-  )
+  );
 }

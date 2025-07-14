@@ -68,16 +68,20 @@ export const signInWithEmailThunk = createAsyncThunk(
 export const signInWithGoogleThunk = createAsyncThunk(
   "auth/signInWithGoogle",
   async (_, { rejectWithValue }) => {
-    const { data, error } = await supabase.auth.signInWithOAuth({
+    const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
         redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`,
       },
     });
+
     if (error) return rejectWithValue(error.message);
-    return data;
+    // Tidak return apa-apa karena browser akan redirect.
+    return;
   }
 );
+
+
 
 // Tambahan: Sign Up with Email + basic profile
 export const signUpWithEmailThunk = createAsyncThunk(

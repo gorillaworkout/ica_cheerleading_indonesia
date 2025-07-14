@@ -1,4 +1,3 @@
-// components/auth/auth-init.tsx
 "use client"
 
 import { useEffect } from "react"
@@ -14,17 +13,21 @@ export function AuthInit() {
   const dispatch = useAppDispatch()
 
   useEffect(() => {
-    dispatch(fetchSessionAndProfile()) // initial fetch on mount
+    // Initial fetch on component mount
+    dispatch(fetchSessionAndProfile())
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
-        if (session?.user) {
+        if (event === "SIGNED_IN" && session?.user) {
+          console.log("SIGNED IN 22 auth-init")
           dispatch(setAuthState({ session, user: session.user }))
           dispatch(fetchSessionAndProfile())
-        } else {
+        } else if (event === "SIGNED_OUT") {
+          console.log("SIGNED OUT 26 auth-init")
           dispatch(setAuthState({ session: null, user: null }))
           dispatch(clearProfile())
         }
+        // You can handle other events if needed
       }
     )
 
@@ -33,5 +36,5 @@ export function AuthInit() {
     }
   }, [dispatch])
 
-  return null // ⛔ No JSX here
+  return null // no UI needed here
 }
