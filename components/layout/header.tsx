@@ -78,7 +78,7 @@ export function Header() {
   return (
     <>
       <SocialMedia/>
-      <header className={`sticky top-0 z-50 ${scrolled ? "bg-white/60 backdrop-blur-lg shadow-md" : "bg-white/90"}`}>
+      <header className={`sticky top-0 z-50 ${scrolled ? "bg-white/80 backdrop-blur-lg shadow-md" : "bg-white/90"}`}>
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16">
             <Link href="/">
@@ -107,7 +107,7 @@ export function Header() {
                         initial={{ opacity: 0, y: -30 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -30 }}
-                        className="fixed left-0 top-[113px] w-full bg-white border-t shadow-xl py-6 z-50 flex flex-col items-start"
+                        className={`fixed left-0 ${scrolled?"top-[63px] bg-white/80 backdrop-blur-lg shadow-md": "top-[113px] bg-white/90"} w-full  border-t shadow-xl py-6 z-50 flex flex-col items-start`}
                         // onMouseEnter={() => setOpenMenu(menu.name)}
                         // onMouseLeave={() => setOpenMenu(null)}
                       >
