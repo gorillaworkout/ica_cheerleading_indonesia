@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation"
 import { CoachSidebar } from "@/components/coach/coach-sidebar"
 import { useAuthContext } from "@/components/providers/auth-provider"
 import { useEffect } from "react"
+import { FullScreenLoader } from "@/components/ui/fullScreenLoader"
 
 export default function CoachLayout({
   children,
@@ -21,7 +22,7 @@ export default function CoachLayout({
     }
   }, [user, profile, loading, router])
 
-  if (loading) return <p>Loading...</p>
+  if (loading) return <FullScreenLoader message="" />
   if (!user || profile?.role !== "coach") return null
 
   return (

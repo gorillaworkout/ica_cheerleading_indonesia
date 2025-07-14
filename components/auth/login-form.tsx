@@ -301,7 +301,8 @@ export function LoginForm() {
                     onChange={(date) => {
                       setTempBirthDate(date)
                       setSignUpData({ ...signUpData, birthDate: date ? date.toISOString().split("T")[0] : "" })
-                    } } disabled={false}
+                    } } 
+                    disabled={false}
                     />
                 </div>
 

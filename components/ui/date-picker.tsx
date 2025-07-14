@@ -18,7 +18,7 @@ import {
 interface DatePickerProps {
   date: Date | undefined
   onChange: (date: Date | undefined) => void
-  disabled: boolean
+  disabled?: boolean
 }
 
 export function DatePicker({ date, onChange, disabled }: DatePickerProps) {
@@ -26,7 +26,7 @@ export function DatePicker({ date, onChange, disabled }: DatePickerProps) {
     <Popover>
       <PopoverTrigger asChild>
         <Button
-        disabled
+        disabled= {disabled}
           variant={"outline"}
           className={cn(
             "w-full justify-start text-left font-normal",
