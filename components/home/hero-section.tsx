@@ -52,8 +52,8 @@ export function HeroSection({
 
 
   // new hero youtube
-    
-    const [isLoading, setIsLoading] = useState(true)
+
+  const [isLoading, setIsLoading] = useState(true)
   const [visibleProducts, setVisibleProducts] = useState(9)
   const [showVideoModal, setShowVideoModal] = useState(false)
   const heroRef = useRef<HTMLDivElement>(null)
@@ -114,34 +114,33 @@ export function HeroSection({
   }, []);
 
   return (
-      <section
-        ref={heroRef}
-        className="relative h-screen flex items-center justify-center overflow-hidden bg-black text-white"
-      >
-        <motion.div className="absolute inset-0 z-0 w-full h-full" style={{ opacity }}>
-          <div className="relative w-full h-full pointer-events-none">
-           <iframe
-            src="https://www.youtube.com/embed/SksDptq-w8g?controls=0&showinfo=0&modestbranding=1&rel=0&autoplay=1&mute=1&loop=1&playlist=SksDptq-w8g"
-            title="Background Video"
-            className="absolute top-0 left-0 w-full h-full object-cover"
-            frameBorder="0"
-            allow="autoplay; fullscreen; picture-in-picture"
-            allowFullScreen
-          ></iframe>
-          </div>
-        </motion.div>
+    <section
+      ref={heroRef}
+      className="relative flex items-center justify-center overflow-hidden bg-black md:h-screen h-auto"
+    >
+      <motion.div className="w-full aspect-video md:aspect-auto md:absolute md:inset-0 z-0" style={{ opacity }}>
+        <iframe
+          src="https://www.youtube.com/embed/SksDptq-w8g?controls=0&showinfo=0&modestbranding=1&rel=0&autoplay=1&mute=1&loop=1&playlist=SksDptq-w8g"
+          title="Background Video"
+          className="w-full h-full object-cover"
+          frameBorder="0"
+          allow="autoplay; fullscreen; picture-in-picture"
+          allowFullScreen
+        ></iframe>
+      </motion.div>
 
-        <motion.div
-          className="absolute bottom-10 left-1/2 transform -translate-x-1/2 cursor-pointer"
-          animate={{ y: [0, 10, 0] }}
-          transition={{ repeat: Number.POSITIVE_INFINITY, duration: 2 }}
-          onClick={() => {
-            introSection?.scrollIntoView({ behavior: "smooth" });
-          }}
-        >
-          <ChevronRight size={30} className="rotate-90" />
-        </motion.div>
-      </section>
+      <motion.div
+        className="hidden md:block absolute bottom-10 left-1/2 transform -translate-x-1/2 cursor-pointer"
+        animate={{ y: [0, 10, 0] }}
+        transition={{ repeat: Number.POSITIVE_INFINITY, duration: 2 }}
+        onClick={() => {
+          introSection?.scrollIntoView({ behavior: "smooth" });
+        }}
+      >
+        <ChevronRight size={30} className="rotate-90" />
+      </motion.div>
+    </section>
+
     // <section className="relative w-full h-full overflow-hidden">
     //   {heroSlides.map((image, index) => (
     //     <div

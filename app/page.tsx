@@ -25,7 +25,7 @@ export default function HomePage() {
     <div className="min-h-screen bg-white">
       <Header />
       <main>
-        <div className="w-[99.6vw] h-screen">
+        <div className="w-full md:h-screen">
           <HeroSection showTextAndButtons={false} />
         </div>
         <div id="introSection">
