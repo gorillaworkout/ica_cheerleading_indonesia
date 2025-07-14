@@ -120,14 +120,14 @@ export function HeroSection({
       >
         <motion.div className="absolute inset-0 z-0 w-full h-full" style={{ opacity }}>
           <div className="relative w-full h-full pointer-events-none">
-            <iframe
-              src="https://www.youtube.com/embed/SksDptq-w8g?si=BCmXnWMGUROiGsy2&controls=0&autoplay=1&mute=1"
-              title="Background Video"
-              className="absolute top-0 left-0 w-full h-full object-cover"
-              frameBorder="0"
-              allow="autoplay; fullscreen; picture-in-picture"
-              allowFullScreen
-            ></iframe>
+           <iframe
+            src="https://www.youtube.com/embed/SksDptq-w8g?controls=0&showinfo=0&modestbranding=1&rel=0&autoplay=1&mute=1&loop=1&playlist=SksDptq-w8g"
+            title="Background Video"
+            className="absolute top-0 left-0 w-full h-full object-cover"
+            frameBorder="0"
+            allow="autoplay; fullscreen; picture-in-picture"
+            allowFullScreen
+          ></iframe>
           </div>
         </motion.div>
 
