@@ -28,9 +28,11 @@ export default function HomePage() {
         <div className="w-[99.6vw] h-screen">
           <HeroSection showTextAndButtons={false} />
         </div>
-        <ScrollAnimation>
-          <IntroSection />
-        </ScrollAnimation>
+        <div id="introSection">
+          <ScrollAnimation>
+            <IntroSection />
+          </ScrollAnimation>
+        </div>
         <ScrollAnimation>
           <TeamLogoSlider />  
         </ScrollAnimation>
