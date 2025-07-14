@@ -52,8 +52,8 @@ export default function AdminUsersPage() {
         const to = from + PAGE_SIZE - 1
 
         query = query.range(from, to)
-
         const { data, error, count } = await query
+        console.log("Query Data user:", data)
 
         if (error) {
             console.error(error)
@@ -66,30 +66,48 @@ export default function AdminUsersPage() {
         setLoading(false)
     }
 
-    async function approveUser(userId: string) {
-        setApproving(userId)
-        const { error } = await supabase
-            .from("profiles")
-            .update({ is_verified: true })
-            .eq("id", userId)
+ async function approveUser(userId: string) {
+    console.log("Approving user:", userId)
+    setApproving(userId)
 
-        if (error) {
-            console.error(error)
-            toast({ title: "Error", description: "Failed to approve user." })
-        } else {
-            toast({ title: "Success", description: "User approved successfully." })
-            fetchUsers()
-        }
+    console.log("Approving user:", userId, typeof userId);
 
-        setApproving(null)
+    const { data, error } = await supabase
+    .from("profiles")
+    .update({ is_verified: true })
+    .filter("user_id", "eq", userId) // alternative to eq()
+    .select();
+
+    console.log("User ID Filter:", userId);
+    console.log("Update result:", { data, error });
+
+    console.log("Target UserId (should match user_id column exactly):", userId);
+
+    const { data: foundUsers } = await supabase
+    .from("profiles")
+    .select("*")
+    .eq("user_id", userId);
+
+    console.log("Found Users:", foundUsers);
+
+    if (error) {
+        console.error("Supabase error:", error)
+        toast({ title: "Error", description: error.message })
+    } else {
+        toast({ title: "Success", description: "User approved successfully." })
+        fetchUsers()
     }
+
+    setApproving(null)
+}
+
 
     async function approveEditRequest(userId: string) {
         setApproving(userId)
         const { error } = await supabase
             .from("profiles")
-            .update({ is_edit_allowed: true })
-            .eq("id", userId)
+            .update({ is_edit_allowed: true, is_request_edit: false })
+            .eq("user_id", userId)
 
         if (error) {
             console.error(error)

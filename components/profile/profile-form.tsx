@@ -10,27 +10,31 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
-import { Mail, Shield, User, Calendar, Phone, ImageIcon, BadgeCheck, BadgeX } from "lucide-react"
+import { Mail, Shield, User as UserIcon, Calendar, Phone, ImageIcon, BadgeCheck, BadgeX, AlertCircle } from "lucide-react"
 import Link from "next/link"
 import { getPublicImageUrl } from "@/utils/getPublicImageUrl"
 import { DatePicker } from "../ui/date-picker"
-
+import { useAppDispatch } from "@/lib/redux/hooks";
+import { fetchSessionAndProfile } from "@/features/auth/authSlice"
+import { Alert, AlertDescription } from "@/components/ui/alert"
 export function ProfileForm() {
   const { user, profile } = useAppSelector((state) => state.auth)
   const { toast } = useToast()
   const [isUpdating, setIsUpdating] = useState(false)
-
+  const dispatch = useAppDispatch()
+  const [localError, setLocalError] = useState<string | null>(null)
   const [formData, setFormData] = useState({
     displayName: "",
     phoneNumber: "",
     gender: "",
     birthDate: "",
-    is_edit_allowed:false
+    is_edit_allowed: false,
+    is_request_edit: false
   })
   const [tempBirthDate, setTempBirthDate] = useState<Date | undefined>(
     formData.birthDate ? new Date(formData.birthDate) : undefined
   )
-    useEffect(() => {
+  useEffect(() => {
     if (user && profile) {
       setFormData({
         displayName: profile.display_name || "",
@@ -38,8 +42,11 @@ export function ProfileForm() {
         gender: profile.gender || "",
         birthDate: profile.birth_date || "",
         is_edit_allowed: profile.is_edit_allowed ?? true,
+        is_request_edit: profile.is_request_edit ?? false
       })
-
+      if(profile.is_request_edit){
+        setLocalError("Request berhasil dikirim. Tunggu persetujuan admin.")
+      }
       setTempBirthDate(
         profile.birth_date ? new Date(profile.birth_date) : undefined
       )
@@ -82,6 +89,35 @@ export function ProfileForm() {
     }
   }
 
+  const onRequestEdit = async () => {
+    setIsUpdating(true);
+
+    try {
+      if (!user?.id) {
+        alert("User tidak ditemukan");
+        return;
+      }
+
+      const { error } = await supabase
+        .from("profiles")
+        .update({ is_request_edit: true })
+        .eq("id", user.id);
+
+      if (error) {
+        console.error(error);
+        setLocalError("Gagal mengirim request")
+      } else {
+        dispatch(fetchSessionAndProfile());
+        setLocalError("Request berhasil dikirim. Tunggu persetujuan admin.")
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Terjadi kesalahan");
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
   if (!user) {
     return (
       <Card>
@@ -99,7 +135,7 @@ export function ProfileForm() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
-            <User className="h-5 w-5 text-red-600" />
+            <UserIcon className="h-5 w-5 text-red-600" />
             <span>Profile Overview</span>
           </CardTitle>
         </CardHeader>
@@ -116,7 +152,7 @@ export function ProfileForm() {
               />
             ) : (
               <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center">
-                <User className="h-8 w-8 text-red-600" />
+                <UserIcon className="h-8 w-8 text-red-600" />
               </div>
             )}
             <div>
@@ -148,11 +184,18 @@ export function ProfileForm() {
         </CardContent>
       </Card>
 
+      {localError && (
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>{localError}</AlertDescription>
+          </Alert>
+        )}
       {/* Edit Profile */}
       <Card>
         <CardHeader>
           <CardTitle>Edit Profile</CardTitle>
         </CardHeader>
+    
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
@@ -193,7 +236,7 @@ export function ProfileForm() {
             </div> */}
             <div className="space-y-1">
               <Label>Gender</Label>
-              <select  disabled={!formData.is_edit_allowed} value={formData.gender} onChange={(e) => setFormData({ ...formData, gender: e.target.value })} required className="w-full border rounded px-2 py-2">
+              <select disabled={!formData.is_edit_allowed} value={formData.gender} onChange={(e) => setFormData({ ...formData, gender: e.target.value })} required className="w-full border rounded px-2 py-2">
                 <option value="">Choose Gender</option>
                 <option value="lakilaki">Laki Laki</option>
                 <option value="perempuan">Perempuan</option>
@@ -211,11 +254,18 @@ export function ProfileForm() {
                 }}
               />
             </div>
-            
+
             {
               formData.is_edit_allowed && (
                 <Button type="submit" disabled={isUpdating} className="bg-red-600 hover:bg-red-700">
                   {isUpdating ? "Updating..." : "Update Profile"}
+                </Button>
+              )
+            }
+            {
+              !formData.is_edit_allowed && !formData.is_request_edit && (
+                <Button onClick={onRequestEdit} type="submit" disabled={isUpdating} className="bg-red-600 hover:bg-red-700">
+                  {isUpdating ? "Request Update Profile..." : "Request Update Profile"}
                 </Button>
               )
             }
