@@ -13,17 +13,22 @@ export const aboutICA = {
     founder: "Dian Anggraini",
     sanctionedBy: "International Cheer Union",
     memberOf: "KORMI (16 June 2008)",
-    introduction: `“Indonesian Cheer Association (ICA) adalah organisasi nasional resmi yang menaungi pengembangan olahraga cheerleading di Indonesia. ICA merupakan anggota penuh International Cheer Union (ICU) sejak 2009, yang diakui sebagai badan dunia pengatur olahraga cheerleading.
+    introduction: `Asosiasi Pemandu Sorak Indonesia (APSI) atau Indonesian Cheer Association (ICA) adalah satu-satunya organisasi cheerleading yang telah terdaftar sebagai anggota Komite Olahraga Rekreasi Masyarakat Indonesia (KORMI) pada 16 Juni 2008 
+    Dibentuk untuk mengembangkan olahraga cheerleading di Indonesia sehingga dapat menjadi salah satu cabang di Pekan Olahraga Nasional (PON) dan membentuk Tim Nasional sebagai wakil Indonesia di Kejuaraan Internasional.
 
-Setiap tahunnya, ICA menyelenggarakan kejuaraan nasional terbesar di Indonesia—ICA National Championship. Edisi ke‑15 digelar pada 28 Juni 2025 di Hall Indoor Si Jalak Harupat, yang diikuti lebih dari 1.200 cheerleaders dari berbagai provinsi .
+    Telah mempunyai perwakilan di : DKI Jakarta, Jawa Barat, Jawa Timur, Jawa Tengah, DI Yogyakarta, Sumatera Selatan, Riau, Kepulauan Riau, Kalimantan Timur, Kalimantan Barat, Kalimantan Selatan, Bali, Papua.
 
-Melalui berbagai program sosialisasi dan pelatihan, ICA bertujuan menyeragamkan teknik cheerleading yang benar dan aman sesuai standar internasional (safety rules & regulations). ICA juga rutin menyelenggarakan kompetisi tingkat regional (provinsi) hingga nasional sebagai bentuk evaluasi dan promosi teknik standar cheerleading.`,
-    visionMission: `Menyeragamkan teknik olahraga cheerleading yang benar dan aman sesuai dengan standarisasi Internasional yang meliputi teknik dan peraturan (safety rules & regulations).
-    Melalui program sosialisasi dan pelatihan, ICA menyebarkan informasi tentang teknik standar dan safety rules yang telah ditetapkan oleh Badan Internasional untuk olahraga cheerleading. 
-    Dan sebagai evaluasi, ICA menyelenggarakan kejuaraan tingkat Regional Provinsi dan Nasional.`,
-    goal: `Mengukuhkan cheerleading sebagai olahraga resmi yang diakui di Indonesia dan dipertandingkan di Pekan Olahraga Nasional (PON).
-    Menyamaratakan pemahaman tentang cheerleading sebagai olahraga dan sebagai salah satu kegiatan positif yang patut diberikan perhatian khusus baik moril maupun materi (fasilitas memadai) dari berbagai pihak 
-    mengingat peminat olahraga ini adalah 95% remaja yang rentan terhadap pengaruh buruk lingkungan.`,
+    Secara rutin telah melaksanakan 15 kali kejuaraan nasional.
+    .`,
+    visionMission: `Visi dan misi Asosiasi Pemandu Sorak Indonesia (APSI) adalah menyeragamkan teknik olahraga cheerleading yang benar dan aman sesuai dengan standar internasional yang meliputi teknik dan peraturan (safety rules & regulations). `,
+    goal: `Sebagai sarana positif bagi generasi muda untuk menorehkan prestasi dalam bakat dan potensi yang dimiliki.
+    Merealisasikan program kerja tahunan untuk skala nasional.
+    Membangkitkan kembali giat cabang olahraga cheerleading pasca pandemic COVID-19.
+    Menguji kompetensi cheerleading tim-tim cheerleading se Indonesia dalam skala nasional.
+    Sebagai sarana tukar pikiran dan silaturahmi antar atlet dan pelatih di Indonesia.
+
+
+    `,
     tagline: 'Cheerleading sebagai cabang olahraga yang penuh semangat dan energi'
 };
 

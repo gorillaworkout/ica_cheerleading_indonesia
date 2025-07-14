@@ -25,7 +25,7 @@ export default function HomePage() {
   return (
     <div className="min-h-screen bg-white">
       {/* <Counter /> */}
-      <SocialMedia/>
+      {/* <SocialMedia/> */}
       <Header />
       <main>
         <div className="w-[99.6vw] h-screen">

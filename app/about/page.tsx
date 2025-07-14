@@ -1,7 +1,7 @@
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { provinces, structure, aboutICA } from "@/utils/about";
-
+import Image from "next/image";
 export default function AboutPage() {
   return (
     <div className="min-h-screen flex flex-col bg-neutral-100">
@@ -30,9 +30,16 @@ export default function AboutPage() {
           </div>
 
           <div className="flex items-center justify-center">
-            <div className="rounded-xl shadow-lg bg-white w-full h-64 flex items-center justify-center text-gray-500">
-              About ICA Image
+            <div className="relative rounded-xl shadow-lg bg-white w-full h-64 flex items-center justify-center text-gray-500 overflow-hidden">
+              <Image
+                src="/ica-text.png"
+                alt="Logo"
+                width={650}
+                height={400}
+                className="object-contain animate-pulse"
+              />
             </div>
+
           </div>
         </section>
 

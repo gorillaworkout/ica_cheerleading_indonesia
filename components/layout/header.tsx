@@ -26,13 +26,14 @@ import {
   ChevronLeft,
 } from "lucide-react";
 import { IconRight } from "react-day-picker";
+import { SocialMedia } from "./socialMedia";
 
 const menus = [
   { name: "Home", href: "/", icon: <Home size={16} /> },
   {
     name: "About",
     children: [
-      { name: "About", href: "/about" },
+      { name: "About ICA", href: "/about" },
       { name: "Organization", href: "/about/organization" },
       { name: "Coaches", href: "/about/coaches" },
       { name: "Judges", href: "/about/judges" },
@@ -75,157 +76,160 @@ export function Header() {
   };
 
   return (
-    <header className={`sticky top-0 z-50 ${scrolled ? "bg-white/60 backdrop-blur-lg shadow-md" : "bg-white/90"}`}>
-      <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16">
-          <Link href="/">
-            <Image src="/ica-text.png" alt="Logo" width={180} height={50} />
-          </Link>
-          <button
-            className="md:hidden"
-            onClick={() => setMobileOpen((prev) => !prev)}
-          >
-            {mobileOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
-          <nav className="hidden md:flex items-start gap-6">
-            {menus.map((menu) => (
-              <div
-                key={menu.name}
-                className="relative"
-                onMouseEnter={() => setOpenMenu(menu.name)}
-                onMouseLeave={() => setOpenMenu(null)}
-              >
-                <button className="flex items-center gap-2 text-gray-800 font-semibold hover:text-red-600">
-                  {menu.name} {menu.children && <ChevronDown size={16} />}
-                </button>
-                <AnimatePresence>
-                  {openMenu === menu.name && menu.children && (
-                    <motion.div
-                      initial={{ opacity: 0, y: -20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -20 }}
-                      className="fixed left-0 top-[64px] w-full bg-white border-t shadow-xl py-6 z-50 flex flex-col items-start"
-                      onMouseEnter={() => setOpenMenu(menu.name)}
-                      onMouseLeave={() => setOpenMenu(null)}
-                    >
-                      <div className="max-w-7xl mx-auto px-8 flex flex-col gap-4 items-start w-full">
-                        {menu.children.map((sub) => (
-                          <Link
-                            key={sub.name}
-                            href={sub.href}
-                            className=" text-lg font-medium text-gray-800 hover:text-red-600 flex flex-row gap-x-4 items-center"
-                          >
-                            <ChevronLeft size={16} />
-                            {sub.name}
-                          </Link>
-                        ))}
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            ))}
-          </nav>
-          <div className="hidden md:flex items-center gap-4">
-            {loading ? (
-              <Loader2 className="animate-spin" />
-            ) : user ? (
-              <div className="relative group">
-                <Button variant="ghost" className="flex items-center gap-2">
-                  <User className="h-4 w-4" />
-                  {profile?.display_name || user.email}
-                  <ChevronDown className="h-4 w-4" />
-                </Button>
-                <div className="absolute right-0 top-full mt-2 w-48 bg-white shadow-lg rounded-md invisible group-hover:visible group-hover:opacity-100 opacity-0 transition-all">
-                  <div className="px-2 py-1.5 text-sm text-gray-500">
-                    <div className="font-medium text-gray-900">{profile?.display_name || user.email?.split("@")[0]}</div>
-                    <div className="text-xs">{user.email}</div>
-                    {profile?.role && <div className="text-xs font-medium text-red-600 capitalize mt-1">Role: {profile.role}</div>}
-                  </div>
-                  {isAdmin && (
-                    <Link href="/admin" className="block px-4 py-2 text-sm hover:bg-gray-100">
-                      <Shield className="inline h-4 w-4 mr-2" /> Admin Dashboard
-                    </Link>
-                  )}
-                  {isCoach && (
-                    <Link href="/coach" className="block px-4 py-2 text-sm hover:bg-gray-100">
-                      <Users className="inline h-4 w-4 mr-2" /> Coach Dashboard
-                    </Link>
-                  )}
-                  <Link href="/profile" className="block px-4 py-2 text-sm hover:bg-gray-100">
-                    <Settings className="inline h-4 w-4 mr-2" /> Profile Settings
-                  </Link>
-                  <button
-                    onClick={handleSignOut}
-                    disabled={isSigningOut}
-                    className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50"
-                  >
-                    {isSigningOut ? "Signing out..." : "Sign Out"}
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <Link href="/login">
-                <Button className="bg-red-600 hover:bg-red-700">Sign In</Button>
-              </Link>
-            )}
-          </div>
-        </div>
-
-        {mobileOpen && (
-          <div className="md:hidden mt-4 pb-4">
-            <div className="space-y-2">
+    <>
+      <SocialMedia/>
+      <header className={`sticky top-0 z-50 ${scrolled ? "bg-white/60 backdrop-blur-lg shadow-md" : "bg-white/90"}`}>
+        <div className="container mx-auto px-4">
+          <div className="flex items-center justify-between h-16">
+            <Link href="/">
+              <Image src="/ica-text.png" alt="Logo" width={180} height={50} />
+            </Link>
+            <button
+              className="md:hidden"
+              onClick={() => setMobileOpen((prev) => !prev)}
+            >
+              {mobileOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+            <nav className="hidden md:flex items-start gap-6">
               {menus.map((menu) => (
-                <div key={menu.name}>
-                  <Link href={menu.href || "#"} className="flex items-center gap-2 text-gray-800 font-medium py-2">
-                    {menu.icon} {menu.name}
-                  </Link>
-                  {menu.children && (
-                    <div className="ml-6 space-y-1">
-                      {menu.children.map((sub) => (
-                        <Link key={sub.name} href={sub.href} className="block text-sm text-gray-600 hover:text-red-600">
-                          {sub.name}
-                        </Link>
-                      ))}
-                    </div>
-                  )}
+                <div
+                  key={menu.name}
+                  className="relative"
+                  onMouseEnter={() => setOpenMenu(menu.name)}
+                  onMouseLeave={() => setOpenMenu(null)}
+                >
+                  <button className="flex items-center gap-2 text-gray-800 font-semibold hover:text-red-600">
+                    {menu.name} {menu.children && <ChevronDown size={16} />}
+                  </button>
+                  <AnimatePresence>
+                    {openMenu === menu.name && menu.children && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -30 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -30 }}
+                        className="fixed left-0 top-[113px] w-full bg-white border-t shadow-xl py-6 z-50 flex flex-col items-start"
+                        // onMouseEnter={() => setOpenMenu(menu.name)}
+                        // onMouseLeave={() => setOpenMenu(null)}
+                      >
+                        <div className="max-w-7xl mx-auto px-8 flex flex-col gap-4 items-start w-full">
+                          {menu.children.map((sub) => (
+                            <Link
+                              key={sub.name}
+                              href={sub.href}
+                              className=" text-lg font-medium text-gray-800 hover:text-red-600 flex flex-row gap-x-4 items-center"
+                            >
+                              <ChevronLeft size={16} />
+                              {sub.name}
+                            </Link>
+                          ))}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
               ))}
-            </div>
-            <div className="mt-4 border-t pt-4">
-              {user ? (
-                <>
-                  {isAdmin && (
-                    <Link href="/admin" className="block py-2 text-sm">
-                      Admin Dashboard
+            </nav>
+            <div className="hidden md:flex items-center gap-4">
+              {loading ? (
+                <Loader2 className="animate-spin" />
+              ) : user ? (
+                <div className="relative group">
+                  <Button variant="ghost" className="flex items-center gap-2">
+                    <User className="h-4 w-4" />
+                    {profile?.display_name || user.email}
+                    <ChevronDown className="h-4 w-4" />
+                  </Button>
+                  <div className="absolute right-0 top-full mt-2 w-48 bg-white shadow-lg rounded-md invisible group-hover:visible group-hover:opacity-100 opacity-0 transition-all">
+                    <div className="px-2 py-1.5 text-sm text-gray-500">
+                      <div className="font-medium text-gray-900">{profile?.display_name || user.email?.split("@")[0]}</div>
+                      <div className="text-xs">{user.email}</div>
+                      {profile?.role && <div className="text-xs font-medium text-red-600 capitalize mt-1">Role: {profile.role}</div>}
+                    </div>
+                    {isAdmin && (
+                      <Link href="/admin" className="block px-4 py-2 text-sm hover:bg-gray-100">
+                        <Shield className="inline h-4 w-4 mr-2" /> Admin Dashboard
+                      </Link>
+                    )}
+                    {isCoach && (
+                      <Link href="/coach" className="block px-4 py-2 text-sm hover:bg-gray-100">
+                        <Users className="inline h-4 w-4 mr-2" /> Coach Dashboard
+                      </Link>
+                    )}
+                    <Link href="/profile" className="block px-4 py-2 text-sm hover:bg-gray-100">
+                      <Settings className="inline h-4 w-4 mr-2" /> Profile Settings
                     </Link>
-                  )}
-                  {isCoach && (
-                    <Link href="/coach" className="block py-2 text-sm">
-                      Coach Dashboard
-                    </Link>
-                  )}
-                  <Link href="/profile" className="block py-2 text-sm">
-                    Profile Settings
-                  </Link>
-                  <button
-                    onClick={handleSignOut}
-                    disabled={isSigningOut}
-                    className="text-left text-red-600 w-full py-2 text-sm"
-                  >
-                    {isSigningOut ? "Signing out..." : "Sign Out"}
-                  </button>
-                </>
+                    <button
+                      onClick={handleSignOut}
+                      disabled={isSigningOut}
+                      className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+                    >
+                      {isSigningOut ? "Signing out..." : "Sign Out"}
+                    </button>
+                  </div>
+                </div>
               ) : (
                 <Link href="/login">
-                  <Button className="w-full bg-red-600 hover:bg-red-700">Sign In</Button>
+                  <Button className="bg-red-600 hover:bg-red-700">Sign In</Button>
                 </Link>
               )}
             </div>
           </div>
-        )}
-      </div>
-    </header>
+
+          {mobileOpen && (
+            <div className="md:hidden mt-4 pb-4">
+              <div className="space-y-2">
+                {menus.map((menu) => (
+                  <div key={menu.name}>
+                    <Link href={menu.href || "#"} className="flex items-center gap-2 text-gray-800 font-medium py-2">
+                      {menu.icon} {menu.name}
+                    </Link>
+                    {menu.children && (
+                      <div className="ml-6 space-y-1">
+                        {menu.children.map((sub) => (
+                          <Link key={sub.name} href={sub.href} className="block text-sm text-gray-600 hover:text-red-600">
+                            {sub.name}
+                          </Link>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+              <div className="mt-4 border-t pt-4">
+                {user ? (
+                  <>
+                    {isAdmin && (
+                      <Link href="/admin" className="block py-2 text-sm">
+                        Admin Dashboard
+                      </Link>
+                    )}
+                    {isCoach && (
+                      <Link href="/coach" className="block py-2 text-sm">
+                        Coach Dashboard
+                      </Link>
+                    )}
+                    <Link href="/profile" className="block py-2 text-sm">
+                      Profile Settings
+                    </Link>
+                    <button
+                      onClick={handleSignOut}
+                      disabled={isSigningOut}
+                      className="text-left text-red-600 w-full py-2 text-sm"
+                    >
+                      {isSigningOut ? "Signing out..." : "Sign Out"}
+                    </button>
+                  </>
+                ) : (
+                  <Link href="/login">
+                    <Button className="w-full bg-red-600 hover:bg-red-700">Sign In</Button>
+                  </Link>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+      </header>
+    </>
   );
 }
 
