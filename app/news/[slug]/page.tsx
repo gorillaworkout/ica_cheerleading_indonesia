@@ -19,5 +19,5 @@ export default function Page(props: { params: Promise<{ slug: string }> }) {
 
   if (!article) return notFound()
 
-  return <NewsDetailClient article={article} />
+  return <NewsDetailClient article={article} relatedNews={news} />
 }

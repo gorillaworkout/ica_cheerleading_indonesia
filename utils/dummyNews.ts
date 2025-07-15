@@ -58,7 +58,7 @@ export const news = [
 
             Sumber : <a href="https://www.redaksi9.com/read/14298/sebanyak-1000-atlet-dari-9-negara-berlaga-dalam-lomba-cheerleading-internasional-di-kuta.html#google_vignette" target="_blank" rel="noopener noreferrer">Redaksi 9</a>
             `,
-        date: "2014-09-14",
+        date: "2024-09-14",
         image: apccHeroSlides,
         category: "Competition",
     },

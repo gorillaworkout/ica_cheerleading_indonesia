@@ -61,23 +61,26 @@ export default function GalleryPage() {
     setUploading(false)
   }
 
- const handleDelete = async (fileName: string) => {
-  setDeleting(fileName)
-  console.log("Deleting:", `public/${fileName}`)
+const handleDelete = async (fileName: string) => {
+  setDeleting(fileName);
+
+  const fullPath = `public/${fileName}`; // pastikan full path benar
 
   const { error } = await supabase
     .storage
     .from("uploads")
-    .remove([`public/${fileName}`])
+    .remove([fullPath]);
 
   if (error) {
-    console.error("Delete error", error)
-    alert(error.message)
+    console.error("Delete error", error);
+    alert(error.message);
   } else {
-    setImages((prev) => prev.filter((img) => img.name !== fileName))
+    console.log("Deleted:", fullPath);
+    setImages((prev) => prev.filter((img) => img.name !== fileName));
   }
-  setDeleting(null)
-}
+  setDeleting(null);
+};
+
 
 
   useEffect(() => {

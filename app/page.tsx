@@ -34,6 +34,9 @@ export default function HomePage() {
           </ScrollAnimation>
         </div>
         <ScrollAnimation>
+          <NewsSection />
+        </ScrollAnimation>
+        <ScrollAnimation>
           <TeamLogoSlider />  
         </ScrollAnimation>
         <ScrollAnimation>
@@ -41,9 +44,6 @@ export default function HomePage() {
         </ScrollAnimation>
         <ScrollAnimation>
           <ChampionshipSection/>
-        </ScrollAnimation>
-        <ScrollAnimation>
-          <NewsSection />
         </ScrollAnimation>
       </main>
       <Footer />

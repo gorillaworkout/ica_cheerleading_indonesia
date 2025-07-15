@@ -7,8 +7,10 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { HeroSection } from "@/components/home/hero-section"
 import { newsImageProps } from "@/utils/dummyhero"
+import { HeroImageSection } from "@/components/home/hero-image-section"
 
 interface Article {
+  id: number
   title: string
   slug: string
   date: string
@@ -17,7 +19,14 @@ interface Article {
   content: string
 }
 
-export function NewsDetailClient({ article }: { article: Article }) {
+
+export function NewsDetailClient({
+  article,
+  relatedNews,
+}: {
+  article: Article
+  relatedNews: Article[]
+}) {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -27,55 +36,82 @@ export function NewsDetailClient({ article }: { article: Article }) {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-gray-50 animate-pulse">
-        <div className="container mx-auto px-4 max-w-4xl">
-          <div className="h-10 w-40 bg-gray-300 rounded mb-6" />
-          <div className="relative w-full h-64 md:h-96 bg-gray-300 rounded mb-6" />
-          <div className="h-10 bg-gray-300 rounded mb-4 w-3/4" />
-          <div className="flex items-center space-x-2 mb-8">
-            <div className="h-5 w-5 bg-gray-300 rounded-full" />
-            <div className="h-4 w-32 bg-gray-300 rounded" />
-          </div>
-          <div className="space-y-4">
-            <div className="h-4 bg-gray-300 rounded w-full" />
-            <div className="h-4 bg-gray-300 rounded w-5/6" />
-            <div className="h-4 bg-gray-300 rounded w-2/3" />
-            <div className="h-4 bg-gray-300 rounded w-full" />
-            <div className="h-4 bg-gray-300 rounded w-1/2" />
-          </div>
-        </div>
-      </main>
+      <main className="min-h-screen bg-gray-50 animate-pulse" />
     )
   }
 
   return (
-    <main className="min-h-screen bg-gray-50">
-      <div className="container mx-auto px-4 max-w-4xl">
-        <Link href="/news">
-          <Button variant="outline" className="mb-6">
-            ← Back to News
-          </Button>
-        </Link>
+    <main className="min-h-screen bg-gray-50 py-8">
+      <div className="container mx-auto px-4 flex flex-col lg:flex-row gap-8">
+        {/* Main Content */}
+        <div className="flex-1 max-w-4xl">
+          <Link href="/news">
+            <Button variant="outline" className="mb-6">
+              ← Back to News
+            </Button>
+          </Link>
 
-        <div className="relative w-full h-64 md:h-96 rounded overflow-hidden mb-6 shadow-md">
-            <div className="w-full h-full">
-                <HeroSection showTextAndButtons={false} heroSlides={article.image || []} />
-            </div>
+          <div className="relative w-full h-64 md:h-96 rounded overflow-hidden mb-6 shadow-md">
+            <HeroImageSection showTextAndButtons={false} heroSlides={article.image || []} />
             <span className="absolute top-4 left-4 bg-red-600 text-white px-3 py-1 rounded font-semibold text-sm">
-            {article.category}
+              {article.category}
             </span>
+          </div>
+
+          <h1 className="text-4xl font-bold mb-4 text-gray-900">{article.title}</h1>
+          <div className="flex items-center text-gray-600 mb-8">
+            <Calendar className="h-5 w-5 mr-2" />
+            <time dateTime={article.date}>{new Date(article.date).toLocaleDateString()}</time>
+          </div>
+
+          <article
+            className="prose prose-lg max-w-none text-gray-700 whitespace-pre-line"
+            dangerouslySetInnerHTML={{ __html: article.content }}
+          />
         </div>
 
-        <h1 className="text-4xl font-bold mb-4 text-gray-900">{article.title}</h1>
-        <div className="flex items-center text-gray-600 mb-8">
-          <Calendar className="h-5 w-5 mr-2" />
-          <time dateTime={article.date}>{new Date(article.date).toLocaleDateString()}</time>
-        </div>
+        {/* Sidebar */}
+        <aside className="w-full lg:w-80 max-h-[calc(100vh-150px)] overflow-y-auto sticky top-24">
+          <h2 className="text-xl font-bold mb-4">Popular Events</h2>
 
-        <article
-          className="prose prose-lg max-w-none text-gray-700 whitespace-pre-line"
-          dangerouslySetInnerHTML={{ __html: article.content }}
-        />
+          <div className="space-y-4">
+            {Array.isArray(relatedNews) &&
+              relatedNews
+                .filter((n) => n.id !== article.id)
+                .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+                .map((newsItem) => (
+                  <Link
+                    href={`/news/${newsItem.slug}`}
+                    key={newsItem.id}
+                    className="flex gap-4 items-start group bg-white border rounded-lg p-2 shadow-sm hover:shadow-md transition"
+                  >
+                    <div className="relative w-24 h-24 flex-shrink-0 rounded-lg overflow-hidden">
+                      <Image
+                        src={newsItem.image?.[0]?.src || "/placeholder.svg"}
+                        alt={newsItem.title}
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform"
+                      />
+                      {newsItem.category && (
+                        <span className="absolute top-1 left-1 bg-red-600 text-white text-[10px] px-1.5 py-0.5 rounded font-semibold uppercase tracking-wide">
+                          {newsItem.category}
+                        </span>
+                      )}
+                    </div>
+
+                    <div className="flex flex-col justify-between flex-1">
+                      <p className="font-semibold text-sm leading-tight line-clamp-2 group-hover:text-red-600">
+                        {newsItem.title}
+                      </p>
+                      <time className="text-xs text-gray-500 mt-1">
+                        {new Date(newsItem.date).toLocaleDateString()}
+                      </time>
+                    </div>
+                  </Link>
+                ))}
+          </div>
+        </aside>
+
       </div>
     </main>
   )
