@@ -118,14 +118,15 @@ export function HeroSection({
       ref={heroRef}
       className="relative flex items-center justify-center overflow-hidden bg-black md:h-screen h-auto"
     >
-      <motion.div className="w-full aspect-video md:aspect-auto md:absolute md:inset-0 z-0" style={{ opacity }}>
+      <motion.div className="absolute top-0 left-0 w-full h-full z-0" style={{ opacity }}>
         <iframe
-          src="https://www.youtube.com/embed/SksDptq-w8g?controls=0&showinfo=0&modestbranding=1&rel=0&autoplay=1&mute=1&loop=1&playlist=SksDptq-w8g"
+          src="https://www.youtube.com/embed/SksDptq-w8g?controls=0&autoplay=1&mute=1&loop=1&playlist=SksDptq-w8g&disablekb=1"
           title="Background Video"
-          className="w-full h-full object-cover"
+          className="absolute top-0 left-0 w-full h-full object-cover"
+          style={{ width: "100vw", height: "100vh" }}
           frameBorder="0"
-          allow="autoplay; fullscreen; picture-in-picture"
-          allowFullScreen
+          allow="autoplay fullscreen; picture-in-picture"
+
         ></iframe>
       </motion.div>
 
