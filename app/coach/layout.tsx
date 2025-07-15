@@ -3,16 +3,17 @@
 import type React from "react"
 import { useRouter } from "next/navigation"
 import { CoachSidebar } from "@/components/coach/coach-sidebar"
-import { useAuthContext } from "@/components/providers/auth-provider"
+// import { useAuthContext } from "@/components/providers/auth-provider"
 import { useEffect } from "react"
 import { FullScreenLoader } from "@/components/ui/fullScreenLoader"
-
+import { useSelector } from "react-redux"
+import { RootState } from "@/lib/redux/store"  // Pastikan path sesuai
 export default function CoachLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
-  const { user, profile, loading } = useAuthContext()
+  const { user, profile, loading } = useSelector((state: RootState) => state.auth)
   const router = useRouter()
 
   useEffect(() => {
