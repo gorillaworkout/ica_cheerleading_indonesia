@@ -22,7 +22,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://ica-app.vercel.app",
+    url: "https://indonesiancheer.org",
     title: "ICA - Indonesian Cheer Association",
     description: "Official platform for Indonesian Cheer Association competitions, education, and community.",
     siteName: "ICA",
@@ -36,7 +36,12 @@ export const metadata: Metadata = {
     index: true,
     follow: true,
   },
-  generator: "v0.dev",
+  generator: "gorillaworkout",
+  icons: {
+    icon: "/ica-text.png",
+    shortcut:"/ica-text.png",
+    apple:"/ica-text.png"
+  },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

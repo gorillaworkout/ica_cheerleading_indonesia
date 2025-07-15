@@ -77,7 +77,7 @@ export function Header() {
 
   return (
     <>
-      <SocialMedia/>
+      <SocialMedia />
       <header className={`sticky top-0 z-50 ${scrolled ? "bg-white/80 backdrop-blur-lg shadow-md" : "bg-white/90"}`}>
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16">
@@ -95,21 +95,32 @@ export function Header() {
                 <div
                   key={menu.name}
                   className="relative"
-                  onMouseEnter={() => setOpenMenu(menu.name)}
-                  onMouseLeave={() => setOpenMenu(null)}
+                  onMouseEnter={() => menu.children && setOpenMenu(menu.name)}
+                  onMouseLeave={() => menu.children && setOpenMenu(null)}
                 >
-                  <button className="flex items-center gap-2 text-gray-800 font-semibold hover:text-red-600">
-                    {menu.name} {menu.children && <ChevronDown size={16} />}
-                  </button>
+                  {menu.children ? (
+                    <button className="flex items-center gap-2 text-gray-800 font-semibold hover:text-red-600">
+                      {menu.name} {menu.children && <ChevronDown size={16} />}
+                    </button>
+                  ) : (
+                    <Link
+                      href={menu.href}
+                      className="flex items-center gap-2 text-gray-800 font-semibold hover:text-red-600"
+                    >
+                      {menu.name}
+                    </Link>
+                  )}
+
                   <AnimatePresence>
                     {openMenu === menu.name && menu.children && (
                       <motion.div
                         initial={{ opacity: 0, y: -30 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -30 }}
-                        className={`fixed left-0 ${scrolled?"top-[63px] bg-white/80 backdrop-blur-lg shadow-md": "top-[113px] bg-white/90"} w-full  border-t shadow-xl py-6 z-50 flex flex-col items-start`}
-                        // onMouseEnter={() => setOpenMenu(menu.name)}
-                        // onMouseLeave={() => setOpenMenu(null)}
+                        className={`fixed left-0 ${scrolled
+                            ? "top-[63px] bg-white/80 backdrop-blur-lg shadow-md"
+                            : "top-[113px] bg-white/90"
+                          } w-full  border-t shadow-xl py-6 z-50 flex flex-col items-start`}
                       >
                         <div className="max-w-7xl mx-auto px-8 flex flex-col gap-4 items-start w-full">
                           {menu.children.map((sub) => (
@@ -128,6 +139,7 @@ export function Header() {
                   </AnimatePresence>
                 </div>
               ))}
+
             </nav>
             <div className="hidden md:flex items-center gap-4">
               {loading ? (

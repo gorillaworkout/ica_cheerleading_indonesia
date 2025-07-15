@@ -8,6 +8,7 @@ import { HeroSection } from "../home/hero-section"
 import {championshipHeroSlides} from "@/utils/dummyhero"
 import { convertToRupiah, getPriceRangeInRupiah } from "@/lib/utils"
 import { CompetitionProps } from "@/types/types"
+import { HeroImageSection } from "@/components/home/hero-image-section"
 // interface DivisionDetailsProps {
 //   id: string
 //   name: string
@@ -47,9 +48,9 @@ export function CompetitionDetails({ competition }: CompetitionDetailsProps) {
             </div>
           </div>
         </div> */}
-        <div className="w-full h-full">
-          <HeroSection heroSlides={championshipHeroSlides} showTextAndButtons={false} />
-        </div>
+        {/* <div className="w-full h-full">
+          <HeroImageSection heroSlides={championshipHeroSlides} showTextAndButtons={false} />
+        </div> */}
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content */}
