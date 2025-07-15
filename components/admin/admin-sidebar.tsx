@@ -7,9 +7,10 @@ import { LayoutDashboard, Trophy, Users, Settings, Plus, BarChart3, UserCheck, C
 
 const navigation = [
   { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
+  { name: "Add Division", href: "/admin/divisions/add", icon: Trophy },
   { name: "Add Competition", href: "/admin/competitions/add", icon: Plus },
   { name: "Add Results", href: "/admin/results/add", icon: BarChart3 },
-  { name: "Add Division", href: "/admin/divisions/add", icon: Trophy },
+  { name: "Add Image Public", href: "/admin/gallery", icon: BarChart3 },
   { name: "Manage Roles", href: "/admin/roles", icon: UserCheck },
   { name: "All Competitions", href: "/admin/competitions", icon: Calendar },
   { name: "Users", href: "/admin/users", icon: Users },

@@ -1,28 +1,9 @@
 "use client";
 
-import React from "react";
-import { motion } from "framer-motion";
-import Image from "next/image";
+import { useEffect } from "react";
+import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
+import { fetchPublicImages } from "@/features/publicImages/publicImagesSlice";
 
-const logos = [
-  {
-    name: "International Cheer Union",
-    short: "ICU",
-    img: "/logo/icu-logo.avif",
-  },
-  {
-    name: "Asian Cheer Union",
-    short: "ACU",
-    img: "/logo/acu-logo.jpg",
-  },
-  {
-    name: "Indonesian Cheer Association",
-    short: "ICA",
-    img: "/logo/ica-logo.png",
-  },
-];
-
-// Animation Variants
 const containerVariants = {
   hidden: {},
   visible: {
@@ -39,12 +20,26 @@ const cardVariants = {
     y: 0,
     transition: {
       duration: 0.6,
-      ease: [0.25, 0.1, 0.25, 1] as const, // ✅ SOLUSI TYPE
+      ease: [0.25, 0.1, 0.25, 1] as const,
     },
   },
-}
+};
+
+const logos = [
+  { name: "163-icu-logo-new.png", short: "ICU" },
+  { name: "630-acu-logo.jpg", short: "ACU" },
+  { name: "072-ica-logo.png", short: "ICA" },
+];
 
 export default function CheerOrganizationsSection() {
+  const dispatch = useAppDispatch()
+
+  const { images } = useAppSelector((state) => state.publicImages)
+  useEffect(() => {
+    if (images.length === 0) {
+      dispatch(fetchPublicImages())
+    }
+  }, [dispatch, images.length])
   return (
     <section className="py-12 bg-gray-50">
       <div className="container mx-auto px-4">
@@ -52,34 +47,22 @@ export default function CheerOrganizationsSection() {
           Official Cheerleading Organizations
         </h2>
 
-        <motion.div
-          className="grid grid-cols-1 md:grid-cols-3 gap-8"
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.3 }}
-        >
-          {logos.map((logo) => (
-            <motion.div
-              key={logo.short}
-              className="bg-white rounded-2xl p-6 flex flex-col items-center justify-center border shadow-md hover:shadow-xl transition-all"
-              variants={cardVariants}
-              whileHover={{ scale: 1.03 }}
-            >
-              <div className="relative w-36 h-36 md:w-48 md:h-48 mb-4">
-                <Image
-                  src={logo.img}
-                  alt={logo.name}
-                  fill
-                  className="object-contain"
-                  sizes="(min-width: 768px) 12rem, 9rem"
-                />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {logos.map((logo) => {
+            const matchedImg = images.find((img) => img.name === logo.name)
+            return (
+              <div key={logo.name} className="bg-white rounded-2xl p-6 flex flex-col items-center justify-center border shadow-md hover:shadow-xl transition-all">
+                {matchedImg && (
+                  <img
+                    src={matchedImg.url}
+                    alt={logo.name}
+                    className="w-36 h-36 md:w-48 md:h-48 object-contain mb-4"
+                  />
+                )}
               </div>
-              <h3 className="text-xl font-semibold text-center">{logo.short}</h3>
-              <p className="text-center text-gray-600">{logo.name}</p>
-            </motion.div>
-          ))}
-        </motion.div>
+            )
+          })}
+        </div>
       </div>
     </section>
   );

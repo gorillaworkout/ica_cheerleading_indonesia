@@ -53,19 +53,19 @@ export interface newsImageProps {
 }
 export const jurnasHeroSlides:newsImageProps[] = [
   {
-    src: "/icanc2025/athlete.jpg",
+    src: "1752562539612-jurnasathlete.jpeg",
     alt: "ICA ATHLETE",
     // title: "Excellence in Motion",
     // subtitle: "Join the premier cheerleading competitions worldwide",
   },
   {
-    src: "/icanc2025/judge.jpg",
+    src: "1752562538958-alljudge.jpeg",
     alt: "ICA JUDGE",
     // title: "Achieve Greatness",
     // subtitle: "Compete at the highest level and showcase your skills",
   },
   {
-    src: "/icanc2025/bdg.jpg",
+    src: "1752562538485-alljudeathlete.jpeg",
     alt: "BDG",
     // title: "Train with the Best",
     // subtitle: "Learn from certified coaches and experienced judges",
