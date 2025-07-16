@@ -102,5 +102,5 @@ export interface CompetitionProps {
   location: string
   registrationOpen: boolean
   registrationDeadline: string
-  divisions: DivisionDetailsProps[]
+  // divisions: DivisionDetailsProps[]
 }

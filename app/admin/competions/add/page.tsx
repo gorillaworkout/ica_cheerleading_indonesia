@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
 import { AddCompetitionForm } from "@/components/admin/add-competition-form"
+import { CompetitionsTable } from "@/components/admin/competitions-table"
 
 export const metadata: Metadata = {
   title: "Add Competition",
@@ -10,7 +11,7 @@ export const metadata: Metadata = {
   },
 }
 
-export default function AddCompetitionPage() {
+export default function AddCompetionPage() {
   return (
     <div>
       <div className="mb-8">
@@ -18,6 +19,9 @@ export default function AddCompetitionPage() {
         <p className="text-gray-600 mt-2">Create a new competition event</p>
       </div>
       <AddCompetitionForm />
+      <div className="mt-12">
+        <CompetitionsTable />
+      </div>
     </div>
   )
 }
