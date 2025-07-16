@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -8,22 +8,17 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Plus } from "lucide-react";
 import { supabase } from "@/lib/supabase";
-
-export interface DivisionDetailsProps {
-  id: string;
-  name: string;
-  ageGroup: string;
-  skillLevel: string;
-}
+import { DivisionDetailsProps } from "@/types/types";
+import { v4 as uuidv4 } from "uuid";
 
 export function AddDivisionForm() {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState<DivisionDetailsProps>({
-    id: "",
+    id: uuidv4(),
     name: "",
-    ageGroup: "",
-    skillLevel: "",
+    age_group: "",
+    skill_level: "",
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -36,7 +31,13 @@ export function AddDivisionForm() {
     setIsSubmitting(true);
 
     try {
-      const { data, error } = await supabase.from("divisions").insert([formData]);
+      const { data, error } = await supabase.from("divisions").insert([
+        {
+          ...formData,
+          id: uuidv4(),
+          created_at: new Date().toISOString(),
+        },
+      ]);
 
       if (error) {
         throw error;
@@ -49,12 +50,13 @@ export function AddDivisionForm() {
 
       // Reset form
       setFormData({
-        id: "",
+        id: uuidv4(),
         name: "",
-        ageGroup: "",
-        skillLevel: "",
+        age_group: "",
+        skill_level: "",
       });
     } catch (error) {
+      console.log(error, "error");
       toast({
         title: "Error",
         description: "Failed to add division. Please try again.",
@@ -87,22 +89,22 @@ export function AddDivisionForm() {
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="ageGroup">Age Group *</Label>
+            <Label htmlFor="age_group">Age Group *</Label>
             <Input
-              id="ageGroup"
-              name="ageGroup"
-              value={formData.ageGroup}
+              id="age_group"
+              name="age_group"
+              value={formData.age_group}
               onChange={handleInputChange}
               placeholder="e.g., 15-18"
               required
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="skillLevel">Skill Level *</Label>
+            <Label htmlFor="skill_level">Skill Level *</Label>
             <Input
-              id="skillLevel"
-              name="skillLevel"
-              value={formData.skillLevel}
+              id="skill_level"
+              name="skill_level"
+              value={formData.skill_level}
               onChange={handleInputChange}
               placeholder="e.g., Elite"
               required
@@ -115,7 +117,11 @@ export function AddDivisionForm() {
         <Button type="button" variant="outline" className="bg-transparent">
           Cancel
         </Button>
-        <Button type="submit" disabled={isSubmitting} className="bg-red-600 hover:bg-red-700">
+        <Button
+          type="submit"
+          disabled={isSubmitting}
+          className="bg-red-600 hover:bg-red-700"
+        >
           {isSubmitting ? "Adding..." : "Add Division"}
         </Button>
       </div>

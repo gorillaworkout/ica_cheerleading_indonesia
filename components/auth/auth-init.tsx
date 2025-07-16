@@ -9,6 +9,7 @@ import {
   clearProfile,
 } from "@/features/auth/authSlice"
 import { fetchPublicImages } from "@/features/publicImages/publicImagesSlice"
+import { fetchDivisions } from "@/features/divisions/divisionsSlice"
 
 export function AuthInit() {
   const dispatch = useAppDispatch()
@@ -17,6 +18,7 @@ export function AuthInit() {
     // Initial fetch on component mount
     dispatch(fetchSessionAndProfile())
     dispatch(fetchPublicImages())
+    dispatch(fetchDivisions())
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
@@ -25,6 +27,7 @@ export function AuthInit() {
           dispatch(setAuthState({ session, user: session.user }))
           dispatch(fetchSessionAndProfile())
           dispatch(fetchPublicImages())
+          dispatch(fetchDivisions())
         } else if (event === "SIGNED_OUT") {
           console.log("SIGNED OUT 26 auth-init")
           dispatch(setAuthState({ session: null, user: null }))

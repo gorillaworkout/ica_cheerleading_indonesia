@@ -1,14 +1,12 @@
+"use client"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Calendar, MapPin, Users, Clock, Trophy } from "lucide-react"
 import Link from "next/link"
-import Image from "next/image"
-import { HeroSection } from "../home/hero-section"
-import {championshipHeroSlides} from "@/utils/dummyhero"
-import { convertToRupiah, getPriceRangeInRupiah } from "@/lib/utils"
 import { CompetitionProps } from "@/types/types"
-import { HeroImageSection } from "@/components/home/hero-image-section"
+import { useAppSelector } from "@/lib/redux/hooks"
+
 // interface DivisionDetailsProps {
 //   id: string
 //   name: string
@@ -34,6 +32,8 @@ interface CompetitionDetailsProps {
 }
 
 export function CompetitionDetails({ competition }: CompetitionDetailsProps) {
+  const { divisions } = useAppSelector((state) => state.divisions);
+
   return (
     <div className="py-12 bg-white">
       <div className="container mx-auto px-4">
@@ -90,7 +90,7 @@ export function CompetitionDetails({ competition }: CompetitionDetailsProps) {
                     <Users className="h-5 w-5 text-red-600" />
                     <div>
                       <p className="font-medium">Divisions</p>
-                      <p className="text-gray-600">{competition.divisions.length} Available</p>
+                      <p className="text-gray-600">{divisions.length} Available</p>
                     </div>
                   </div>
                 </div>
@@ -104,17 +104,17 @@ export function CompetitionDetails({ competition }: CompetitionDetailsProps) {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4 max-h-[500px] overflow-scroll">
-                  {competition.divisions.map((division) => (
+                  {divisions.map((division) => (
                     <div key={division.id} className="border rounded-lg p-4 hover:bg-gray-50 transition-colors">
                       <div className="flex justify-between items-start mb-2">
                         <h3 className="font-semibold text-lg">{division.name}</h3>
                       </div>
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-600">
                         <div>
-                          <span className="font-medium">Age Group:</span> {division.ageGroup}
+                          <span className="font-medium">Age Group:</span> {division.age_group}
                         </div>
                         <div>
-                          <span className="font-medium">Skill Level:</span> {division.skillLevel}
+                          <span className="font-medium">Skill Level:</span> {division.skill_level}
                         </div>        
                       </div>
                     </div>
@@ -175,7 +175,7 @@ export function CompetitionDetails({ competition }: CompetitionDetailsProps) {
               <CardContent className="space-y-3 text-sm">
                 <div className="flex justify-between">
                   <span className="text-gray-600">Total Divisions:</span>
-                  <span className="font-medium">{competition.divisions.length}</span>
+                  <span className="font-medium">{divisions.length}</span>
                 </div>
                 {/* <div className="flex justify-between">
                   <span className="text-gray-600">Price Range:</span>

@@ -20,11 +20,8 @@ export interface Competition {
 export interface Division {
   id: string
   name: string
-  ageGroup: string
-  skillLevel: string
-  price: number
-  maxTeams: number
-  competitionId: string
+  age_group: string
+  skill_level: string
 }
 
 export interface Team {
@@ -92,8 +89,8 @@ export interface Database {
 export interface DivisionDetailsProps {
   id: string
   name: string
-  ageGroup: string
-  skillLevel: string
+  age_group: string
+  skill_level: string
 }
 
 export interface CompetitionProps {
