@@ -22,6 +22,7 @@ export interface Division {
   name: string
   age_group: string
   skill_level: string
+  queue: number
 }
 
 export interface Team {

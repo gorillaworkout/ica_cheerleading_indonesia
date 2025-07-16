@@ -31,10 +31,22 @@ export function AddDivisionForm() {
     setIsSubmitting(true);
 
     try {
+      // Fetch the current total number of divisions
+      const { count, error: countError } = await supabase
+        .from("divisions")
+        .select("id", { count: "exact" });
+
+      if (countError) {
+        throw countError;
+      }
+
+      const queue = (count ?? 0) + 1; // Calculate the queue value with fallback
+
       const { data, error } = await supabase.from("divisions").insert([
         {
           ...formData,
           id: uuidv4(),
+          queue,
           created_at: new Date().toISOString(),
         },
       ]);

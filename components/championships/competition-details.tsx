@@ -104,21 +104,24 @@ export function CompetitionDetails({ competition }: CompetitionDetailsProps) {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4 max-h-[500px] overflow-scroll">
-                  {divisions.map((division) => (
-                    <div key={division.id} className="border rounded-lg p-4 hover:bg-gray-50 transition-colors">
-                      <div className="flex justify-between items-start mb-2">
-                        <h3 className="font-semibold text-lg">{division.name}</h3>
-                      </div>
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-600">
-                        <div>
-                          <span className="font-medium">Age Group:</span> {division.age_group}
+                  {divisions
+                    ?.slice() // Create a copy of the array to avoid mutating the original state
+                    .sort((a, b) => a.queue - b.queue) // Sort divisions by queue
+                    .map((division) => (
+                      <div key={division.id} className="border rounded-lg p-4 hover:bg-gray-50 transition-colors">
+                        <div className="flex justify-between items-start mb-2">
+                          <h3 className="font-semibold text-lg">{division.name}</h3>
                         </div>
-                        <div>
-                          <span className="font-medium">Skill Level:</span> {division.skill_level}
-                        </div>        
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-600">
+                          <div>
+                            <span className="font-medium">Age Group:</span> {division.age_group}
+                          </div>
+                          <div>
+                            <span className="font-medium">Skill Level:</span> {division.skill_level}
+                          </div>        
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    ))}
                 </div>
               </CardContent>
             </Card>

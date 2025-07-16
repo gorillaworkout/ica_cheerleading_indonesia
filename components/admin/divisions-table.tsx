@@ -116,10 +116,10 @@ const handleSaveEdit = async (updatedDivision: UpdatedDivision): Promise<void> =
         <tbody>
           {divisions
             ?.slice() // Create a copy of the array to avoid mutating the original state
-            .sort((a, b) => a.name.localeCompare(b.name))
+            .sort((a, b) => a.queue - b.queue) // Sort divisions by queue
             .map((division, id) => (
               <tr key={division.id}>
-                <td className="border border-gray-300 px-4 py-2">{id+1}</td> 
+                <td className="border border-gray-300 px-4 py-2">{id + 1}</td>
                 <td className="border border-gray-300 px-4 py-2">{division.name}</td>
                 <td className="border border-gray-300 px-4 py-2">{division.age_group}</td>
                 <td className="border border-gray-300 px-4 py-2">{division.skill_level}</td>
