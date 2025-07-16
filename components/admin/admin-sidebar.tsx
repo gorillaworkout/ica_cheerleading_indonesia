@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
-import { LayoutDashboard, Trophy, Users, Settings, Plus, BarChart3, UserCheck, Calendar, Menu, X } from "lucide-react"
+import { LayoutDashboard, Trophy, Users, Settings, Plus, Medal, UserCheck, Calendar, Menu, X,Image } from "lucide-react"
 import { useState } from "react"
 import { useMediaQuery } from "@/hooks/use-media-query"
 
@@ -11,11 +11,10 @@ const navigation = [
 	{ name: "Dashboard", href: "/admin", icon: LayoutDashboard },
 	{ name: "Add Division", href: "/admin/divisions/add", icon: Trophy },
 	{ name: "Add Competition", href: "/admin/competitions/add", icon: Plus },
-	{ name: "Add Results", href: "/admin/results/add", icon: BarChart3 },
-	{ name: "Add Image Public", href: "/admin/gallery", icon: BarChart3 },
+	{ name: "Add Results", href: "/admin/results/add", icon: Medal },
+	{ name: "Add Image Public", href: "/admin/gallery", icon: Image },
 	{ name: "Manage Roles", href: "/admin/roles", icon: UserCheck },
-	{ name: "All Competitions", href: "/admin/competitions", icon: Calendar },
-	{ name: "Users", href: "/admin/users", icon: Users },
+	{ name: "Manage Users", href: "/admin/users", icon: Users },
 	{ name: "Settings", href: "/admin/settings", icon: Settings },
 ]
 

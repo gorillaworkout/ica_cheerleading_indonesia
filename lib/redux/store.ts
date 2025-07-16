@@ -3,6 +3,7 @@ import authReducer from "@/features/auth/authSlice";
 import counterReducer from "@/features/counter/counterSlice";
 import publicImagesReducer from '@/features/publicImages/publicImagesSlice'
 import divisionsReducer from "@/features/divisions/divisionsSlice";
+import competitionsReducer from "@/features/competitions/competitionsSlice";
 
 export const store = configureStore({
   reducer: {
@@ -10,6 +11,7 @@ export const store = configureStore({
     counter: counterReducer,
     publicImages: publicImagesReducer,
     divisions: divisionsReducer,
+    competitions: competitionsReducer, // Added competitions reducer
   },
 });
 

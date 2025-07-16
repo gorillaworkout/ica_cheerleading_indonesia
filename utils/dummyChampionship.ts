@@ -62,6 +62,7 @@ export const competitionsDetails = [
         location: "Hall Indoor Sijalak Harupat, Bandung, INDONESIA",
         registrationOpen: false,
         registrationDeadline: "2024-05-01",
+        slug:"lomba-cari-kodok-2025"
         // divisions: [
         //     { id: "1", name: "Team Cheer Beginner", age_group: "7-10", skill_level: "Beginner",  },
         //     { id: "2", name: "Team Cheer Novice", age_group: "8-12", skill_level: "Novice",  },

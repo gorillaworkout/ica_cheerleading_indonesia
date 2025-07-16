@@ -4,19 +4,20 @@ import { Footer } from "@/components/layout/footer"
 import { CompetitionDetails } from "@/components/championships/competition-details"
 import { CompetitionResults } from "@/components/championships/competition-results"
 import { notFound } from "next/navigation"
-import {competitionsDetails} from '@/utils/dummyChampionship'
+import { fetchCompetitions } from "@/lib/fetchCompetitions"
 import BestTeamSummary from "@/components/championships/best-team-medal-result"
 import { HeroSection } from "@/components/home/hero-section"
 import { jurnasHeroSlides } from "@/utils/dummyhero"
 import ProvinceRankingPage from "@/components/championships/province-point"
 import { HeroImageSection } from "@/components/home/hero-image-section"
 interface Props {
-  params: Promise<{ id: string }>
+  params: Promise<{ slug: string }>
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { id } = await params
-  const competition = competitionsDetails.find((comp) => comp.id === id)
+  const { slug } = await params
+  const competitions = await fetchCompetitions()
+  const competition = competitions.find((comp) => comp.slug === slug)
 
   if (!competition) {
     return {
@@ -35,8 +36,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function CompetitionPage({ params }: Props) {
-  const { id } = await params
-  const competition = competitionsDetails.find((comp) => comp.id === id)
+  const { slug } = await params
+  const competitions = await fetchCompetitions()
+  const competition = competitions.find((comp) => comp.slug === slug)
 
   if (!competition) {
     notFound()
@@ -50,9 +52,9 @@ export default async function CompetitionPage({ params }: Props) {
           <HeroImageSection heroSlides={jurnasHeroSlides} showTextAndButtons={false} />
         </div>
         <CompetitionDetails competition={competition} />
-        <ProvinceRankingPage/>
-        <BestTeamSummary/>
-        <CompetitionResults competitionId={id} />
+        <ProvinceRankingPage />
+        <BestTeamSummary />
+        <CompetitionResults competitionId={competition.id} />
       </main>
       <Footer />
     </div>
@@ -60,7 +62,8 @@ export default async function CompetitionPage({ params }: Props) {
 }
 
 export async function generateStaticParams() {
-  return competitionsDetails.map((competition) => ({
-    id: competition.id,
+  const competitions = await fetchCompetitions()
+  return competitions.map((competition) => ({
+    slug: competition.slug,
   }))
 }

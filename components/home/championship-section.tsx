@@ -1,12 +1,18 @@
+"use client";
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Calendar, ArrowRight, MapPin, Users, Banknote } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
-import { news } from "@/utils/dummyNews"
-import { competitions } from "@/utils/dummyChampionship"
+import { useSelector } from "react-redux";
+import { RootState } from "@/lib/redux/store";
 import { Badge } from "../ui/badge"
+import { getPublicImageUrl } from "@/utils/getPublicImageUrl";
+
 export function ChampionshipSection() {
+  const competitions = useSelector((state: RootState) => state.competitions.competitions);
+  const profile = useSelector((state: RootState) => state.auth.profile);
 
   return (
     <section className="py-16 bg-white">
@@ -19,11 +25,11 @@ export function ChampionshipSection() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {competitions.slice(0,2).map((competition) => (
+          {competitions.slice(0, 2).map((competition) => (
             <Card key={competition.id} className="overflow-hidden hover:shadow-lg transition-shadow">
               <div className="relative h-48">
                 <Image
-                  src={competition.image || "/placeholder.svg"}
+                  src={getPublicImageUrl(competition.image) || "/placeholder.svg"}
                   alt={competition.name}
                   fill
                   className="object-cover"

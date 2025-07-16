@@ -72,23 +72,6 @@ export function CompetitionsTable() {
     setEditCompetition(competition);
   };
 
-  const handleAddCompetition = async (newCompetition: Partial<Competition>): Promise<void> => {
-    try {
-      const { error } = await supabase.from("competitions").insert(newCompetition);
-      if (error) {
-        console.error("Error adding competition:", error);
-        return;
-      }
-      toast({
-        title: "Add Successful",
-        description: "The competition has been added successfully.",
-      });
-      fetchcompetitions();
-    } catch (err) {
-      console.error("Unexpected error:", err);
-    }
-  };
-
   const handleSaveEdit = async (updatedCompetition: Partial<Competition>): Promise<void> => {
     try {
       let newImageUrl = updatedCompetition.image;
@@ -121,9 +104,13 @@ export function CompetitionsTable() {
         newImageUrl = competitions.find((comp) => comp.id === updatedCompetition.id)?.image;
       }
 
+      const updatedSlug = updatedCompetition.name
+        ? updatedCompetition.name.toLowerCase().replace(/\s+/g, "-")
+        : updatedCompetition.slug;
+
       const { error } = await supabase
         .from("competitions")
-        .update({ ...updatedCompetition, image: newImageUrl })
+        .update({ ...updatedCompetition, image: newImageUrl, slug: updatedSlug })
         .eq("id", updatedCompetition.id);
 
       if (error) {
@@ -144,7 +131,7 @@ export function CompetitionsTable() {
 
   return (
     <div className="overflow-x-auto">
-      <h2 className="text-xl font-bold mb-4">competitions</h2>
+      <h2 className="text-xl font-bold mb-4">Competitions</h2>
       {isLoading ? (
         <FullScreenLoader />
       ) : (

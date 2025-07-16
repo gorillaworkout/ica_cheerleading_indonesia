@@ -109,6 +109,7 @@ export function AddCompetitionForm() {
         created_by: user?.user?.id,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
+        slug: formData.name.toLowerCase().replace(/\s+/g, "-"),
       })
 
       if (error) {
@@ -156,8 +157,8 @@ export function AddCompetitionForm() {
             <span>Competition Information</span>
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <CardContent className="space-y-6">
+          <div className="grid grid-cols-1 gap-6">
             <div className="space-y-2">
               <Label htmlFor="name">Competition Name *</Label>
               <Input
@@ -180,67 +181,63 @@ export function AddCompetitionForm() {
                 required
               />
             </div>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="description">Description</Label>
-            <Textarea
-              id="description"
-              name="description"
-              value={formData.description}
-              onChange={handleInputChange}
-              placeholder="Describe the competition..."
-              rows={3}
-            />
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="date">Competition Date *</Label>
-              <Input
-                id="date"
-                name="date"
-                type="date"
-                value={formData.date}
+              <Label htmlFor="description">Description</Label>
+              <Textarea
+                id="description"
+                name="description"
+                value={formData.description}
                 onChange={handleInputChange}
-                required
+                placeholder="Describe the competition..."
+                rows={3}
               />
             </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <Label htmlFor="date">Competition Date *</Label>
+                <Input
+                  id="date"
+                  name="date"
+                  type="date"
+                  value={formData.date}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="registrationDeadline">Registration Deadline *</Label>
+                <Input
+                  id="registrationDeadline"
+                  name="registrationDeadline"
+                  type="date"
+                  value={formData.registrationDeadline}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+            </div>
+            {validationError && (
+              <p className="text-red-600">{validationError}</p>
+            )}
             <div className="space-y-2">
-              <Label htmlFor="registrationDeadline">Registration Deadline *</Label>
+              <Label htmlFor="image">Competition Image</Label>
               <Input
-                id="registrationDeadline"
-                name="registrationDeadline"
-                type="date"
-                value={formData.registrationDeadline}
-                onChange={handleInputChange}
-                required
+                id="image"
+                name="image"
+                type="file"
+                ref={imageInputRef}
+                accept="image/*"
               />
             </div>
-          </div>
-
-          {validationError && (
-            <p className="text-red-600">{validationError}</p>
-          )}
-
-          <div className="space-y-2">
-            <Label htmlFor="image">Competition Image</Label>
-            <Input
-              id="image"
-              name="image"
-              type="file"
-              ref={imageInputRef}
-              accept="image/*"
-            />
           </div>
         </CardContent>
       </Card>
 
       {/* Submit Button */}
       <div className="flex justify-end space-x-4">
-        <Button type="button" variant="outline" className="bg-transparent">
+        {/* <Button type="button" variant="outline" className="bg-transparent">
           Cancel
-        </Button>
+        </Button> */}
         <Button
           type="submit"
           disabled={isSubmitting || validationError !== ""}

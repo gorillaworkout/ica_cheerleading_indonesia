@@ -10,21 +10,32 @@ import { Calendar, MapPin, Users, Banknote, Search } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { competitions } from "@/utils/dummyChampionship"
-import { getPriceRangeInRupiah } from "@/lib/utils"
-import { CompetitionProps } from "@/types/types"
+import { useSelector } from "react-redux"
+import { RootState } from "@/lib/redux/store"
+import { getPublicImageUrl } from "@/utils/getPublicImageUrl"
 
 export function ChampionshipsList() {
+  const competitions = useSelector((state: RootState) => state.competitions.competitions)
   const [searchTerm, setSearchTerm] = useState("")
   const [yearFilter, setYearFilter] = useState<string>("all")
 
   const filteredCompetitions = useMemo(() => {
-    return competitions.filter((comp) => {
-      const matchYear = yearFilter === "all" || new Date(comp.date).getFullYear().toString() === yearFilter
-      const matchName = comp.name.toLowerCase().includes(searchTerm.toLowerCase())
-      return matchYear && matchName
-    })
-  }, [searchTerm, yearFilter])
+    return competitions
+      .map((competition) => {
+        const competitionDate = new Date(competition.date)
+        const status = new Date() > competitionDate ? "Registration Closed" : "Registration Open"
+
+        return {
+          ...competition,
+          status,
+        }
+      })
+      .filter((comp) => {
+        const matchYear = yearFilter === "all" || new Date(comp.date).getFullYear().toString() === yearFilter
+        const matchName = comp.name.toLowerCase().includes(searchTerm.toLowerCase())
+        return matchYear && matchName
+      })
+  }, [competitions, searchTerm, yearFilter])
 
   const uniqueYears = Array.from(new Set(competitions.map((c) => new Date(c.date).getFullYear().toString()))).sort(
     (a, b) => Number(b) - Number(a)
@@ -81,7 +92,7 @@ export function ChampionshipsList() {
             <Card key={competition.id} className="overflow-hidden hover:shadow-lg transition-shadow">
               <div className="relative h-48">
                 <Image
-                  src={competition.image || "/placeholder.svg"}
+                  src={getPublicImageUrl(competition.image) || "/placeholder.svg"}
                   alt={competition.name}
                   fill
                   className="object-cover"
@@ -131,7 +142,7 @@ export function ChampionshipsList() {
                 )}
 
                 <div className="flex space-x-2">
-                  <Link href={`/championships/${competition.id}`} className="flex-1">
+                  <Link href={`/championships/${competition.slug}`} className="flex-1">
                     <Button variant="outline" className="w-full bg-transparent">
                       View Details
                     </Button>

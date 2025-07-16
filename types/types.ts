@@ -15,6 +15,7 @@ export interface Competition {
   divisions: Division[]
   registrationOpen: boolean
   createdAt: string
+  slug:string
 }
 
 export interface Division {
