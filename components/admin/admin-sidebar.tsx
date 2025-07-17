@@ -3,14 +3,15 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
-import { LayoutDashboard, Trophy, Users, Settings, Plus, Medal, UserCheck, Calendar, Menu, X,Image } from "lucide-react"
+import { LayoutDashboard, Trophy, Users, Settings, Anvil, Medal, UserCheck, Building2, Menu, X,Image } from "lucide-react"
 import { useState } from "react"
 import { useMediaQuery } from "@/hooks/use-media-query"
 
 const navigation = [
 	{ name: "Dashboard", href: "/admin", icon: LayoutDashboard },
+	{ name: "Add Province", href: "/admin/province/add", icon: Building2 },
 	{ name: "Add Division", href: "/admin/divisions/add", icon: Trophy },
-	{ name: "Add Competition", href: "/admin/competitions/add", icon: Plus },
+	{ name: "Add Competition", href: "/admin/competitions/add", icon: Anvil },
 	{ name: "Add Results", href: "/admin/results/add", icon: Medal },
 	{ name: "Add Image Public", href: "/admin/gallery", icon: Image },
 	{ name: "Manage Roles", href: "/admin/roles", icon: UserCheck },

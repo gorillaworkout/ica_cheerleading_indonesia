@@ -15,7 +15,6 @@ import { supabase } from "@/lib/supabase";
 import { Edit, Trash } from "lucide-react";
 import { Modal } from "@/components/ui/modal";
 import { FullScreenLoader } from "@/components/ui/fullScreenLoader";
-
 type Competition = {
   id: string;
   name: string;
@@ -108,9 +107,24 @@ export function CompetitionsTable() {
         ? updatedCompetition.name.toLowerCase().replace(/\s+/g, "-")
         : updatedCompetition.slug;
 
+      // Check and update registration_open based on the date and registration deadline
+      const today = new Date();
+      const eventDate = updatedCompetition.date ? new Date(updatedCompetition.date) : null;
+      const registrationDeadline = updatedCompetition.registration_deadline ? new Date(updatedCompetition.registration_deadline) : null;
+
+      let registrationOpen = false;
+      if (eventDate && registrationDeadline) {
+        registrationOpen = today <= registrationDeadline && today < eventDate;
+      }
+
       const { error } = await supabase
         .from("competitions")
-        .update({ ...updatedCompetition, image: newImageUrl, slug: updatedSlug })
+        .update({
+          ...updatedCompetition,
+          image: newImageUrl,
+          slug: updatedSlug,
+          registration_open: registrationOpen,
+        })
         .eq("id", updatedCompetition.id);
 
       if (error) {
@@ -158,7 +172,7 @@ export function CompetitionsTable() {
                   <td className="border border-gray-300 px-4 py-2">{competition.name}</td>
                   <td className="border border-gray-300 px-4 py-2">{competition.location}</td>
                   <td className="border border-gray-300 px-4 py-2">{competition.date}</td>
-                   <td className="border border-gray-300 px-4 py-2">{competition.registration_deadline}</td>
+                  <td className="border border-gray-300 px-4 py-2">{competition.registration_deadline}</td>
                   <td className="border border-gray-300 px-4 py-2 flex justify-center space-x-2">
                     <Edit
                       onClick={() => handleEdit(competition)}
@@ -194,6 +208,16 @@ export function CompetitionsTable() {
               />
             </div>
             <div className="flex flex-col">
+              <label className="text-sm font-medium text-gray-700 mb-1">Description:</label>
+              <textarea
+                value={editCompetition?.description || ""}
+                onChange={(e) =>
+                  setEditCompetition({ ...editCompetition, description: e.target.value })
+                }
+                className="px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-red-500"
+              />
+            </div>
+            <div className="flex flex-col">
               <label className="text-sm font-medium text-gray-700 mb-1">Location:</label>
               <input
                 type="text"
@@ -209,9 +233,21 @@ export function CompetitionsTable() {
               <input
                 type="date"
                 value={editCompetition?.date || ""}
-                onChange={(e) =>
-                  setEditCompetition({ ...editCompetition, date: e.target.value })
-                }
+                onChange={(e) => {
+                  const newDate = e.target.value;
+                  if (
+                    editCompetition?.registration_deadline &&
+                    new Date(newDate) < new Date(editCompetition.registration_deadline)
+                  ) {
+                    toast({
+                      title: "Error",
+                      description: "Date cannot be earlier than the registration deadline.",
+                      variant: "destructive",
+                    });
+                    return;
+                  }
+                  setEditCompetition({ ...editCompetition, date: newDate });
+                }}
                 className="px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-red-500"
               />
             </div>
@@ -220,9 +256,22 @@ export function CompetitionsTable() {
               <input
                 type="date"
                 value={editCompetition?.registration_deadline || ""}
-                onChange={(e) =>
-                  setEditCompetition({ ...editCompetition, registration_deadline: e.target.value })
-                }
+                onChange={(e) => {
+                  const newDeadline = e.target.value;
+                  if (
+                    editCompetition?.date &&
+                    new Date(newDeadline) > new Date(editCompetition.date)
+                  ) {
+                    toast({
+                      title: "Error",
+                      description: "Registration deadline cannot be later than the event date.",
+                      variant: "destructive",
+                    });
+
+                    return;
+                  }
+                  setEditCompetition({ ...editCompetition, registration_deadline: newDeadline });
+                }}
                 className="px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-red-500"
               />
             </div>

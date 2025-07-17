@@ -141,6 +141,18 @@ export const competitionsDetails = [
     //   },
 ]
 
+export const mockResults2 = {
+   "1": [
+      {
+      division:"Double Performance Cheer Freestyle Pom Novice",
+      results:[
+        {placement: 1, team:"ORACLE", score: 68.8, province: "West Java"},
+        {placement: 2, team:"MAC", score: 61.3, province: "East Java"},
+        {placement: 3, team:"SCARLET MACAROON", score: 55.2, province: "South Kalimantan"},
+      ]
+    }
+  ]
+}
 
 export const mockResults = {
   "1": [
