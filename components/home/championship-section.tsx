@@ -12,7 +12,6 @@ import { getPublicImageUrl } from "@/utils/getPublicImageUrl";
 
 export function ChampionshipSection() {
   const competitions = useSelector((state: RootState) => state.competitions.competitions);
-  const profile = useSelector((state: RootState) => state.auth.profile);
 
   return (
     <section className="py-16 bg-white">
