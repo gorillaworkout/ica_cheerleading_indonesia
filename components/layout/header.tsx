@@ -53,6 +53,7 @@ export function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [openMenu, setOpenMenu] = useState<string | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [hoverTimeout, setHoverTimeout] = useState<NodeJS.Timeout | null>(null);
   const dispatch = useAppDispatch();
   const router = useRouter();
   const { user, profile, loading } = useAppSelector((state) => state.auth);
@@ -65,6 +66,30 @@ export function Header() {
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (hoverTimeout) {
+        clearTimeout(hoverTimeout);
+      }
+    };
+  }, [hoverTimeout]);
+
+  const handleMouseEnter = (menuName: string) => {
+    if (hoverTimeout) {
+      clearTimeout(hoverTimeout);
+      setHoverTimeout(null);
+    }
+    setOpenMenu(menuName);
+  };
+
+  const handleMouseLeave = () => {
+    const timeout = setTimeout(() => {
+      setOpenMenu(null);
+    }, 150); // 150ms delay before closing
+    setHoverTimeout(timeout);
+  };
 
   const handleSignOut = async () => {
     setIsSigningOut(true);
@@ -95,17 +120,17 @@ export function Header() {
                 <div
                   key={menu.name}
                   className="relative"
-                  onMouseEnter={() => menu.children && setOpenMenu(menu.name)}
-                  onMouseLeave={() => menu.children && setOpenMenu(null)}
+                  onMouseEnter={() => menu.children && handleMouseEnter(menu.name)}
+                  onMouseLeave={() => menu.children && handleMouseLeave()}
                 >
                   {menu.children ? (
-                    <button className="flex items-center gap-2 text-gray-800 font-semibold hover:text-red-600">
+                    <button className="flex items-center gap-2 text-gray-800 font-semibold hover:text-red-600 py-2 transition-colors duration-200">
                       {menu.name} {menu.children && <ChevronDown size={16} />}
                     </button>
                   ) : (
                     <Link
                       href={menu.href}
-                      className="flex items-center gap-2 text-gray-800 font-semibold hover:text-red-600"
+                      className="flex items-center gap-2 text-gray-800 font-semibold hover:text-red-600 py-2 transition-colors duration-200"
                     >
                       {menu.name}
                     </Link>
@@ -114,22 +139,26 @@ export function Header() {
                   <AnimatePresence>
                     {openMenu === menu.name && menu.children && (
                       <motion.div
-                        initial={{ opacity: 0, y: -30 }}
+                        initial={{ opacity: 0, y: -20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -30 }}
+                        exit={{ opacity: 0, y: -20 }}
+                        transition={{ duration: 0.2 }}
                         className={`fixed left-0 ${scrolled
-                            ? "top-[63px] bg-white/80 backdrop-blur-lg shadow-md"
-                            : "top-[113px] bg-white/90"
-                          } w-full  border-t shadow-xl py-6 z-50 flex flex-col items-start`}
+                            ? "top-[63px] bg-white/95 backdrop-blur-lg shadow-lg"
+                            : "top-[113px] bg-white/95"
+                          } w-full border-t shadow-xl py-8 z-50 flex flex-col items-start`}
+                        onMouseEnter={() => handleMouseEnter(menu.name)}
+                        onMouseLeave={handleMouseLeave}
                       >
-                        <div className="max-w-7xl mx-auto px-8 flex flex-col gap-4 items-start w-full">
+                        <div className="max-w-7xl mx-auto px-8 flex flex-col gap-6 items-start w-full">
                           {menu.children.map((sub) => (
                             <Link
                               key={sub.name}
                               href={sub.href}
-                              className=" text-lg font-medium text-gray-800 hover:text-red-600 flex flex-row gap-x-4 items-center"
+                              className="text-lg font-medium text-gray-800 hover:text-red-600 flex flex-row gap-x-4 items-center transition-colors duration-200 hover:translate-x-2 transform"
+                              onClick={() => setOpenMenu(null)}
                             >
-                              <ChevronLeft size={16} />
+                              <ChevronRight size={16} />
                               {sub.name}
                             </Link>
                           ))}
