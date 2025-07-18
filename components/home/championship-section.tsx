@@ -9,6 +9,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/lib/redux/store";
 import { Badge } from "../ui/badge"
 import { getPublicImageUrl } from "@/utils/getPublicImageUrl";
+import { getCardStyle } from "@/styles/cardStyles";
 import React, { useEffect, useState } from "react";
 
 export function ChampionshipSection() {
@@ -43,8 +44,10 @@ export function ChampionshipSection() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {competitions.slice(0, 2).map((competition) => (
-            <Card key={competition.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+          {competitions.slice(0, 2).map((competition, index) => {
+            const cardStyle = getCardStyle(index);
+            return (
+            <Card key={competition.id} className={`overflow-hidden hover:shadow-lg transition-all duration-300 hover:scale-105 ${cardStyle.border} ${cardStyle.shadow}`}>
               <div className="relative h-48">
                 <Image
                   src={imageUrls[competition.id] || "/placeholder.svg"}
@@ -110,7 +113,8 @@ export function ChampionshipSection() {
                 </div>
               </CardContent>
             </Card>
-          ))}
+            )
+          })}
         </div>
 
         <div className="text-center mt-12">

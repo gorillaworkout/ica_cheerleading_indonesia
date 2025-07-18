@@ -11,7 +11,7 @@ import { Badge } from "@/components/ui/badge"
 import { Trophy, Medal, Award } from "lucide-react"
 import { useEffect, useState } from "react"
 import { supabase } from "@/lib/supabase"
-import {cardStyles} from '@/styles/cardStyle'
+import { getCardStyle, getExtendedCardStyle } from "@/styles/cardStyles"
 
 interface CompetitionResultsProps {
   competitionId: string
@@ -144,12 +144,7 @@ export function CompetitionResults({ competitionId }: CompetitionResultsProps) {
               <AccordionContent>
                 <div className="space-y-6">
                   {divisionResult.results.map((result: any, resultIndex: number) => {
-                    const style = cardStyles[resultIndex] || {
-                      bg: "bg-transparent",
-                      border: "border-gray-200",
-                      shadow: "shadow-sm",
-                      text: "text-gray-700",
-                    };
+                    const style = getExtendedCardStyle(resultIndex);
 
                     return (
                       <div

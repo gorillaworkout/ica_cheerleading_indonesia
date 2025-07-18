@@ -1,7 +1,7 @@
 import React from "react";
 import { Trophy, Medal } from "lucide-react";
 import { mockResults } from "@/utils/dummyChampionship";
-import {cardStyles} from '@/styles/cardStyle'
+import { getCardStyle } from "@/styles/cardStyles";
 interface Result {
   placement: number;
   team: string;
@@ -71,12 +71,7 @@ export default function ProvinceRankingPage() {
 
         <div className="space-y-6">
           {provinceRanking.map((provinceData, index) => {
-            const style = cardStyles[index] || {
-              bg: "bg-white",
-              border: "border-gray-200",
-              shadow: "shadow-sm",
-              text: "text-gray-700",
-            };
+            const style = getCardStyle(index);
 
             return (
               <div
