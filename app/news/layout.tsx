@@ -7,7 +7,7 @@ export default function NewsLayout({ children }: { children: ReactNode }) {
     <>
       <Header />
       <main className="min-h-screen bg-gray-50 py-16">
-        <div className="container mx-auto px-4 max-w-6xl">
+        <div className="container mx-auto px-4 max-w-8xl">
           {children}
         </div>
       </main>

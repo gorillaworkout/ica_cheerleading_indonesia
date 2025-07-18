@@ -41,7 +41,7 @@ export function NewsDetailClient({
   }
 
   return (
-    <main className="min-h-screen bg-gray-50 py-8">
+    <main className="min-h-screen bg-gray-50 py-8 px-4">
       <div className="container mx-auto px-4 flex flex-col lg:flex-row gap-8">
         {/* Main Content */}
         <div className="flex-1 max-w-4xl">
