@@ -97,7 +97,7 @@ export function ChampionshipSection() {
                 )}
 
                 <div className="flex space-x-2">
-                  <Link href={`/championships/${competition.id}`} className="flex-1">
+                  <Link href={`/championships/${competition.slug}`} className="flex-1">
                     <Button variant="outline" className="w-full bg-transparent">
                       View Details
                     </Button>
