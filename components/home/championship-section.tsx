@@ -9,12 +9,31 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/lib/redux/store";
 import { Badge } from "../ui/badge"
 import { getPublicImageUrl } from "@/utils/getPublicImageUrl";
+import React, { useEffect, useState } from "react";
 
 export function ChampionshipSection() {
   const competitions = useSelector((state: RootState) => state.competitions.competitions);
 
+  // Helper to fetch image URLs for competitions
+  const [imageUrls, setImageUrls] = useState<{ [id: string]: string | null }>({});
+
+  useEffect(() => {
+    async function fetchImages() {
+      const urls: { [id: string]: string | null } = {};
+      await Promise.all(
+        competitions.slice(0, 2).map(async (competition) => {
+          urls[competition.id] = await getPublicImageUrl(competition.image);
+        })
+      );
+      setImageUrls(urls);
+    }
+    if (competitions.length > 0) {
+      fetchImages();
+    }
+  }, [competitions]);
+
   return (
-    <section className="py-16 bg-white">
+    <section className="py-16 bg-gray-50">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold text-gray-900 mb-4">Latest Cheerleading Championships and Results</h2>
@@ -28,7 +47,7 @@ export function ChampionshipSection() {
             <Card key={competition.id} className="overflow-hidden hover:shadow-lg transition-shadow">
               <div className="relative h-48">
                 <Image
-                  src={getPublicImageUrl(competition.image) || "/placeholder.svg"}
+                  src={imageUrls[competition.id] || "/placeholder.svg"}
                   alt={competition.name}
                   fill
                   className="object-cover"
