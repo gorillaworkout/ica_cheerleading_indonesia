@@ -11,8 +11,8 @@ import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
 import { getPublicImageUrlSync } from "@/utils/getPublicImageUrl"
 export function NewsSection() {
   const dispatch = useAppDispatch();
-  const { newsList, status } = useSelector((state: any) => state.news);
-  console.log(newsList, "newslist")
+  const { newsList, status, error } = useSelector((state: any) => state.news);
+  
   useEffect(() => {
     if (status === "idle") {
       dispatch(fetchNews());

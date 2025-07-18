@@ -30,12 +30,11 @@ export async function getPublicImageUrl(path: string) {
         const { data } = supabase.storage.from("uploads").getPublicUrl(fullPath)
         
         if (data?.publicUrl) {
-          console.log(`Image found in folder: ${folder || 'root'}`, fullPath)
           return data.publicUrl
         }
       }
     } catch (error) {
-      console.log(`Checking folder ${folder}:`, error)
+      // Folder check failed, continue to next folder
     }
   }
 
@@ -50,19 +49,15 @@ export function getPublicImageUrlSync(path: string) {
     return null
   }
 
-  console.log('getPublicImageUrlSync called with path:', path)
-
   // If path already contains folder structure, use it directly
   if (path.includes('/')) {
     const { data } = supabase.storage.from("uploads").getPublicUrl(path)
-    console.log('Path contains /, using directly:', path, 'Result:', data?.publicUrl)
     return data?.publicUrl || null
   }
 
   // Try most likely folder first for news images
   const { data } = supabase.storage.from("uploads").getPublicUrl(`news-images/${path}`)
   if (data?.publicUrl) {
-    console.log(`Using news-images folder for: ${path}`, data.publicUrl)
     return data.publicUrl
   }
 
@@ -76,11 +71,9 @@ export function getPublicImageUrlSync(path: string) {
   for (const fullPath of fallbackPaths) {
     const { data } = supabase.storage.from("uploads").getPublicUrl(fullPath)
     if (data?.publicUrl) {
-      console.log(`Using fallback path: ${fullPath}`, data.publicUrl)
       return data.publicUrl
     }
   }
 
-  console.error("Failed to generate public URL for path:", path)
   return null
 }

@@ -7,6 +7,7 @@ import { ThemeProvider } from "@/components/theme-provider"
 import { ReduxProvider } from "@/components/providers/redux-provider"
 import { AuthInitWrapper } from "@/components/auth/auth-init-wrapper"
 import { Toaster } from "@/components/ui/toaster"
+// import { DebugPanel } from "@/components/dev/debug-panel"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -58,6 +59,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <AuthInitWrapper>
               {children}
               <Toaster />
+              {/* <DebugPanel /> */}
             </AuthInitWrapper>
           </ReduxProvider>
         </ThemeProvider>

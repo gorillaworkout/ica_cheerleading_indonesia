@@ -19,13 +19,53 @@ interface NewsState {
 }
 
 // Async thunk to fetch news
-export const fetchNews = createAsyncThunk<NewsItem[]>("news/fetchNews", async () => {
-  const { data, error } = await supabase.from("news").select("*");
-  if (error) {
-    throw new Error(error.message);
+export const fetchNews = createAsyncThunk<NewsItem[]>("news/fetchNews", async (_, { rejectWithValue }) => {
+  try {
+    const { data, error } = await supabase.from("news").select("*");
+    
+    if (error) {
+      throw new Error(error.message);
+    }
+    
+    if (!data) {
+      return [];
+    }
+    
+    return data as NewsItem[];
+  } catch (error) {
+    return rejectWithValue(error instanceof Error ? error.message : "Failed to fetch news");
   }
-  return data as NewsItem[];
 });
+
+// Test action for debugging connection
+export const testSupabaseConnection = createAsyncThunk(
+  "news/testConnection", 
+  async (_, { rejectWithValue }) => {
+    try {
+      // Test basic connection
+      const { data: healthCheck, error: healthError } = await supabase
+        .from("news")
+        .select("count", { count: "exact", head: true });
+      
+      // Test table schema
+      const { data: schemaTest, error: schemaError } = await supabase
+        .from("news")
+        .select("*")
+        .limit(1);
+      
+      // Test with auth
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      return { 
+        connection: !healthError, 
+        schema: !schemaError,
+        user: user?.email || null 
+      };
+    } catch (error) {
+      return rejectWithValue(error instanceof Error ? error.message : "Connection test failed");
+    }
+  }
+);
 
 // Initial state
 const initialState: NewsState = {
@@ -38,19 +78,25 @@ const initialState: NewsState = {
 const newsSlice = createSlice({
   name: "news",
   initialState,
-  reducers: {},
+  reducers: {
+    clearNewsError: (state) => {
+      state.error = null;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchNews.pending, (state) => {
         state.status = "loading";
+        state.error = null;
       })
       .addCase(fetchNews.fulfilled, (state, action) => {
         state.status = "succeeded";
         state.newsList = action.payload;
+        state.error = null;
       })
       .addCase(fetchNews.rejected, (state, action) => {
         state.status = "failed";
-        state.error = action.error.message ?? null; // Ensure error is either string or null
+        state.error = action.payload as string;
       });
   },
 });

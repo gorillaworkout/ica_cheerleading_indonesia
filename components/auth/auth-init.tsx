@@ -12,11 +12,17 @@ import { fetchPublicImages } from "@/features/publicImages/publicImagesSlice"
 import { fetchDivisions } from "@/features/divisions/divisionsSlice"
 import { fetchCompetitions } from "@/features/competitions/competitionsSlice"
 import { fetchNews } from "@/features/news/newsSlice"
+import { debugEnvironment, debugSupabaseConnection } from "@/utils/debug"
 
 export function AuthInit() {
   const dispatch = useAppDispatch()
 
   useEffect(() => {
+    // Debug environment on app start
+    console.log('🚀 AuthInit starting...');
+    debugEnvironment();
+    debugSupabaseConnection();
+    
     // Initial fetch on component mount
     dispatch(fetchSessionAndProfile())
     dispatch(fetchPublicImages())

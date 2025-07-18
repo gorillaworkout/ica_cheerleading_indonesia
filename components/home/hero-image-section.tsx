@@ -24,7 +24,6 @@ export function HeroImageSection({
   heroSlides = [],
   showTextAndButtons = true,
 }: HeroImageSectionProps) {
-  console.log(heroSlides, 'hero slides')
   const [currentSlide, setCurrentSlide] = useState(0)
   
   const formattedSlides = useMemo(() => {
@@ -45,16 +44,12 @@ export function HeroImageSection({
     });
   }, [heroSlides]);
 
-  console.log('formattedSlides:', formattedSlides, 'currentSlide:', currentSlide);
-
   useEffect(() => {
     if (formattedSlides.length <= 1) return; // Don't auto-slide if only one or no slides
     
-    console.log('Setting up timer for', formattedSlides.length, 'slides');
     const timer = setInterval(() => {
       setCurrentSlide((prev) => {
         const next = (prev + 1) % formattedSlides.length;
-        console.log('Auto-sliding from', prev, 'to', next);
         return next;
       })
     }, 5000)
@@ -68,8 +63,6 @@ export function HeroImageSection({
         : formattedSlides[currentSlide].src.startsWith("/") 
           ? formattedSlides[currentSlide].src 
           : getPublicImageUrlSync(formattedSlides[currentSlide].src) || "/placeholder.svg";
-      
-      console.log('Current slide changed to:', currentSlide, 'Image src:', imageSrc);
     }
   }, [currentSlide, formattedSlides])
 

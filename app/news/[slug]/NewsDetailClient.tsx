@@ -29,8 +29,6 @@ export function NewsDetailClient({
   relatedNews: Article[]
 }) {
   const [loading, setLoading] = useState(true)
-  console.log(article,'article')
-  console.log(relatedNews,'relatedNews - check image format')
   
   useEffect(() => {
     const timeout = setTimeout(() => setLoading(false), 1000)
@@ -94,7 +92,6 @@ export function NewsDetailClient({
                           if (!newsItem.images || !newsItem.images[0]) return "/placeholder.svg";
                           
                           const imageData = newsItem.images[0];
-                          console.log('Image data:', imageData, 'Type:', typeof imageData);
                           
                           // If it's a string (direct URL)
                           if (typeof imageData === "string") {

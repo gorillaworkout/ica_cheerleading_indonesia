@@ -53,7 +53,7 @@ export function AddNewsForm() {
     const fetchNews = async () => {
         const { data, error } = await supabase.from("news").select("*");
         if (error) {
-            console.error("Error fetching news:", error.message);
+            toast({ title: "Error", description: "Failed to fetch news articles." })
         } else {
             setNewsList(data as News[]);
         }
@@ -157,7 +157,6 @@ export function AddNewsForm() {
                         .upload(`news-images/${Date.now()}-${image.name}`, image); // Upload to news-images folder
 
                     if (error) {
-                        console.error("Image upload error:", error.message);
                         toast({ title: "Error", description: "Failed to upload images." })
                         return;
                     }
@@ -185,16 +184,14 @@ export function AddNewsForm() {
                 .eq("id", editFormData.id!);
 
             if (error) {
-                console.error("Update error:", error.message);
                 toast({ title: "Error", description: "Failed to update news." })
                 return;
             }
 
-            toast({ title: "Error", description: "News updated successfully!" })
+            toast({ title: "Success", description: "News updated successfully!" })
             setIsModalOpen(false);
             fetchNews();
         } catch (error) {
-            console.error("Unexpected error:", error);
             toast({ title: "Error", description: "An unexpected error occurred." })
         }
     };
