@@ -8,21 +8,39 @@ import { TeamLogoSlider } from "@/components/home/team-logo-section"
 import { ChampionshipSection } from "@/components/home/championship-section"
 import CheerOrganizationsSection from "@/components/home/cheer-organization-section"
 import { ScrollAnimation } from "@/components/ui/scroll-animation"
+import { generateSEOMetadata, generateJSONLD, breadcrumbSchema } from "@/lib/seo"
 
-export const metadata: Metadata = {
-  title: "Home",
-  description:
-    "Welcome to the Indonesian Cheer Association - Your gateway to competitive cheerleading excellence.",
-  openGraph: {
-    title: "ICA - Indonesian Cheer Association",
-    description:
-      "Welcome to the Indonesian Cheer Association - Your gateway to competitive cheerleading excellence.",
-  },
-}
+export const metadata: Metadata = generateSEOMetadata({
+  title: "Beranda - ICA Indonesian Cheer Association",
+  description: "Selamat datang di Indonesian Cheer Association - Platform resmi kompetisi cheerleading terbesar di Indonesia. Bergabunglah dengan komunitas cheerleading nasional.",
+  keywords: [
+    "beranda ICA",
+    "cheerleading indonesia",
+    "kompetisi cheerleading nasional",
+    "komunitas cheerleading",
+    "olahraga cheerleading indonesia",
+    "turnamen cheerleading",
+    "pelatihan cheerleading professional"
+  ],
+  canonicalUrl: "https://indonesiancheer.org",
+  type: "website"
+})
+
+const breadcrumbs = breadcrumbSchema([
+  { name: "Beranda", url: "https://indonesiancheer.org" }
+])
 
 export default function HomePage() {
   return (
     <div className="min-h-screen bg-white">
+      {/* Structured Data - Breadcrumbs */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: generateJSONLD(breadcrumbs)
+        }}
+      />
+      
       <Header />
       <main>
         <div className="w-full h-fit">

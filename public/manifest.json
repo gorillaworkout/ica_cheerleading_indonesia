@@ -1,25 +1,95 @@
 {
   "name": "ICA - Indonesian Cheer Association",
   "short_name": "ICA",
-  "description": "Official platform for Indonesian Cheer Association competitions, education, and community.",
+  "description": "Platform resmi Indonesian Cheer Association untuk kompetisi cheerleading, edukasi, dan komunitas cheerleading Indonesia.",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#e11d48",
   "orientation": "portrait-primary",
-  "categories": ["sports", "education", "lifestyle"],
+  "lang": "id",
+  "categories": ["sports", "education", "lifestyle", "fitness"],
+  "keywords": ["cheerleading", "kompetisi", "ICA", "indonesia", "olahraga"],
+  "screenshots": [
+    {
+      "src": "/ica-hero.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide"
+    }
+  ],
   "icons": [
+    {
+      "src": "/ica-rounded.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/ica-rounded.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/ica-rounded.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/ica-rounded.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/ica-rounded.png",
+      "sizes": "152x152",
+      "type": "image/png",
+      "purpose": "any"
+    },
     {
       "src": "/ica-rounded.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "maskable"
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/ica-rounded.png",
+      "sizes": "384x384",
+      "type": "image/png",
+      "purpose": "any"
     },
     {
       "src": "/ica-rounded.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any"
+      "purpose": "maskable any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Kompetisi",
+      "short_name": "Kompetisi",
+      "description": "Lihat kompetisi cheerleading terbaru",
+      "url": "/championships",
+      "icons": [{"src": "/ica-rounded.png", "sizes": "96x96"}]
+    },
+    {
+      "name": "Berita",
+      "short_name": "Berita",
+      "description": "Baca berita cheerleading terkini",
+      "url": "/news",
+      "icons": [{"src": "/ica-rounded.png", "sizes": "96x96"}]
+    },
+    {
+      "name": "Edukasi",
+      "short_name": "Edukasi",
+      "description": "Materi pembelajaran cheerleading",
+      "url": "/education",
+      "icons": [{"src": "/ica-rounded.png", "sizes": "96x96"}]
     }
   ]
 }

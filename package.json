@@ -6,7 +6,12 @@
     "build": "next build",
     "dev": "next dev",
     "lint": "next lint",
-    "start": "next start"
+    "start": "next start",
+    "analyze": "cross-env ANALYZE=true next build",
+    "export": "next export",
+    "postbuild": "next-sitemap",
+    "seo:check": "npx @next/bundle-analyzer",
+    "lighthouse": "lhci autorun"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
