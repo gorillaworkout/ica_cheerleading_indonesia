@@ -184,7 +184,7 @@ export default function AdminUsersPage() {
                                     <td className="p-2 border">
                                         {user.id_photo_url ? (
                                             <img
-                                                src={getPublicImageUrl(user.id_photo_url)}
+                                                src={user.id_photo_url ? getPublicImageUrl(user.id_photo_url) ?? undefined : undefined}
                                                 alt="KTP"
                                                 onClick={() => setZoomImageUrl(user.id_photo_url!)}
                                                 className="h-20 w-auto mx-auto object-contain border rounded cursor-pointer hover:scale-105 transition"
@@ -269,7 +269,7 @@ export default function AdminUsersPage() {
                             <X className="w-4 h-4" />
                         </button>
                         <img
-                            src={getPublicImageUrl(zoomImageUrl)}
+                            src={zoomImageUrl ? getPublicImageUrl(zoomImageUrl) ?? undefined : undefined}
                             alt="Zoomed KTP"
                             className="object-contain max-h-[80vh] w-full mx-auto"
                         />

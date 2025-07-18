@@ -8,7 +8,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useEffect } from "react";
 import { fetchNews } from "@/features/news/newsSlice";
 import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
-import { getPublicImageUrl } from "@/utils/getPublicImageUrl"
+import { getPublicImageUrlSync } from "@/utils/getPublicImageUrl"
 export function NewsSection() {
   const dispatch = useAppDispatch();
   const { newsList, status } = useSelector((state: any) => state.news);
@@ -31,12 +31,20 @@ export function NewsSection() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {newsList &&
-            newsList
+            [...newsList]
               .sort((a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime())
               .map((article: any) => (
                 <Card key={article.id} className="overflow-hidden hover:shadow-lg transition-shadow">
                   <div className="relative h-48">
-                    <Image src={article.images[0] || "/placeholder.svg"} alt={article.title} fill className="object-cover" />
+                    <Image src={
+                      article.images && article.images[0]
+                        ? (article.images[0].startsWith("https://")
+                            ? article.images[0]
+                            : article.images[0].startsWith("/")
+                              ? article.images[0]
+                              : getPublicImageUrlSync(article.images[0]) || "/placeholder.svg")
+                        : "/placeholder.svg"
+                    } alt={article.title} fill className="object-cover" />
                     <div className="absolute top-4 left-4">
                       <span className="bg-red-600 text-white px-2 py-1 rounded text-xs font-medium">
                         {article.category}

@@ -1,18 +1,21 @@
+"use client"
 import type { Metadata } from "next";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { BookOpen, Users, Award } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { getPublicImageUrl } from "@/utils/getPublicImageUrl";
 
-export const metadata: Metadata = {
-  title: "Safety Rules & Age Grid",
-  description: "Official safety rules and age grid guidelines from ICA.",
-  openGraph: {
-    title: "Safety Rules & Age Grid - ICA",
-    description: "Official safety rules and age grid guidelines from ICA.",
-  },
-};
+// export const metadata: Metadata = {
+//   title: "Safety Rules & Age Grid",
+//   description: "Official safety rules and age grid guidelines from ICA.",
+//   openGraph: {
+//     title: "Safety Rules & Age Grid - ICA",
+//     description: "Official safety rules and age grid guidelines from ICA.",
+//   },
+// };
 
 const resources = [
   {
@@ -61,6 +64,14 @@ const resources = [
 ];
 
 export default function AgeGrid() {
+  const [imageUrl, setImageUrl] = useState<string>("/placeholder.svg")
+  
+    useEffect(() => {
+      getPublicImageUrl("539-medal.jpeg").then((url) => {
+        if (url) setImageUrl(url)
+      })
+    }, [])
+  
   return (
     <div className="min-h-screen bg-white">
       <Header />
@@ -68,7 +79,7 @@ export default function AgeGrid() {
         {/* Hero Section */}
         <section className="relative h-[400px] overflow-hidden">
           <Image
-            src="/placeholder.svg?height=400&width=1200"
+            src={imageUrl}
             alt="Safety Rules and Age Grid"
             fill
             className="object-cover"

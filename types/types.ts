@@ -105,3 +105,9 @@ export interface CompetitionProps {
   registrationDeadline: string
   // divisions: DivisionDetailsProps[]
 }
+
+
+export interface newsImageProps {
+  src:string;
+  alt:string;
+}

@@ -1,17 +1,86 @@
 import { supabase } from "@/lib/supabase"
 
-export function getPublicImageUrl(path: string) {
+export async function getPublicImageUrl(path: string) {
   if (!path) {
     console.error("Invalid path provided to getPublicImageUrl")
     return null
   }
 
-  const { data } = supabase.storage.from("uploads").getPublicUrl(path)
+  // If path already contains folder structure, use it directly
+  if (path.includes('/')) {
+    const { data } = supabase.storage.from("uploads").getPublicUrl(path)
+    return data?.publicUrl || null
+  }
 
-  if (!data || !data.publicUrl) {
-    console.error("Failed to generate public URL for path:", path)
+  // List of possible folders where images might be stored
+  const folders = ['news-images', 'competitions', 'id-photos', 'profile-photos', 'public', '']
+
+  // Try to find the file in each folder
+  for (const folder of folders) {
+    try {
+      const fullPath = folder ? `${folder}/${path}` : path
+      
+      // Check if file exists in this folder
+      const { data: listData, error } = await supabase.storage
+        .from("uploads")
+        .list(folder, { search: path })
+
+      if (!error && listData && listData.length > 0) {
+        // File found in this folder, generate public URL
+        const { data } = supabase.storage.from("uploads").getPublicUrl(fullPath)
+        
+        if (data?.publicUrl) {
+          console.log(`Image found in folder: ${folder || 'root'}`, fullPath)
+          return data.publicUrl
+        }
+      }
+    } catch (error) {
+      console.log(`Checking folder ${folder}:`, error)
+    }
+  }
+
+  console.error("Failed to find image in any folder:", path)
+  return null
+}
+
+// Synchronous version for immediate use (tries common patterns)
+export function getPublicImageUrlSync(path: string) {
+  if (!path) {
+    console.error("Invalid path provided to getPublicImageUrlSync")
     return null
   }
 
-  return data.publicUrl
+  console.log('getPublicImageUrlSync called with path:', path)
+
+  // If path already contains folder structure, use it directly
+  if (path.includes('/')) {
+    const { data } = supabase.storage.from("uploads").getPublicUrl(path)
+    console.log('Path contains /, using directly:', path, 'Result:', data?.publicUrl)
+    return data?.publicUrl || null
+  }
+
+  // Try most likely folder first for news images
+  const { data } = supabase.storage.from("uploads").getPublicUrl(`news-images/${path}`)
+  if (data?.publicUrl) {
+    console.log(`Using news-images folder for: ${path}`, data.publicUrl)
+    return data.publicUrl
+  }
+
+  // Fallback to other patterns
+  const fallbackPaths = [
+    `competitions/${path}`,
+    `public/${path}`,
+    path // root folder
+  ]
+
+  for (const fullPath of fallbackPaths) {
+    const { data } = supabase.storage.from("uploads").getPublicUrl(fullPath)
+    if (data?.publicUrl) {
+      console.log(`Using fallback path: ${fullPath}`, data.publicUrl)
+      return data.publicUrl
+    }
+  }
+
+  console.error("Failed to generate public URL for path:", path)
+  return null
 }

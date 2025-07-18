@@ -1,9 +1,9 @@
 "use client"
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { createClient } from "@supabase/supabase-js";
-import { Edit, Trash2 } from "lucide-react";
+import { Edit, Trash2, Bold, Italic, Underline } from "lucide-react";
 import { Modal } from "../ui/modal"; // Adjust the import path if necessary
-
+import { toast } from "@/components/ui/use-toast"
 // Define the News type
 interface News {
     id: number;
@@ -32,6 +32,8 @@ export function AddNewsForm() {
 
     const [newsList, setNewsList] = useState<News[]>([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const contentRef = useRef<HTMLTextAreaElement>(null);
+    const editContentRef = useRef<HTMLTextAreaElement>(null);
     const [editFormData, setEditFormData] = useState<{
         id: number | null;
         title: string;
@@ -77,8 +79,58 @@ export function AddNewsForm() {
         setIsModalOpen(false);
     };
 
+    // Formatting functions
+    const insertFormatting = (tag: string, ref: React.RefObject<HTMLTextAreaElement | null>, isEdit: boolean = false) => {
+        const textarea = ref.current;
+        if (!textarea) return;
+
+        const start = textarea.selectionStart;
+        const end = textarea.selectionEnd;
+        const selectedText = textarea.value.substring(start, end);
+        const beforeText = textarea.value.substring(0, start);
+        const afterText = textarea.value.substring(end);
+
+        let newText;
+        if (selectedText) {
+            // If text is selected, wrap it with the tag
+            newText = `${beforeText}<${tag}>${selectedText}</${tag}>${afterText}`;
+        } else {
+            // If no text is selected, insert opening and closing tags
+            newText = `${beforeText}<${tag}></${tag}>${afterText}`;
+        }
+
+        if (isEdit) {
+            setEditFormData(prev => ({ ...prev, content: newText }));
+        } else {
+            setFormData(prev => ({ ...prev, content: newText }));
+        }
+
+        // Focus back to textarea and set cursor position
+        setTimeout(() => {
+            textarea.focus();
+            const newCursorPos = selectedText ? start + tag.length + 2 + selectedText.length + tag.length + 3 : start + tag.length + 2;
+            textarea.setSelectionRange(newCursorPos, newCursorPos);
+        }, 0);
+    };
+
+    const formatBold = (isEdit: boolean = false) => insertFormatting('strong', isEdit ? editContentRef : contentRef, isEdit);
+    const formatItalic = (isEdit: boolean = false) => insertFormatting('em', isEdit ? editContentRef : contentRef, isEdit);
+    const formatUnderline = (isEdit: boolean = false) => insertFormatting('u', isEdit ? editContentRef : contentRef, isEdit);
+
+    // Function to convert newlines to HTML breaks for preview
+    const formatContentForPreview = (content: string) => {
+        return content.replace(/\n/g, '<br>');
+    };
+
     const handleEditSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        // Check authentication first
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) {
+            toast({ title: "Error", description: "Please login first to edit news." })
+            return;
+        }
 
         try {
             if (editFormData.images.length > 0) {
@@ -89,24 +141,28 @@ export function AddNewsForm() {
                     .single();
 
                 if (oldNews && oldNews.images) {
-                    for (const path of oldNews.images) {
-                        await supabase.storage.from("news-images").remove([path]);
+                    for (const imageUrl of oldNews.images) {
+                        // Extract path from full URL for deletion in handleEditSubmit
+                        const pathMatch = imageUrl.match(/\/storage\/v1\/object\/public\/uploads\/(.+)$/);
+                        if (pathMatch) {
+                            await supabase.storage.from("uploads").remove([pathMatch[1]]);
+                        }
                     }
                 }
 
                 const uploadedImageUrls: string[] = [];
                 for (const image of editFormData.images) {
                     const { data, error } = await supabase.storage
-                        .from("news-images") // Correct bucket name
-                        .upload(`${Date.now()}-${image.name}`, image);
+                        .from("uploads") // Use uploads bucket to match policy
+                        .upload(`news-images/${Date.now()}-${image.name}`, image); // Upload to news-images folder
 
                     if (error) {
                         console.error("Image upload error:", error.message);
-                        alert("Failed to upload images.");
+                        toast({ title: "Error", description: "Failed to upload images." })
                         return;
                     }
 
-                    const imageUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/news-images/${data.path}`;
+                    const imageUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/uploads/${data.path}`;
                     uploadedImageUrls.push(imageUrl);
                 }
 
@@ -130,21 +186,28 @@ export function AddNewsForm() {
 
             if (error) {
                 console.error("Update error:", error.message);
-                alert("Failed to update news.");
+                toast({ title: "Error", description: "Failed to update news." })
                 return;
             }
 
-            alert("News updated successfully!");
+            toast({ title: "Error", description: "News updated successfully!" })
             setIsModalOpen(false);
             fetchNews();
         } catch (error) {
             console.error("Unexpected error:", error);
-            alert("An unexpected error occurred.");
+            toast({ title: "Error", description: "An unexpected error occurred." })
         }
     };
 
     const handleDelete = async (id: number) => {
         if (confirm("Are you sure you want to delete this news?")) {
+            // Check authentication first
+            const { data: { session } } = await supabase.auth.getSession();
+            if (!session) {
+                toast({ title: "Error", description: "Please login first to delete news." })
+                return;
+            }
+
             try {
                 const { data: oldNews } = await supabase
                     .from("news")
@@ -153,8 +216,12 @@ export function AddNewsForm() {
                     .single();
 
                 if (oldNews && oldNews.images) {
-                    for (const path of oldNews.images) {
-                        await supabase.storage.from("news-images").remove([path]);
+                    for (const imageUrl of oldNews.images) {
+                        // Extract path from full URL for deletion in handleDelete
+                        const pathMatch = imageUrl.match(/\/storage\/v1\/object\/public\/uploads\/(.+)$/);
+                        if (pathMatch) {
+                            await supabase.storage.from("uploads").remove([pathMatch[1]]);
+                        }
                     }
                 }
 
@@ -162,15 +229,15 @@ export function AddNewsForm() {
 
                 if (error) {
                     console.error("Delete error:", error.message);
-                    alert("Failed to delete news.");
+                    toast({ title: "Error", description: "Failed to delete news." });
                     return;
                 }
 
-                alert("News deleted successfully!");
+                toast({ title: "Success", description: "News deleted successfully!" });
                 fetchNews();
             } catch (error) {
                 console.error("Unexpected error:", error);
-                alert("An unexpected error occurred.");
+                toast({ title: "Error", description: "An unexpected error occurred." });
             }
         }
     };
@@ -191,7 +258,7 @@ export function AddNewsForm() {
         if (files) {
             const fileArray = Array.from(files);
             if (fileArray.length > 3) {
-                alert("You can only upload a maximum of 3 images.");
+                toast({ title: "Error", description: "You can only upload a maximum of 3 images." });
                 return;
             }
             setFormData((prevData) => ({
@@ -204,6 +271,13 @@ export function AddNewsForm() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
+        // Check authentication first
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) {
+            toast({ title: "Error", description: "Please login first to add news." });
+            return;
+        }
+
         const uploadedImagePaths: string[] = []; // Declare variable outside try block
 
         try {
@@ -212,16 +286,16 @@ export function AddNewsForm() {
 
             for (const image of formData.images) {
                 const { data, error } = await supabase.storage
-                    .from("news-images") // Correct bucket name
-                    .upload(`${Date.now()}-${image.name}`, image);
+                    .from("uploads") // Use uploads bucket to match policy
+                    .upload(`news-images/${Date.now()}-${image.name}`, image); // Upload to news-images folder
 
                 if (error) {
                     console.error("Image upload error:", error.message);
-                    alert("Failed to upload images.");
+                    toast({ title: "Error", description: "Failed to upload images." });
                     return;
                 }
 
-                const imageUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/news-images/${data.path}`;
+                const imageUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/uploads/${data.path}`;
                 uploadedImageUrls.push(imageUrl);
                 uploadedImagePaths.push(data.path);
             }
@@ -241,17 +315,17 @@ export function AddNewsForm() {
 
                 // Delete uploaded images if news creation fails
                 for (const path of uploadedImagePaths) {
-                    const { error: deleteError } = await supabase.storage.from("news-images").remove([path]);
+                    const { error: deleteError } = await supabase.storage.from("uploads").remove([path]);
                     if (deleteError) {
                         console.error("Failed to delete image:", deleteError.message);
                     }
                 }
 
-                alert("Failed to save news.");
+                toast({ title: "Error", description: "Failed to save news." });
                 return;
             }
 
-            alert("News added successfully!");
+            toast({ title: "Success", description: "News added successfully!" });
             setFormData({
                 title: "",
                 content: "",
@@ -260,18 +334,19 @@ export function AddNewsForm() {
                 category: "",
                 slug: "",
             });
+            fetchNews();
         } catch (error) {
             console.error("Unexpected error:", error);
 
             // Delete uploaded images in case of unexpected error
             for (const path of uploadedImagePaths) {
-                const { error: deleteError } = await supabase.storage.from("news-images").remove([path]);
+                const { error: deleteError } = await supabase.storage.from("uploads").remove([path]);
                 if (deleteError) {
                     console.error("Failed to delete image:", deleteError.message);
                 }
             }
 
-            alert("An unexpected error occurred.");
+            toast({ title: "Error", description: "An unexpected error occurred." });
         }
     };
 
@@ -292,13 +367,55 @@ export function AddNewsForm() {
 
                     <div>
                         <label className="block text-sm font-medium text-gray-700">Content</label>
+                        
+                        {/* Formatting Buttons */}
+                        <div className="mb-2 flex space-x-2">
+                            <button
+                                type="button"
+                                onClick={() => formatBold(false)}
+                                className="inline-flex items-center px-2 py-1 border border-gray-300 rounded text-xs font-medium text-gray-700 bg-white hover:bg-gray-50"
+                                title="Bold"
+                            >
+                                <Bold className="w-4 h-4" />
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => formatItalic(false)}
+                                className="inline-flex items-center px-2 py-1 border border-gray-300 rounded text-xs font-medium text-gray-700 bg-white hover:bg-gray-50"
+                                title="Italic"
+                            >
+                                <Italic className="w-4 h-4" />
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => formatUnderline(false)}
+                                className="inline-flex items-center px-2 py-1 border border-gray-300 rounded text-xs font-medium text-gray-700 bg-white hover:bg-gray-50"
+                                title="Underline"
+                            >
+                                <Underline className="w-4 h-4" />
+                            </button>
+                        </div>
+
                         <textarea
+                            ref={contentRef}
                             name="content"
                             value={formData.content}
                             onChange={handleChange}
                             rows={5}
+                            placeholder="Enter your content here. Use the buttons above to format text or type HTML tags directly."
                             className="mt-1 block w-full border border-gray-400 bg-gray-50 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm px-3 py-2"
                         />
+                        
+                        {/* Preview */}
+                        {formData.content && (
+                            <div className="mt-2">
+                                <p className="text-sm text-gray-500 mb-1">Preview:</p>
+                                <div 
+                                    className="p-2 border border-gray-200 rounded bg-gray-50 text-sm"
+                                    dangerouslySetInnerHTML={{ __html: formatContentForPreview(formData.content) }}
+                                />
+                            </div>
+                        )}
                     </div>
 
                     <div>
@@ -445,15 +562,57 @@ export function AddNewsForm() {
 
                             <div>
                                 <label className="block text-sm font-medium text-gray-700">Content</label>
+                                
+                                {/* Formatting Buttons for Edit Modal */}
+                                <div className="mb-2 flex space-x-2">
+                                    <button
+                                        type="button"
+                                        onClick={() => formatBold(true)}
+                                        className="inline-flex items-center px-2 py-1 border border-gray-300 rounded text-xs font-medium text-gray-700 bg-white hover:bg-gray-50"
+                                        title="Bold"
+                                    >
+                                        <Bold className="w-4 h-4" />
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => formatItalic(true)}
+                                        className="inline-flex items-center px-2 py-1 border border-gray-300 rounded text-xs font-medium text-gray-700 bg-white hover:bg-gray-50"
+                                        title="Italic"
+                                    >
+                                        <Italic className="w-4 h-4" />
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => formatUnderline(true)}
+                                        className="inline-flex items-center px-2 py-1 border border-gray-300 rounded text-xs font-medium text-gray-700 bg-white hover:bg-gray-50"
+                                        title="Underline"
+                                    >
+                                        <Underline className="w-4 h-4" />
+                                    </button>
+                                </div>
+
                                 <textarea
+                                    ref={editContentRef}
                                     name="content"
                                     value={editFormData.content}
                                     onChange={(e) =>
                                         setEditFormData({ ...editFormData, content: e.target.value })
                                     }
                                     rows={5}
+                                    placeholder="Enter your content here. Use the buttons above to format text or type HTML tags directly."
                                     className="mt-1 block w-full border border-gray-400 bg-gray-50 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm px-3 py-2"
                                 />
+                                
+                                {/* Preview for Edit Modal */}
+                                {editFormData.content && (
+                                    <div className="mt-2">
+                                        <p className="text-sm text-gray-500 mb-1">Preview:</p>
+                                        <div 
+                                            className="p-2 border border-gray-200 rounded bg-gray-50 text-sm"
+                                            dangerouslySetInnerHTML={{ __html: formatContentForPreview(editFormData.content) }}
+                                        />
+                                    </div>
+                                )}
                             </div>
 
                             <div>

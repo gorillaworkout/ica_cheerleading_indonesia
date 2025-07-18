@@ -1,13 +1,12 @@
 "use client"
 
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef, useMemo } from "react"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react"
 import Link from "next/link"
-import { defaultHeroSlides } from "@/utils/dummyhero"
 import { motion, useScroll, useTransform } from "framer-motion"
-import { getPublicImageUrl } from "@/utils/getPublicImageUrl"
+import { getPublicImageUrlSync } from "@/utils/getPublicImageUrl"
 
 interface Slide {
   src: string
@@ -22,44 +21,65 @@ interface HeroImageSectionProps {
 }
 
 export function HeroImageSection({
-  heroSlides = defaultHeroSlides,
+  heroSlides = [],
   showTextAndButtons = true,
 }: HeroImageSectionProps) {
   console.log(heroSlides, 'hero slides')
   const [currentSlide, setCurrentSlide] = useState(0)
-  const [loading, setLoading] = useState(true)
+  
+  const formattedSlides = useMemo(() => {
+    return heroSlides.map((slide, index) => {
+      if (typeof slide === "string") {
+        return { 
+          src: slide, 
+          alt: "",
+          title: "Excellence in Motion",
+          subtitle: "Join the premier cheerleading competitions worldwide"
+        }
+      }
+      return {
+        ...slide,
+        title: slide.title || "Excellence in Motion",
+        subtitle: slide.subtitle || "Join the premier cheerleading competitions worldwide"
+      }
+    });
+  }, [heroSlides]);
+
+  console.log('formattedSlides:', formattedSlides, 'currentSlide:', currentSlide);
 
   useEffect(() => {
+    if (formattedSlides.length <= 1) return; // Don't auto-slide if only one or no slides
+    
+    console.log('Setting up timer for', formattedSlides.length, 'slides');
     const timer = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % heroSlides.length)
+      setCurrentSlide((prev) => {
+        const next = (prev + 1) % formattedSlides.length;
+        console.log('Auto-sliding from', prev, 'to', next);
+        return next;
+      })
     }, 5000)
     return () => clearInterval(timer)
-  }, [heroSlides.length])
+  }, [formattedSlides.length])
 
   useEffect(() => {
-    if (heroSlides.length > 0 && heroSlides[currentSlide]?.src) {
-      const preload = new window.Image()
-      preload.src = heroSlides[currentSlide].src
-      preload.onload = () => setLoading(false)
-      preload.onerror = () => setLoading(false) // Ensure loading stops even if the image fails to load
-    } else {
-      setLoading(false) // Stop loading if no valid slides are available
+    if (formattedSlides.length > 0 && formattedSlides[currentSlide]?.src) {
+      const imageSrc = formattedSlides[currentSlide].src.startsWith("https://")
+        ? formattedSlides[currentSlide].src
+        : formattedSlides[currentSlide].src.startsWith("/") 
+          ? formattedSlides[currentSlide].src 
+          : getPublicImageUrlSync(formattedSlides[currentSlide].src) || "/placeholder.svg";
+      
+      console.log('Current slide changed to:', currentSlide, 'Image src:', imageSrc);
     }
-  }, [currentSlide, heroSlides])
+  }, [currentSlide, formattedSlides])
 
   const nextSlide = () => {
-    setLoading(true)
-    setCurrentSlide((prev) => (prev + 1) % heroSlides.length)
+    setCurrentSlide((prev) => (prev + 1) % formattedSlides.length)
   }
 
   const prevSlide = () => {
-    setLoading(true)
-    setCurrentSlide((prev) => (prev - 1 + heroSlides.length) % heroSlides.length)
+    setCurrentSlide((prev) => (prev - 1 + formattedSlides.length) % formattedSlides.length)
   }
-
-  const formattedSlides = heroSlides.map((slide) =>
-  typeof slide === "string" ? { src: slide, alt: "" } : slide
-);
 
   return (
     <section className="relative w-full h-full overflow-hidden">
@@ -68,19 +88,21 @@ export function HeroImageSection({
           key={index}
           className={`absolute inset-0 transition-opacity duration-1000 ${index === currentSlide ? "opacity-100 z-10" : "opacity-0 z-0"}`}
         >
-          {loading ? (
-            <div className="w-full h-full bg-gray-300 animate-pulse" />
-          ) : (
-            <Image
-              src={image.src ? (image.src.startsWith("/") ? image.src : getPublicImageUrl(image.src)) : "/placeholder.svg"}
-              alt={image.alt || "Image description not available"}
-              fill
-              className="object-cover w-full h-full"
-              priority={index === 0}
-            />
-          )}
+          <Image
+            src={
+              image.src.startsWith("https://") 
+                ? image.src 
+                : image.src.startsWith("/") 
+                  ? image.src 
+                  : getPublicImageUrlSync(image.src) || "/placeholder.svg"
+            }
+            alt={image.alt || "Image description not available"}
+            fill
+            className="object-cover w-full h-full"
+            priority={index === 0}
+          />
 
-          {showTextAndButtons && !loading && (
+          {showTextAndButtons && index === currentSlide && (
             <>
               <div className="absolute inset-0 bg-black bg-opacity-40" />
               <div className="absolute inset-0 flex items-center justify-center">
@@ -129,10 +151,7 @@ export function HeroImageSection({
         {formattedSlides.map((_, index) => (
           <button
             key={index}
-            onClick={() => {
-              setLoading(true);
-              setCurrentSlide(index);
-            }}
+            onClick={() => setCurrentSlide(index)}
             className={`w-3 h-3 rounded-full transition-all ${index === currentSlide ? "bg-white" : "bg-white bg-opacity-50"}`}
           />
         ))}

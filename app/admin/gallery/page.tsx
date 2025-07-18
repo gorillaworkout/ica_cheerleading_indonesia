@@ -6,6 +6,7 @@ import { supabase } from "@/lib/supabase"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Trash2 } from "lucide-react"
+import { toast } from "@/components/ui/use-toast"
 
 type ImageFile = {
   name: string
@@ -45,7 +46,7 @@ export default function GalleryPage() {
     for (let i = 0; i < files.length; i++) {
       const file = files[i]
       if (file.size > 2 * 1024 * 1024) {
-        alert(`File ${file.name} lebih dari 2MB, dilewati.`)
+        toast({ title: "Error", description: `File ${file.name} lebih dari 2MB, dilewati.` })
         continue
       }
 
@@ -73,7 +74,7 @@ const handleDelete = async (fileName: string) => {
 
   if (error) {
     console.error("Delete error", error);
-    alert(error.message);
+    toast({ title: "Error", description: error.message });
   } else {
     console.log("Deleted:", fullPath);
     setImages((prev) => prev.filter((img) => img.name !== fileName));

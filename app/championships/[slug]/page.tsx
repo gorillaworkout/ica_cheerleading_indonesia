@@ -6,8 +6,6 @@ import { CompetitionResults } from "@/components/championships/competition-resul
 import { notFound } from "next/navigation"
 import { fetchCompetitions } from "@/lib/fetchCompetitions"
 import BestTeamSummary from "@/components/championships/best-team-medal-result"
-import { HeroSection } from "@/components/home/hero-section"
-import { jurnasHeroSlides } from "@/utils/dummyhero"
 import ProvinceRankingPage from "@/components/championships/province-point"
 import { HeroImageSection } from "@/components/home/hero-image-section"
 interface Props {

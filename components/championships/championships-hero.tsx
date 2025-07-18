@@ -1,13 +1,26 @@
+"use client"
 import { Button } from "@/components/ui/button"
 import { Trophy, Calendar, MapPin } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
+import { getPublicImageUrl } from "@/utils/getPublicImageUrl"
+
+import { useEffect, useState } from "react"
 
 export function ChampionshipsHero() {
+  const [imageUrl, setImageUrl] = useState<string>("/placeholder.svg")
+
+  useEffect(() => {
+    getPublicImageUrl("539-medal.jpeg").then((url) => {
+      if (url) setImageUrl(url)
+    })
+  }, [])
+
   return (
     <section className="relative h-[500px] overflow-hidden">
       <Image
-        src="/placeholder.svg?height=500&width=1200"
+        // src="/placeholder.svg?height=500&width=1200"
+        src={imageUrl}
         alt="Cheerleading Championship"
         fill
         className="object-cover"

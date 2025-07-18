@@ -49,11 +49,11 @@ export function ProfileForm() {
         birthDate: profile.birth_date || "",
         is_edit_allowed: profile.is_edit_allowed ?? true,
         is_request_edit: profile.is_request_edit ?? false,
-        provinceCode:profile.province_code || "",
+        provinceCode: profile.province_code || "",
         id_photo_file: profile.id_photo_url!,
         profile_photo_file: profile.profile_photo_url!,
       })
-      if(profile.is_request_edit){
+      if (profile.is_request_edit) {
         setLocalError("Request berhasil dikirim. Tunggu persetujuan admin.")
       }
       setTempBirthDate(
@@ -77,10 +77,10 @@ export function ProfileForm() {
           gender: formData.gender,
           birth_date: formData.birthDate,
           updated_at: new Date().toISOString(),
-          is_edit_allowed:false,
-          is_request_editL:false,
-          is_verified:false,
-          provinceCode:formData.provinceCode,
+          is_edit_allowed: false,
+          is_request_editL: false,
+          is_verified: false,
+          provinceCode: formData.provinceCode,
           id_photo_file: formData.id_photo_file,
           profile_photo_file: formData.profile_photo_file
         })
@@ -109,7 +109,7 @@ export function ProfileForm() {
 
     try {
       if (!user?.id) {
-        alert("User tidak ditemukan");
+        toast({ title: "Error", description: "User tidak ditemukan" });
         return;
       }
 
@@ -127,7 +127,7 @@ export function ProfileForm() {
       }
     } catch (err) {
       console.error(err);
-      alert("Terjadi kesalahan");
+      toast({ title: "Error", description: "Terjadi kesalahan" });
     } finally {
       setIsUpdating(false);
     }
@@ -157,7 +157,10 @@ export function ProfileForm() {
           <div className="flex items-center space-x-4">
             {profile?.profile_photo_url ? (
               <Image
-                src={getPublicImageUrl(profile.profile_photo_url)}
+                // src={getPublicImageUrl(profile.profile_photo_url || "")}
+                src={profile.profile_photo_url && typeof profile.profile_photo_url === "string"
+                  ? (profile.profile_photo_url.startsWith("/") ? profile.profile_photo_url : getPublicImageUrl(profile.profile_photo_url) || "/placeholder.svg")
+                  : "/placeholder.svg"}
                 // getPublicImageUrl(profile.id_photo_url)
                 alt="Profile Photo"
                 width={64}
@@ -199,17 +202,17 @@ export function ProfileForm() {
       </Card>
 
       {localError && (
-          <Alert variant="destructive">
-            <AlertCircle className="h-4 w-4" />
-            <AlertDescription>{localError}</AlertDescription>
-          </Alert>
-        )}
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>{localError}</AlertDescription>
+        </Alert>
+      )}
       {/* Edit Profile */}
       <Card>
         <CardHeader>
           <CardTitle>Edit Profile</CardTitle>
         </CardHeader>
-    
+
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
@@ -252,8 +255,8 @@ export function ProfileForm() {
                 disabled={!formData.is_edit_allowed}
                 date={tempBirthDate}
                 onChange={(date) => {
-                setTempBirthDate(date)
-                setFormData({ ...formData, birthDate: date ? date.toISOString().split("T")[0] : "" });
+                  setTempBirthDate(date)
+                  setFormData({ ...formData, birthDate: date ? date.toISOString().split("T")[0] : "" });
 
                 }}
               />
@@ -290,7 +293,7 @@ export function ProfileForm() {
                 required
               />
             </div>
-           <div className="space-y-2">
+            <div className="space-y-2">
               <Label>Profile Photo</Label>
               <Input
                 type="file"
@@ -332,7 +335,7 @@ export function ProfileForm() {
       <Card>
         <CardHeader>Change Password</CardHeader>
         <CardContent className="space-y-3 text-sm text-gray-700">
-          <ChangePasswordForm/>
+          <ChangePasswordForm />
         </CardContent>
       </Card>
 
@@ -350,7 +353,10 @@ export function ProfileForm() {
             <span>ID Photo:</span>
             {profile?.id_photo_url ? (
               <a
-                href={getPublicImageUrl(profile.id_photo_url)}
+                // href={getPublicImageUrl(profile.id_photo_url)}
+                href={profile.id_photo_url && typeof profile.id_photo_url === "string"
+                  ? (profile.id_photo_url.startsWith("/") ? profile.id_photo_url : getPublicImageUrl(profile.id_photo_url) || "/placeholder.svg")
+                  : "/placeholder.svg"}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-blue-600 underline hover:text-blue-800 transition-colors"

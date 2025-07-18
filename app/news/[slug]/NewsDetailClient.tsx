@@ -6,15 +6,16 @@ import { Calendar } from "lucide-react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { HeroSection } from "@/components/home/hero-section"
-import { newsImageProps } from "@/utils/dummyhero"
 import { HeroImageSection } from "@/components/home/hero-image-section"
+import { newsImageProps } from "@/types/types"
+import { getPublicImageUrlSync } from "@/utils/getPublicImageUrl"
 
 interface Article {
   id: number
   title: string
   slug: string
   date: string
-  image?: newsImageProps[]
+  images?: any[]
   category?: string
   content: string
 }
@@ -28,7 +29,9 @@ export function NewsDetailClient({
   relatedNews: Article[]
 }) {
   const [loading, setLoading] = useState(true)
-
+  console.log(article,'article')
+  console.log(relatedNews,'relatedNews - check image format')
+  
   useEffect(() => {
     const timeout = setTimeout(() => setLoading(false), 1000)
     return () => clearTimeout(timeout)
@@ -52,7 +55,7 @@ export function NewsDetailClient({
           </Link>
 
           <div className="relative w-full h-64 md:h-96 rounded overflow-hidden mb-6 shadow-md">
-            <HeroImageSection showTextAndButtons={false} heroSlides={article.image || []} />
+            <HeroImageSection showTextAndButtons={false} heroSlides={article.images as any || []} />
             <span className="absolute top-4 left-4 bg-red-600 text-white px-3 py-1 rounded font-semibold text-sm">
               {article.category}
             </span>
@@ -87,16 +90,40 @@ export function NewsDetailClient({
                   >
                     <div className="relative w-24 h-24 flex-shrink-0 rounded-lg overflow-hidden">
                       <Image
-                        src={newsItem.image?.[0]?.src || "/placeholder.svg"}
+                        src={(() => {
+                          if (!newsItem.images || !newsItem.images[0]) return "/placeholder.svg";
+                          
+                          const imageData = newsItem.images[0];
+                          console.log('Image data:', imageData, 'Type:', typeof imageData);
+                          
+                          // If it's a string (direct URL)
+                          if (typeof imageData === "string") {
+                            if (imageData.startsWith("https://")) return imageData;
+                            if (imageData.startsWith("/")) return imageData;
+                            return getPublicImageUrlSync(imageData) || "/placeholder.svg";
+                          }
+                          
+                          // If it's an object with src property
+                          if (typeof imageData === "object" && imageData && "src" in imageData) {
+                            const src = (imageData as any).src;
+                            if (typeof src === "string") {
+                              if (src.startsWith("https://")) return src;
+                              if (src.startsWith("/")) return src;
+                              return getPublicImageUrlSync(src) || "/placeholder.svg";
+                            }
+                          }
+                          
+                          return "/placeholder.svg";
+                        })()}
                         alt={newsItem.title}
                         fill
                         className="object-cover group-hover:scale-105 transition-transform"
                       />
-                      {newsItem.category && (
+                      {/* {newsItem.category && (
                         <span className="absolute top-1 left-1 bg-red-600 text-white text-[10px] px-1.5 py-0.5 rounded font-semibold uppercase tracking-wide">
                           {newsItem.category}
                         </span>
-                      )}
+                      )} */}
                     </div>
 
                     <div className="flex flex-col justify-between flex-1">

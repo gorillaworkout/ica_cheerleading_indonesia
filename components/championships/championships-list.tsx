@@ -12,7 +12,7 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useSelector } from "react-redux"
 import { RootState } from "@/lib/redux/store"
-import { getPublicImageUrl } from "@/utils/getPublicImageUrl"
+import { getPublicImageUrlSync } from "@/utils/getPublicImageUrl"
 
 export function ChampionshipsList() {
   const competitions = useSelector((state: RootState) => state.competitions.competitions)
@@ -92,7 +92,13 @@ export function ChampionshipsList() {
             <Card key={competition.id} className="overflow-hidden hover:shadow-lg transition-shadow">
               <div className="relative h-48">
                 <Image
-                  src={getPublicImageUrl(competition.image) || "/placeholder.svg"}
+                  src={(() => {
+                    if (!competition.image) return "/placeholder.svg";
+                    if (competition.image.startsWith("https://")) return competition.image;
+                    if (competition.image.startsWith("/")) return competition.image;
+                    const url = getPublicImageUrlSync(competition.image);
+                    return url || "/placeholder.svg";
+                  })()}
                   alt={competition.name}
                   fill
                   className="object-cover"

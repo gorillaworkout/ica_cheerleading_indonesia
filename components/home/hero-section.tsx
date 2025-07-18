@@ -5,7 +5,6 @@ import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react"
 import Link from "next/link"
-import { defaultHeroSlides } from "@/utils/dummyhero"
 import { motion, useScroll, useTransform } from "framer-motion"
 
 interface Slide {
@@ -21,7 +20,7 @@ interface HeroSectionProps {
 }
 
 export function HeroSection({
-  heroSlides = defaultHeroSlides,
+  heroSlides = [],
   showTextAndButtons = true,
 }: HeroSectionProps) {
   // const [currentSlide, setCurrentSlide] = useState(0)
