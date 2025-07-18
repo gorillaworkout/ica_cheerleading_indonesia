@@ -7,6 +7,7 @@ import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react"
 import Link from "next/link"
 import { defaultHeroSlides } from "@/utils/dummyhero"
 import { motion, useScroll, useTransform } from "framer-motion"
+import { getPublicImageUrl } from "@/utils/getPublicImageUrl"
 
 interface Slide {
   src: string
@@ -24,6 +25,7 @@ export function HeroImageSection({
   heroSlides = defaultHeroSlides,
   showTextAndButtons = true,
 }: HeroImageSectionProps) {
+  console.log(heroSlides, 'hero slides')
   const [currentSlide, setCurrentSlide] = useState(0)
   const [loading, setLoading] = useState(true)
 
@@ -35,9 +37,14 @@ export function HeroImageSection({
   }, [heroSlides.length])
 
   useEffect(() => {
-    const preload = new window.Image()
-    preload.src = heroSlides[currentSlide].src
-    preload.onload = () => setLoading(false)
+    if (heroSlides.length > 0 && heroSlides[currentSlide]?.src) {
+      const preload = new window.Image()
+      preload.src = heroSlides[currentSlide].src
+      preload.onload = () => setLoading(false)
+      preload.onerror = () => setLoading(false) // Ensure loading stops even if the image fails to load
+    } else {
+      setLoading(false) // Stop loading if no valid slides are available
+    }
   }, [currentSlide, heroSlides])
 
   const nextSlide = () => {
@@ -50,10 +57,13 @@ export function HeroImageSection({
     setCurrentSlide((prev) => (prev - 1 + heroSlides.length) % heroSlides.length)
   }
 
+  const formattedSlides = heroSlides.map((slide) =>
+  typeof slide === "string" ? { src: slide, alt: "" } : slide
+);
 
   return (
     <section className="relative w-full h-full overflow-hidden">
-      {heroSlides.map((image, index) => (
+      {formattedSlides.map((image, index) => (
         <div
           key={index}
           className={`absolute inset-0 transition-opacity duration-1000 ${index === currentSlide ? "opacity-100 z-10" : "opacity-0 z-0"}`}
@@ -62,8 +72,8 @@ export function HeroImageSection({
             <div className="w-full h-full bg-gray-300 animate-pulse" />
           ) : (
             <Image
-              src={image.src || "/placeholder.svg"}
-              alt={image.alt}
+              src={image.src ? (image.src.startsWith("/") ? image.src : getPublicImageUrl(image.src)) : "/placeholder.svg"}
+              alt={image.alt || "Image description not available"}
               fill
               className="object-cover w-full h-full"
               priority={index === 0}
@@ -116,12 +126,12 @@ export function HeroImageSection({
 
       {/* Slide Indicators */}
       <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2 z-20">
-        {heroSlides.map((_, index) => (
+        {formattedSlides.map((_, index) => (
           <button
             key={index}
             onClick={() => {
-              setLoading(true)
-              setCurrentSlide(index)
+              setLoading(true);
+              setCurrentSlide(index);
             }}
             className={`w-3 h-3 rounded-full transition-all ${index === currentSlide ? "bg-white" : "bg-white bg-opacity-50"}`}
           />

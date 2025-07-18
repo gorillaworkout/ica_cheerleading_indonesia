@@ -44,12 +44,15 @@ export default async function CompetitionPage({ params }: Props) {
     notFound()
   }
 
+  // Convert competition.image (string) to an array for HeroImageSection
+  const heroSlides = competition.image ? [competition.image] : []
+
   return (
     <div className="min-h-screen bg-white">
       <Header />
       <main>
         <div className="container w-full h-[500px]">
-          <HeroImageSection heroSlides={jurnasHeroSlides} showTextAndButtons={false} />
+          <HeroImageSection heroSlides={heroSlides} showTextAndButtons={false} />
         </div>
         <CompetitionDetails competition={competition} />
         <ProvinceRankingPage />

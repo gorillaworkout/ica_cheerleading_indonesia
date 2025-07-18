@@ -116,16 +116,16 @@ export function HeroSection({
   return (
     <section
       ref={heroRef}
-      className="relative flex items-center justify-center overflow-hidden bg-black md:h-screen h-auto"
+      className="relative flex items-center justify-center overflow-hidden bg-black aspect-video m-0 p-0"
     >
-      <motion.div className="absolute top-0 left-0 w-full h-full z-0" style={{ opacity }}>
+      <motion.div className="absolute top-0 left-0 w-full h-full z-0 block" style={{ opacity }}>
         <iframe
           src="https://www.youtube.com/embed/SksDptq-w8g?controls=0&autoplay=1&mute=1&loop=1&playlist=SksDptq-w8g&disablekb=1"
           title="Background Video"
           className="absolute top-0 left-0 w-full h-full object-cover"
-          style={{ width: "100vw", height: "100vh" }}
+          style={{ objectFit: "cover" }}
           frameBorder="0"
-          allow="autoplay fullscreen; picture-in-picture"
+          allow="autoplay; fullscreen; picture-in-picture"
 
         ></iframe>
       </motion.div>
