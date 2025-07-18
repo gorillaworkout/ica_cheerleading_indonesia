@@ -1,7 +1,7 @@
 import React from "react";
 import { Trophy, Medal } from "lucide-react";
 import { mockResults } from "@/utils/dummyChampionship";
-
+import {cardStyles} from '@/styles/cardStyle'
 interface Result {
   placement: number;
   team: string;
@@ -58,26 +58,6 @@ const getProvincePoints = (data: MockResults): ProvinceStats[] => {
   });
 };
 
-const cardStyles = [
-  {
-    bg: "bg-gradient-to-r from-yellow-100 via-yellow-200 to-yellow-300",
-    border: "border-yellow-400",
-    shadow: "shadow-lg",
-    text: "text-yellow-700",
-  },
-  {
-    bg: "bg-gradient-to-r from-gray-100 via-gray-200 to-gray-300",
-    border: "border-gray-400",
-    shadow: "shadow-md",
-    text: "text-gray-700",
-  },
-  {
-    bg: "bg-gradient-to-r from-amber-100 via-amber-200 to-amber-300",
-    border: "border-amber-400",
-    shadow: "shadow-md",
-    text: "text-amber-700",
-  },
-];
 
 export default function ProvinceRankingPage() {
   const provinceRanking = getProvincePoints(mockResults);
@@ -117,23 +97,20 @@ export default function ProvinceRankingPage() {
                     <div className="flex flex-col items-center gap-1 text-yellow-500">
                       <div className="flex items-center gap-1">
                         <Medal size={28} strokeWidth={2.5} />
-                        {provinceData.gold}
+                        <span className="font-bold text-lg md:text-xl">{provinceData.gold}</span>
                       </div>
-                      {/* <div className="text-xs text-gray-500">Gold</div> */}
                     </div>
                     <div className="flex flex-col items-center gap-1 text-gray-400">
                       <div className="flex items-center gap-1">
                         <Medal size={24} strokeWidth={2.2} />
-                        {provinceData.silver}
+                        <span className="font-bold text-lg md:text-xl">{provinceData.silver}</span>
                       </div>
-                      {/* <div className="text-xs text-gray-500">Silver</div> */}
                     </div>
                     <div className="flex flex-col items-center gap-1 text-amber-700">
                       <div className="flex items-center gap-1">
                         <Medal size={22} strokeWidth={2} />
-                        {provinceData.bronze}
+                        <span className="font-bold text-lg md:text-xl">{provinceData.bronze}</span>
                       </div>
-                      {/* <div className="text-xs text-gray-500">Bronze</div> */}
                     </div>
                   </div>
 

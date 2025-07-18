@@ -211,6 +211,17 @@ export default function AddResultsPage() {
 
     // Validate placement scores
     const sortedScores = [...placementScores].sort((a, b) => parseInt(a.placement, 10) - parseInt(b.placement, 10));
+
+    // Ensure single data has placement 1
+    if (placementScores.length === 1 && placementScores[0].placement !== "1") {
+      toast({
+        title: "Error",
+        description: "If there is only one result, the placement must be 1.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     for (let i = 1; i < sortedScores.length; i++) {
       if (parseFloat(sortedScores[i].score) > parseFloat(sortedScores[i - 1].score)) {
         toast({
@@ -435,7 +446,7 @@ export default function AddResultsPage() {
         </form>
       </div>
 
-      <div className="mt-10 max-w-4xl p-6 bg-gray-50 shadow-md rounded-lg">
+      <div className="mt-10 max-w-4xl p-6 bg-white shadow-md rounded-lg">
         <h1 className="text-3xl font-bold mb-6 text-left text-gray-800">
           Competition Results
         </h1>

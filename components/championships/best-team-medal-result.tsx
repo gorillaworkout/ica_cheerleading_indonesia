@@ -1,6 +1,7 @@
 import React from "react";
 import { Trophy, Medal } from "lucide-react";
 import { mockResults } from "@/utils/dummyChampionship";
+import {cardStyles} from '@/styles/cardStyle'
 
 interface Result {
   placement: number;
@@ -46,27 +47,6 @@ const getTopTeams = (data: MockResults) => {
     })
     .slice(0, 3);
 };
-
-const cardStyles = [
-  {
-    bg: "bg-gradient-to-r from-yellow-100 via-yellow-200 to-yellow-300",
-    border: "border-yellow-400",
-    shadow: "shadow-lg",
-    text: "text-yellow-700",
-  },
-  {
-    bg: "bg-gradient-to-r from-gray-100 via-gray-200 to-gray-300",
-    border: "border-gray-400",
-    shadow: "shadow-md",
-    text: "text-gray-700",
-  },
-  {
-    bg: "bg-gradient-to-r from-amber-100 via-amber-200 to-amber-300",
-    border: "border-amber-400",
-    shadow: "shadow-md",
-    text: "text-amber-700",
-  },
-];
 
 export default function BestTeamRanking() {
   const topTeams = getTopTeams(mockResults);
