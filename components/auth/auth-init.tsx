@@ -11,6 +11,7 @@ import {
 import { fetchPublicImages } from "@/features/publicImages/publicImagesSlice"
 import { fetchDivisions } from "@/features/divisions/divisionsSlice"
 import { fetchCompetitions } from "@/features/competitions/competitionsSlice"
+import { fetchNews } from "@/features/news/newsSlice"
 
 export function AuthInit() {
   const dispatch = useAppDispatch()
@@ -21,6 +22,7 @@ export function AuthInit() {
     dispatch(fetchPublicImages())
     dispatch(fetchDivisions())
     dispatch(fetchCompetitions()) // Fetch competitions using Redux
+    dispatch(fetchNews()) // Fetch news using Redux
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
@@ -31,6 +33,7 @@ export function AuthInit() {
           dispatch(fetchPublicImages())
           dispatch(fetchDivisions())
           dispatch(fetchCompetitions())
+          dispatch(fetchNews())
         } else if (event === "SIGNED_OUT") {
           console.log("SIGNED OUT 26 auth-init")
           dispatch(setAuthState({ session: null, user: null }))

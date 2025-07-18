@@ -20,10 +20,6 @@ export default function AddNewsPage() {
         <p className="text-gray-600 mt-2">Create a new News event</p>
       </div>
       <AddNewsForm />
-      <div className="mt-8">
-        <h2 className="text-2xl font-bold text-gray-900">Existing Divisions</h2>
-        <NewsTable />
-      </div>
     </div>
   )
 }

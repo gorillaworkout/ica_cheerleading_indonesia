@@ -10,7 +10,7 @@ interface ModalProps {
 export const Modal: React.FC<ModalProps> = ({ title, children, onClose, onSave }) => {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-white rounded-lg shadow-lg w-96 p-6 border border-red-500">
+      <div className="bg-white rounded-lg shadow-lg w-full max-w-4xl p-6 border border-red-500 mx-4 sm:mx-auto">
         <h2 className="text-xl font-semibold mb-4 text-red-600">{title}</h2>
         <div className="mb-4">{children}</div>
         <div className="flex justify-end space-x-2">

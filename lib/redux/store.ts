@@ -4,6 +4,7 @@ import counterReducer from "@/features/counter/counterSlice";
 import publicImagesReducer from '@/features/publicImages/publicImagesSlice'
 import divisionsReducer from "@/features/divisions/divisionsSlice";
 import competitionsReducer from "@/features/competitions/competitionsSlice";
+import newsReducer from "@/features/news/newsSlice";
 
 export const store = configureStore({
   reducer: {
@@ -12,6 +13,7 @@ export const store = configureStore({
     publicImages: publicImagesReducer,
     divisions: divisionsReducer,
     competitions: competitionsReducer, // Added competitions reducer
+    news: newsReducer, // Add the news reducer here
   },
 });
 
