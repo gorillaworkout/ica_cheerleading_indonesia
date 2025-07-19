@@ -1,7 +1,6 @@
 import React from "react";
 import { Trophy, Medal } from "lucide-react";
 import { mockResults } from "@/utils/dummyChampionship";
-import { getCardStyle } from "@/styles/cardStyles";
 interface Result {
   placement: number;
   team: string;
@@ -71,7 +70,41 @@ export default function ProvinceRankingPage() {
 
         <div className="space-y-6">
           {provinceRanking.map((provinceData, index) => {
-            const style = getCardStyle(index);
+            // Define custom styles for Olympic-style ranking
+            let style;
+            if (index === 0) {
+              // 🥇 Gold - Rank 1
+              style = {
+                bg: "bg-gradient-to-r from-yellow-100 via-yellow-200 to-yellow-300",
+                border: "border-yellow-400",
+                shadow: "shadow-lg",
+                text: "text-yellow-700",
+              };
+            } else if (index === 1) {
+              // 🥈 Silver - Rank 2
+              style = {
+                bg: "bg-gradient-to-r from-gray-100 via-gray-200 to-gray-300",
+                border: "border-gray-400",
+                shadow: "shadow-md",
+                text: "text-gray-700",
+              };
+            } else if (index === 2) {
+              // 🥉 Bronze - Rank 3
+              style = {
+                bg: "bg-gradient-to-r from-amber-200 via-amber-300 to-amber-400",
+                border: "border-amber-500",
+                shadow: "shadow-md",
+                text: "text-amber-800",
+              };
+            } else {
+              // 🏅 Other ranks - Blue gradient
+              style = {
+                bg: "bg-gradient-to-r from-blue-50 via-blue-100 to-blue-200",
+                border: "border-blue-300",
+                shadow: "shadow-sm",
+                text: "text-blue-700",
+              };
+            }
 
             return (
               <div
@@ -79,7 +112,11 @@ export default function ProvinceRankingPage() {
                 className={`${style.bg} border ${style.border} ${style.shadow} rounded-xl p-6 flex flex-col md:flex-row justify-between gap-4 transition-transform transform hover:scale-105`}
               >
                 <div className="flex items-center gap-4 md:gap-6 justify-center md:justify-start text-center md:text-left">
-                  <div className={`font-extrabold text-3xl md:text-4xl ${style.text}`}>
+                  <div className={`font-extrabold text-3xl md:text-4xl ${style.text} flex items-center gap-2`}>
+                    {index === 0 && <span className="text-4xl">🥇</span>}
+                    {index === 1 && <span className="text-4xl">🥈</span>}
+                    {index === 2 && <span className="text-4xl">🥉</span>}
+                    {index >= 3 && <span className="text-4xl">🏅</span>}
                     #{index + 1}
                   </div>
                   <div className="break-words max-w-[200px] md:max-w-none">

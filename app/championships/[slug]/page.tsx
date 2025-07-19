@@ -54,7 +54,7 @@ export default async function CompetitionPage({ params }: Props) {
         </div>
         <CompetitionDetails competition={competition} />
         <ProvinceRankingPage />
-        <BestTeamSummary />
+        {/* <BestTeamSummary /> */}
         <CompetitionResults competitionId={competition.id} />
       </main>
       <Footer />
