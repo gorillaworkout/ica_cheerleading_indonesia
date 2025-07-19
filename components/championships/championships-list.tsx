@@ -10,12 +10,11 @@ import { Calendar, MapPin, Users, Banknote, Search } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { useSelector } from "react-redux"
-import { RootState } from "@/lib/redux/store"
+import { useAppSelector } from "@/lib/redux/hooks"
 import { getPublicImageUrlSync } from "@/utils/getPublicImageUrl"
 
 export function ChampionshipsList() {
-  const competitions = useSelector((state: RootState) => state.competitions.competitions)
+  const competitions = useAppSelector((state) => state.competitions.competitions)
   const [searchTerm, setSearchTerm] = useState("")
   const [yearFilter, setYearFilter] = useState<string>("all")
 

@@ -5,8 +5,7 @@ import { CompetitionDetails } from "@/components/championships/competition-detai
 import { CompetitionResults } from "@/components/championships/competition-results"
 import { notFound } from "next/navigation"
 import { fetchCompetitions } from "@/lib/fetchCompetitions"
-import BestTeamSummary from "@/components/championships/best-team-medal-result"
-import ProvinceRankingPage from "@/components/championships/province-point"
+import ProvinceRankingSimple from "@/components/championships/province-ranking-simple"
 import { HeroImageSection } from "@/components/home/hero-image-section"
 interface Props {
   params: Promise<{ slug: string }>
@@ -53,8 +52,7 @@ export default async function CompetitionPage({ params }: Props) {
           <HeroImageSection heroSlides={heroSlides} showTextAndButtons={false} />
         </div>
         <CompetitionDetails competition={competition} />
-        <ProvinceRankingPage />
-        {/* <BestTeamSummary /> */}
+        <ProvinceRankingSimple />
         <CompetitionResults competitionId={competition.id} />
       </main>
       <Footer />

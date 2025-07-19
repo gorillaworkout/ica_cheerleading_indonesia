@@ -7,7 +7,7 @@ import { Footer } from "@/components/layout/footer"
 import { TeamLogoSlider } from "@/components/home/team-logo-section"
 import { ChampionshipSection } from "@/components/home/championship-section"
 import CheerOrganizationsSection from "@/components/home/cheer-organization-section"
-import { ScrollAnimation } from "@/components/ui/scroll-animation"
+import { ScrollAnimation } from "@/components/ui/scroll-animation-safe"
 import { generateSEOMetadata, generateJSONLD, breadcrumbSchema } from "@/lib/seo"
 
 export const metadata: Metadata = generateSEOMetadata({
@@ -46,21 +46,21 @@ export default function HomePage() {
         <div className="w-full h-fit">
           <HeroSection showTextAndButtons={false} />
         </div>
-        <div id="introSection">
-          <ScrollAnimation>
+        <ScrollAnimation delay={0.2} direction="up">
+          <div id="introSection">
             <IntroSection />
-          </ScrollAnimation>
-        </div>
-        <ScrollAnimation>
+          </div>
+        </ScrollAnimation>
+        <ScrollAnimation delay={0.3} direction="up">
           <NewsSection />
         </ScrollAnimation>
-        <ScrollAnimation>
+        <ScrollAnimation delay={0.4} direction="up">
           <TeamLogoSlider />  
         </ScrollAnimation>
-        <ScrollAnimation>
+        <ScrollAnimation delay={0.5} direction="up">
           <CheerOrganizationsSection/>
         </ScrollAnimation>
-        <ScrollAnimation>
+        <ScrollAnimation delay={0.6} direction="up">
           <ChampionshipSection/>
         </ScrollAnimation>
       </main>

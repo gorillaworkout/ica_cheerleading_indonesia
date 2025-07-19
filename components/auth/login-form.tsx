@@ -17,7 +17,6 @@ import { Chrome, AlertCircle, MailCheck } from "lucide-react"
 import { Label } from "@/components/ui/label"
 import { useRouter } from "next/navigation"
 import { supabase } from "@/lib/supabase"
-import { provinces } from "@/utils/dummyprovince" // pastikan import ini sesuai path kamu
 import { profile } from "console"
 import { DatePicker } from "../ui/date-picker"
 
@@ -38,6 +37,7 @@ export function LoginForm() {
   const [lastSignInEmail, setLastSignInEmail] = useState("")
   const dispatch = useAppDispatch()
   const { loading, error, user, hydrated } = useAppSelector((state) => state.auth)
+  const provinces = useAppSelector((state) => state.provinces.provinces)  // Get provinces from Redux
 
   const [activeTab, setActiveTab] = useState<"signin" | "signup">("signin")
   const [emailForResend, setEmailForResend] = useState("")
@@ -389,7 +389,7 @@ export function LoginForm() {
                   <select value={signUpData.provinceCode} onChange={(e) => setSignUpData({ ...signUpData, provinceCode: e.target.value })} required className="w-full border rounded px-2 py-2">
                     <option value="">Choose Province</option>
                     {provinces.map((prov) => (
-                      <option key={prov.code} value={prov.code}>
+                      <option key={prov.id_province} value={prov.id_province}>
                         {prov.name}
                       </option>
                     ))}

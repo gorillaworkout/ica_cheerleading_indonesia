@@ -4,14 +4,14 @@ import { Button } from "@/components/ui/button"
 import { Calendar, ArrowRight } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
-import { useSelector, useDispatch } from "react-redux";
 import { useEffect } from "react";
 import { fetchNews } from "@/features/news/newsSlice";
 import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
 import { getPublicImageUrlSync } from "@/utils/getPublicImageUrl"
+
 export function NewsSection() {
   const dispatch = useAppDispatch();
-  const { newsList, status, error } = useSelector((state: any) => state.news);
+  const { newsList, status, error } = useAppSelector((state: any) => state.news);
   
   useEffect(() => {
     if (status === "idle") {

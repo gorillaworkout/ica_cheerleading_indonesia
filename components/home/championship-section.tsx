@@ -5,15 +5,14 @@ import { Button } from "@/components/ui/button"
 import { Calendar, ArrowRight, MapPin, Users, Banknote } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
-import { useSelector } from "react-redux";
-import { RootState } from "@/lib/redux/store";
+import { useAppSelector } from "@/lib/redux/hooks";
 import { Badge } from "../ui/badge"
 import { getPublicImageUrl } from "@/utils/getPublicImageUrl";
 import { getCardStyle } from "@/styles/cardStyles";
 import React, { useEffect, useState } from "react";
 
 export function ChampionshipSection() {
-  const competitions = useSelector((state: RootState) => state.competitions.competitions);
+  const competitions = useAppSelector((state) => state.competitions.competitions);
 
   // Helper to fetch image URLs for competitions
   const [imageUrls, setImageUrls] = useState<{ [id: string]: string | null }>({});

@@ -17,15 +17,17 @@ import { DatePicker } from "../ui/date-picker"
 import { useAppDispatch } from "@/lib/redux/hooks";
 import { fetchSessionAndProfile } from "@/features/auth/authSlice"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { provinces } from "@/utils/dummyprovince"
 import { addYears } from "date-fns"
 import ChangePasswordForm from "./change-password"
 export function ProfileForm() {
   const { user, profile } = useAppSelector((state) => state.auth)
+  const provinces = useAppSelector((state) => state.provinces.provinces)  // Get provinces from Redux
   const { toast } = useToast()
   const [isUpdating, setIsUpdating] = useState(false)
   const dispatch = useAppDispatch()
   const [localError, setLocalError] = useState<string | null>(null)
+  const [profilePhotoUrl, setProfilePhotoUrl] = useState<string>("/placeholder.svg")
+  const [idPhotoUrl, setIdPhotoUrl] = useState<string>("/placeholder.svg")
   const [formData, setFormData] = useState({
     displayName: "",
     phoneNumber: "",
@@ -59,6 +61,31 @@ export function ProfileForm() {
       setTempBirthDate(
         profile.birth_date ? new Date(profile.birth_date) : undefined
       )
+
+      // Resolve image URLs
+      if (profile.profile_photo_url && typeof profile.profile_photo_url === "string") {
+        if (profile.profile_photo_url.startsWith("/")) {
+          setProfilePhotoUrl(profile.profile_photo_url)
+        } else {
+          const resolveUrl = async () => {
+            const url = await getPublicImageUrl(profile.profile_photo_url as string)
+            setProfilePhotoUrl(url || "/placeholder.svg")
+          }
+          resolveUrl()
+        }
+      }
+
+      if (profile.id_photo_url && typeof profile.id_photo_url === "string") {
+        if (profile.id_photo_url.startsWith("/")) {
+          setIdPhotoUrl(profile.id_photo_url)
+        } else {
+          const resolveUrl = async () => {
+            const url = await getPublicImageUrl(profile.id_photo_url as string)
+            setIdPhotoUrl(url || "/placeholder.svg")
+          }
+          resolveUrl()
+        }
+      }
     }
   }, [user, profile])
 
@@ -157,11 +184,7 @@ export function ProfileForm() {
           <div className="flex items-center space-x-4">
             {profile?.profile_photo_url ? (
               <Image
-                // src={getPublicImageUrl(profile.profile_photo_url || "")}
-                src={profile.profile_photo_url && typeof profile.profile_photo_url === "string"
-                  ? (profile.profile_photo_url.startsWith("/") ? profile.profile_photo_url : getPublicImageUrl(profile.profile_photo_url) || "/placeholder.svg")
-                  : "/placeholder.svg"}
-                // getPublicImageUrl(profile.id_photo_url)
+                src={profilePhotoUrl}
                 alt="Profile Photo"
                 width={64}
                 height={64}
@@ -266,7 +289,7 @@ export function ProfileForm() {
               <select value={formData.provinceCode} onChange={(e) => setFormData({ ...formData, provinceCode: e.target.value })} required className="w-full border rounded px-2 py-2">
                 <option value="">Choose Province</option>
                 {provinces.map((prov) => (
-                  <option key={prov.code} value={prov.code}>
+                  <option key={prov.id_province} value={prov.id_province}>
                     {prov.name}
                   </option>
                 ))}
@@ -353,10 +376,7 @@ export function ProfileForm() {
             <span>ID Photo:</span>
             {profile?.id_photo_url ? (
               <a
-                // href={getPublicImageUrl(profile.id_photo_url)}
-                href={profile.id_photo_url && typeof profile.id_photo_url === "string"
-                  ? (profile.id_photo_url.startsWith("/") ? profile.id_photo_url : getPublicImageUrl(profile.id_photo_url) || "/placeholder.svg")
-                  : "/placeholder.svg"}
+                href={idPhotoUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-blue-600 underline hover:text-blue-800 transition-colors"
