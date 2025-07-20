@@ -87,7 +87,7 @@ export function ChampionshipSection() {
                   </div>
                   <div className="flex items-center space-x-2">
                     <Users className="h-4 w-4 text-red-600" />
-                    <span>{competition.divisions} Divisions</span>
+                    <span>33 Divisions</span>
                   </div>
                 </div>
 

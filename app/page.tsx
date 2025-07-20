@@ -46,21 +46,21 @@ export default function HomePage() {
         <div className="w-full h-fit">
           <HeroSection showTextAndButtons={false} />
         </div>
-        <ScrollAnimation delay={0.2} direction="up">
+        <ScrollAnimation delay={0.1} direction="up">
           <div id="introSection">
             <IntroSection />
           </div>
         </ScrollAnimation>
-        <ScrollAnimation delay={0.3} direction="up">
+        <ScrollAnimation delay={0.1} direction="up">
           <NewsSection />
         </ScrollAnimation>
-        <ScrollAnimation delay={0.4} direction="up">
+        <ScrollAnimation delay={0.1} direction="right">
           <TeamLogoSlider />  
         </ScrollAnimation>
-        <ScrollAnimation delay={0.5} direction="up">
+        <ScrollAnimation delay={0.1} direction="right">
           <CheerOrganizationsSection/>
         </ScrollAnimation>
-        <ScrollAnimation delay={0.6} direction="up">
+        <ScrollAnimation delay={0.1} direction="right">
           <ChampionshipSection/>
         </ScrollAnimation>
       </main>

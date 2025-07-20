@@ -26,9 +26,9 @@ const cardVariants = {
 };
 
 const logos = [
-  { name: "163-icu-logo-new.png", short: "ICU" },
-  { name: "630-acu-logo.jpg", short: "ACU" },
-  { name: "072-ica-logo.png", short: "ICA" },
+  { name: "163-icu-logo-new.png", short: "ICU", link: "https://cheerunion.org" },
+  { name: "630-acu-logo.jpg", short: "ACU", link: "https://cheerunion.org" },
+  { name: "072-ica-logo.png", short: "ICA", link: "https://indonesiancheer.org" },
 ];
 
 export default function CheerOrganizationsSection() {
@@ -51,7 +51,19 @@ export default function CheerOrganizationsSection() {
           {logos.map((logo) => {
             const matchedImg = images.find((img) => img.name === logo.name)
             return (
-              <div key={logo.name} className="bg-white rounded-2xl p-6 flex flex-col items-center justify-center border shadow-md hover:shadow-xl transition-all">
+              <div 
+                key={logo.name} 
+                className="bg-white rounded-2xl p-6 flex flex-col items-center justify-center border shadow-md hover:shadow-xl transition-all cursor-pointer transform hover:scale-105"
+                onClick={() => window.open(logo.link, '_blank')}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    window.open(logo.link, '_blank');
+                  }
+                }}
+              >
                 {matchedImg && (
                   <img
                     src={matchedImg.url}
@@ -59,6 +71,7 @@ export default function CheerOrganizationsSection() {
                     className="w-36 h-36 md:w-48 md:h-48 object-contain mb-4"
                   />
                 )}
+                <p className="text-sm text-gray-600 font-medium">{logo.short}</p>
               </div>
             )
           })}
