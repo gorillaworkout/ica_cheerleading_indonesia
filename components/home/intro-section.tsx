@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Trophy, Users, Award, Calendar } from "lucide-react"
+import { ScrollAnimation } from "@/components/ui/scroll-animation-safe"
 
 export function IntroSection() {
   const features = [
@@ -28,29 +29,33 @@ export function IntroSection() {
   return (
     <section className="py-16 bg-gray-50">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">
-            Welcome to the Indonesian Cheer Association
-          </h2>
-          <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-            We are dedicated to promoting excellence in cheerleading through competitive events, educational programs,
-            and building a global community of athletes, coaches, and enthusiasts.
-          </p>
-        </div>
+        <ScrollAnimation delay={0.1} direction="up">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+              Welcome to the Indonesian Cheer Association
+            </h2>
+            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+              We are dedicated to promoting excellence in cheerleading through competitive events, educational programs,
+              and building a global community of athletes, coaches, and enthusiasts.
+            </p>
+          </div>
+        </ScrollAnimation>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {features.map((feature, index) => (
-            <Card key={index} className="text-center hover:shadow-lg transition-shadow">
-              <CardHeader>
-                <div className="mx-auto w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mb-4">
-                  <feature.icon className="h-6 w-6 text-red-600" />
-                </div>
-                <CardTitle className="text-xl">{feature.title}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-gray-600">{feature.description}</p>
-              </CardContent>
-            </Card>
+            <ScrollAnimation key={index} delay={0.2 + (index * 0.1)} direction="up">
+              <Card className="text-center hover:shadow-lg transition-shadow">
+                <CardHeader>
+                  <div className="mx-auto w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mb-4">
+                    <feature.icon className="h-6 w-6 text-red-600" />
+                  </div>
+                  <CardTitle className="text-xl">{feature.title}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-gray-600">{feature.description}</p>
+                </CardContent>
+              </Card>
+            </ScrollAnimation>
           ))}
         </div>
       </div>
