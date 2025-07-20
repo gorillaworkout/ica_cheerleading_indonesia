@@ -154,236 +154,236 @@
 // //   ]
 // // }
 
-// // export const mockResults = {
-// //   "1": [
-// //       {
-// //       division:"Double Performance Cheer Freestyle Pom Novice",
-// //       results:[
-// //         {placement: 1, team:"ORACLE", score: 68.8, province: "West Java"},
-// //         {placement: 2, team:"MAC", score: 61.3, province: "East Java"},
-// //         {placement: 3, team:"SCARLET MACAROON", score: 55.2, province: "South Kalimantan"},
-// //       ]
-// //     },
-// //      {
-// //       division:"Double Performance Cheer Freestyle Pom Premier",
-// //       results:[
-// //         {placement: 1, team:"FOX", score: 70.3, province: "DKI Jakarta"},
-// //         {placement: 2, team:"MIDS DIAMOND", score: 65.2, province: "DKI Jakarta"},
-// //         {placement: 3, team:"MAC", score: 62.7, province: "East Java"},
-// //       ]
-// //     },
-// //     {
-// //     division:"Double Performance Cheer Hip Hop Novice",
-// //       results:[
-// //         {placement: 1, team:"ATHENA", score: 68.2, province: "DKI Jakarta"},
-// //         {placement: 2, team:"W-QUEEN", score: 67.8, province: "West Java"},
-// //         {placement: 3, team:"CHARTS", score: 65, province: "West Java"},
-// //       ]
-// //     },
-// //       {
-// //     division:"Double Performance Cheer Hip Hop Premier",
-// //       results:[
-// //         {placement: 1, team:"FORTES HYPEGENE", score: 74.5, province: "Central Java"},
-// //         {placement: 2, team:"PISCES LAVA", score: 71, province: "East Java"},
-// //         {placement: 3, team:"VENTBION GLAMZ", score: 70.2, province: "DKI Jakarta"},
-// //       ]
-// //     },
-// //      {
-// //     division:"Double Performance Cheer Freestyle Pom Mini Novice",
-// //       results:[
-// //         {placement: 1, team:"SKY ZONE", score: 65.5, province: "DKI Jakarta"},
-// //         {placement: 2, team:"FORCE SMART CHEER", score: 57.7, province: "DKI Jakarta"},
-// //         {placement: 3, team:"SCARLET GUMMY BEAR", score: 53.3, province: "South Kalimantan"},
-// //       ]
-// //     },
-// //       {
-// //     division:"Double Performance Cheer Hip Hop Mini Novice ",
-// //       results:[
-// //         {placement: 1, team:"LITTLE B", score: 67.7, province: "South Kalimantan"},
-// //         {placement: 2, team:"FORCE SMART CHEER", score: 65.5, province: "DKI Jakarta"},
-// //         {placement: 3, team:"LITTLE C", score: 53.3, province: "South Kalimantan"},
-// //       ]
-// //     },
-// //       {
-// //       division: "Group Stunt All Girl Advanced",
-// //       results: [
-// //         {placement: 1, team:"CROWN ALLSTAR", score: 72.8, province: "West Java"},
-// //         {placement: 2, team:"CHARTS", score: 65.8, province: "West Java"},
-// //         {placement: 3, team:"SWAG SILVER", score: 45.2, province: "East Java"},
-// //       ],
-// //     },
-// //     {
-// //       division: "Group Stunt All Girl Elite",
-// //       results: [
-// //         { placement: 1, team: "Arrow Allstar", score: 55.2, province: "DI Yogyakarta" },
-// //       ],
-// //     },
-// //     {
-// //       division: "Group Stunt All Girl Intermediate",
-// //       results: [
-// //         { placement: 1, team: "Barstwo Peach", score: 72.2, province: "West Java" },
-// //         { placement: 2, team: "Pisces Louise", score: 69.0, province: "East Java" },
-// //         { placement: 3, team: "Pisces Belle", score: 61.7, province: "East Java" },
-// //       ],
-// //     },
-// //     {
-// //       division: "Group Stunt All Girl Median",
-// //       results: [
-// //         { placement: 1, team: "Crown Allstar", score: 64.2, province: "West Java" },
-// //         { placement: 2, team: "Barstwo", score: 62.2, province: "West Java" },
-// //         { placement: 3, team: "Panthers", score: 55.0, province: "West Java" },
-// //       ],
-// //     },
-// //     {
-// //       division: "Group Stunt All Girl Premier",
-// //       results: [
-// //         { placement: 1, team: "Great Allstar", score: 42.7, province: "South Sumatra" },
-// //       ],
-// //     },
-// //     {
-// //       division: "Group Stunt Coed Advanced",
-// //       results: [
-// //         { placement: 1, team: "Crown Allstar", score: 70.3, province: "West Java" },
-// //         { placement: 2, team: "FOX", score: 63.3, province: "DKI Jakarta" },
-// //         { placement: 3, team: "Great Allstar", score: 48.5, province: "South Sumatra" },
-// //       ],
-// //     },
-// //     {
-// //       division: "Group Stunt Coed Elite",
-// //       results: [
-// //         { placement: 1, team: "Grizza", score: 54.2, province: "Central Java" },
-// //       ],
-// //     },
-// //     {
-// //       division: "Group Stunt Coed Intermediate",
-// //       results: [
-// //         { placement: 1, team: "Spiders", score: 65.2, province: "Central Java" },
-// //         { placement: 2, team: "Barstwo", score: 64.0, province: "West Java" },
-// //         { placement: 3, team: "Spears Blue", score: 51.7, province: "Central Java" },
-// //       ],
-// //     },
-// //     {
-// //       division: "Group Stunt Coed Median",
-// //       results: [
-// //         { placement: 1, team: "Spiders", score: 78.5, province: "Central Java" },
-// //         { placement: 2, team: "Barstwo", score: 68.3, province: "West Java" },
-// //         { placement: 3, team: "Spartan", score: 50.8, province: "East Java" },
-// //       ],
-// //     },
-// //     {
-// //       division: "Group Stunt Coed Premier",
-// //       results: [
-// //         { placement: 1, team: "Crown Allstar", score: 63.8, province: "West Java" },
-// //       ],
-// //     },
-// //     {
-// //       division: "Group Stunt Novice",
-// //       results: [
-// //         { placement: 1, team: "Pisces Pretty", score: 63.7, province: "East Java" },
-// //         { placement: 2, team: "Pisces Pixie", score: 62.0, province: "East Java" },
-// //         { placement: 3, team: "Falcon Arthemis", score: 61.2, province: "East Java" },
-// //       ],
-// //     },
-// //     {
-// //       division: "Partner Stunt Coed Elite",
-// //       results: [
-// //         { placement: 1, team: "CSA", score: 48.7, province: "Central Java" },
-// //         { placement: 2, team: "Scarlet Witch", score: 45.7, province: "South Kalimantan" },
-// //       ],
-// //     },
-// //     {
-// //       division: "Team Cheer All Girl Advanced",
-// //       results: [
-// //         { placement: 1, team: "Crown Allstar", score: 49.7, province: "West Java" },
-// //         { placement: 2, team: "Fortes Cheerleading", score: 46.5, province: "Central Java" },
-// //         { placement: 3, team: "Swag", score: 32.5, province: "East Java" },
-// //       ],
-// //     },
-// //     {
-// //       division: "Team Cheer All Girl Elite",
-// //       results: [
-// //         { placement: 1, team: "Nexat", score: 45.7, province: "South Sumatra" },
-// //         { placement: 2, team: "Blade", score: 39.2, province: "Central Java" },
-// //         { placement: 3, team: "Archers Allstar", score: 38.2, province: "DKI Jakarta" },
-// //       ],
-// //     },
-// //     {
-// //       division: "Team Cheer All Girl Intermediate",
-// //       results: [
-// //         { placement: 1, team: "Espero Cheers", score: 57.8, province: "Central Java" },
-// //         { placement: 2, team: "V-King Cheerleader", score: 56.7, province: "West Java" },
-// //         { placement: 3, team: "Comet", score: 55.5, province: "East Java" },
-// //       ],
-// //     },
-// //     {
-// //       division: "Team Cheer All Girl Median",
-// //       results: [
-// //         { placement: 1, team: "Panthers", score: 60.3, province: "West Java" },
-// //         { placement: 2, team: "Eagles", score: 59.3, province: "Central Java" },
-// //         { placement: 3, team: "GGC Thunders", score: 55.8, province: "Central Java" },
-// //       ],
-// //     },
-// //     {
-// //       division: "Team Cheer Coed Advanced",
-// //       results: [
-// //         { placement: 1, team: "Lions", score: 61.7, province: "Central Java" },
-// //         { placement: 2, team: "Eagles", score: 58.7, province: "Central Java" },
-// //         { placement: 3, team: "FOX", score: 58.5, province: "DKI Jakarta" },
-// //       ],
-// //     },
-// //     {
-// //       division: "Team Cheer Coed Elite",
-// //       results: [
-// //         { placement: 1, team: "Funtastic", score: 45.7, province: "Central Java" },
-// //         { placement: 2, team: "Scarlet All-Stars", score: 38.8, province: "South Kalimantan" },
-// //         { placement: 3, team: "Arrow Allstar", score: 20.2, province: "DI Yogyakarta" },
-// //       ],
-// //     },
-// //     {
-// //       division: "Team Cheer Coed Intermediate",
-// //       results: [
-// //         { placement: 1, team: "Barstwo", score: 55.2, province: "West Java" },
-// //         { placement: 2, team: "Spiders", score: 49.3, province: "Central Java" },
-// //         { placement: 3, team: "MAC", score: 41.5, province: "East Java" },
-// //       ],
-// //     },
-// //     {
-// //       division: "Team Cheer Coed Median",
-// //       results: [
-// //         { placement: 1, team: "Spiders", score: 61.5, province: "Central Java" },
-// //         { placement: 2, team: "Grizza", score: 51.3, province: "Central Java" },
-// //         { placement: 3, team: "Revel Heroes", score: 42.0, province: "DKI Jakarta" },
-// //       ],
-// //     },
-// //     {
-// //       division: "Team Cheer Coed Premier",
-// //       results: [
-// //         { placement: 1, team: "Crown Allstar", score: 56.7, province: "West Java" },
-// //         { placement: 2, team: "Ace All Star", score: 47.3, province: "DKI Jakarta" },
-// //         { placement: 3, team: "Stars Allstars", score: 42.0, province: "Central Java" },
-// //       ],
-// //     },
-// //     {
-// //       division: "Team Cheer New Comer Intermediate",
-// //       results: [
-// //         { placement: 1, team: "Vingt", score: 61.5, province: "West Java" },
-// //         { placement: 2, team: "Phoenix", score: 58.8, province: "Central Java" },
-// //         { placement: 3, team: "Rocket", score: 48.3, province: "East Java" },
-// //       ],
-// //     },
-// //     {
-// //       division: "Team Cheer New Comer Novice",
-// //       results: [
-// //         { placement: 1, team: "Oracle", score: 67.8, province: "West Java" },
-// //         { placement: 2, team: "Python", score: 61.3, province: "Central Java" },
-// //         { placement: 3, team: "Athena", score: 54.8, province: "DKI Jakarta" },
-// //       ],
-// //     },
-// //     {
-// //       division: "Team Cheer Novice",
-// //       results: [
-// //         { placement: 1, team: "Skyzone", score: 58.7, province: "DKI Jakarta" },
-// //       ],
-// //     },
-// //   ],
-// // };
+// export const mockResults = {
+//   "1": [
+//       {
+//       division:"Double Performance Cheer Freestyle Pom Novice",
+//       results:[
+//         {placement: 1, team:"ORACLE", score: 68.8, province: "West Java"},
+//         {placement: 2, team:"MAC", score: 61.3, province: "East Java"},
+//         {placement: 3, team:"SCARLET MACAROON", score: 55.2, province: "South Kalimantan"},
+//       ]
+//     },
+//      {
+//       division:"Double Performance Cheer Freestyle Pom Premier",
+//       results:[
+//         {placement: 1, team:"FOX", score: 70.3, province: "DKI Jakarta"},
+//         {placement: 2, team:"MIDS DIAMOND", score: 65.2, province: "DKI Jakarta"},
+//         {placement: 3, team:"MAC", score: 62.7, province: "East Java"},
+//       ]
+//     },
+//     {
+//     division:"Double Performance Cheer Hip Hop Novice",
+//       results:[
+//         {placement: 1, team:"ATHENA", score: 68.2, province: "DKI Jakarta"},
+//         {placement: 2, team:"W-QUEEN", score: 67.8, province: "West Java"},
+//         {placement: 3, team:"CHARTS", score: 65, province: "West Java"},
+//       ]
+//     },
+//       {
+//     division:"Double Performance Cheer Hip Hop Premier",
+//       results:[
+//         {placement: 1, team:"FORTES HYPEGENE", score: 74.5, province: "Central Java"},
+//         {placement: 2, team:"PISCES LAVA", score: 71, province: "East Java"},
+//         {placement: 3, team:"VENTBION GLAMZ", score: 70.2, province: "DKI Jakarta"},
+//       ]
+//     },
+//      {
+//     division:"Double Performance Cheer Freestyle Pom Mini Novice",
+//       results:[
+//         {placement: 1, team:"SKY ZONE", score: 65.5, province: "DKI Jakarta"},
+//         {placement: 2, team:"FORCE SMART CHEER", score: 57.7, province: "DKI Jakarta"},
+//         {placement: 3, team:"SCARLET GUMMY BEAR", score: 53.3, province: "South Kalimantan"},
+//       ]
+//     },
+//       {
+//     division:"Double Performance Cheer Hip Hop Mini Novice ",
+//       results:[
+//         {placement: 1, team:"LITTLE B", score: 67.7, province: "South Kalimantan"},
+//         {placement: 2, team:"FORCE SMART CHEER", score: 65.5, province: "DKI Jakarta"},
+//         {placement: 3, team:"LITTLE C", score: 53.3, province: "South Kalimantan"},
+//       ]
+//     },
+//       {
+//       division: "Group Stunt All Girl Advanced",
+//       results: [
+//         {placement: 1, team:"CROWN ALLSTAR", score: 72.8, province: "West Java"},
+//         {placement: 2, team:"CHARTS", score: 65.8, province: "West Java"},
+//         {placement: 3, team:"SWAG SILVER", score: 45.2, province: "East Java"},
+//       ],
+//     },
+//     {
+//       division: "Group Stunt All Girl Elite",
+//       results: [
+//         { placement: 1, team: "Arrow Allstar", score: 55.2, province: "DI Yogyakarta" },
+//       ],
+//     },
+//     {
+//       division: "Group Stunt All Girl Intermediate",
+//       results: [
+//         { placement: 1, team: "Barstwo Peach", score: 72.2, province: "West Java" },
+//         { placement: 2, team: "Pisces Louise", score: 69.0, province: "East Java" },
+//         { placement: 3, team: "Pisces Belle", score: 61.7, province: "East Java" },
+//       ],
+//     },
+//     {
+//       division: "Group Stunt All Girl Median",
+//       results: [
+//         { placement: 1, team: "Crown Allstar", score: 64.2, province: "West Java" },
+//         { placement: 2, team: "Barstwo", score: 62.2, province: "West Java" },
+//         { placement: 3, team: "Panthers", score: 55.0, province: "West Java" },
+//       ],
+//     },
+//     {
+//       division: "Group Stunt All Girl Premier",
+//       results: [
+//         { placement: 1, team: "Great Allstar", score: 42.7, province: "South Sumatra" },
+//       ],
+//     },
+//     {
+//       division: "Group Stunt Coed Advanced",
+//       results: [
+//         { placement: 1, team: "Crown Allstar", score: 70.3, province: "West Java" },
+//         { placement: 2, team: "FOX", score: 63.3, province: "DKI Jakarta" },
+//         { placement: 3, team: "Great Allstar", score: 48.5, province: "South Sumatra" },
+//       ],
+//     },
+//     {
+//       division: "Group Stunt Coed Elite",
+//       results: [
+//         { placement: 1, team: "Grizza", score: 54.2, province: "Central Java" },
+//       ],
+//     },
+//     {
+//       division: "Group Stunt Coed Intermediate",
+//       results: [
+//         { placement: 1, team: "Spiders", score: 65.2, province: "Central Java" },
+//         { placement: 2, team: "Barstwo", score: 64.0, province: "West Java" },
+//         { placement: 3, team: "Spears Blue", score: 51.7, province: "Central Java" },
+//       ],
+//     },
+//     {
+//       division: "Group Stunt Coed Median",
+//       results: [
+//         { placement: 1, team: "Spiders", score: 78.5, province: "Central Java" },
+//         { placement: 2, team: "Barstwo", score: 68.3, province: "West Java" },
+//         { placement: 3, team: "Spartan", score: 50.8, province: "East Java" },
+//       ],
+//     },
+//     {
+//       division: "Group Stunt Coed Premier",
+//       results: [
+//         { placement: 1, team: "Crown Allstar", score: 63.8, province: "West Java" },
+//       ],
+//     },
+//     {
+//       division: "Group Stunt Novice",
+//       results: [
+//         { placement: 1, team: "Pisces Pretty", score: 63.7, province: "East Java" },
+//         { placement: 2, team: "Pisces Pixie", score: 62.0, province: "East Java" },
+//         { placement: 3, team: "Falcon Arthemis", score: 61.2, province: "East Java" },
+//       ],
+//     },
+//     {
+//       division: "Partner Stunt Coed Elite",
+//       results: [
+//         { placement: 1, team: "CSA", score: 48.7, province: "Central Java" },
+//         { placement: 2, team: "Scarlet Witch", score: 45.7, province: "South Kalimantan" },
+//       ],
+//     },
+//     {
+//       division: "Team Cheer All Girl Advanced",
+//       results: [
+//         { placement: 1, team: "Crown Allstar", score: 49.7, province: "West Java" },
+//         { placement: 2, team: "Fortes Cheerleading", score: 46.5, province: "Central Java" },
+//         { placement: 3, team: "Swag", score: 32.5, province: "East Java" },
+//       ],
+//     },
+//     {
+//       division: "Team Cheer All Girl Elite",
+//       results: [
+//         { placement: 1, team: "Nexat", score: 45.7, province: "South Sumatra" },
+//         { placement: 2, team: "Blade", score: 39.2, province: "Central Java" },
+//         { placement: 3, team: "Archers Allstar", score: 38.2, province: "DKI Jakarta" },
+//       ],
+//     },
+//     {
+//       division: "Team Cheer All Girl Intermediate",
+//       results: [
+//         { placement: 1, team: "Espero Cheers", score: 57.8, province: "Central Java" },
+//         { placement: 2, team: "V-King Cheerleader", score: 56.7, province: "West Java" },
+//         { placement: 3, team: "Comet", score: 55.5, province: "East Java" },
+//       ],
+//     },
+//     {
+//       division: "Team Cheer All Girl Median",
+//       results: [
+//         { placement: 1, team: "Panthers", score: 60.3, province: "West Java" },
+//         { placement: 2, team: "Eagles", score: 59.3, province: "Central Java" },
+//         { placement: 3, team: "GGC Thunders", score: 55.8, province: "Central Java" },
+//       ],
+//     },
+//     {
+//       division: "Team Cheer Coed Advanced",
+//       results: [
+//         { placement: 1, team: "Lions", score: 61.7, province: "Central Java" },
+//         { placement: 2, team: "Eagles", score: 58.7, province: "Central Java" },
+//         { placement: 3, team: "FOX", score: 58.5, province: "DKI Jakarta" },
+//       ],
+//     },
+//     {
+//       division: "Team Cheer Coed Elite",
+//       results: [
+//         { placement: 1, team: "Funtastic", score: 45.7, province: "Central Java" },
+//         { placement: 2, team: "Scarlet All-Stars", score: 38.8, province: "South Kalimantan" },
+//         { placement: 3, team: "Arrow Allstar", score: 20.2, province: "DI Yogyakarta" },
+//       ],
+//     },
+//     {
+//       division: "Team Cheer Coed Intermediate",
+//       results: [
+//         { placement: 1, team: "Barstwo", score: 55.2, province: "West Java" },
+//         { placement: 2, team: "Spiders", score: 49.3, province: "Central Java" },
+//         { placement: 3, team: "MAC", score: 41.5, province: "East Java" },
+//       ],
+//     },
+//     {
+//       division: "Team Cheer Coed Median",
+//       results: [
+//         { placement: 1, team: "Spiders", score: 61.5, province: "Central Java" },
+//         { placement: 2, team: "Grizza", score: 51.3, province: "Central Java" },
+//         { placement: 3, team: "Revel Heroes", score: 42.0, province: "DKI Jakarta" },
+//       ],
+//     },
+//     {
+//       division: "Team Cheer Coed Premier",
+//       results: [
+//         { placement: 1, team: "Crown Allstar", score: 56.7, province: "West Java" },
+//         { placement: 2, team: "Ace All Star", score: 47.3, province: "DKI Jakarta" },
+//         { placement: 3, team: "Stars Allstars", score: 42.0, province: "Central Java" },
+//       ],
+//     },
+//     {
+//       division: "Team Cheer New Comer Intermediate",
+//       results: [
+//         { placement: 1, team: "Vingt", score: 61.5, province: "West Java" },
+//         { placement: 2, team: "Phoenix", score: 58.8, province: "Central Java" },
+//         { placement: 3, team: "Rocket", score: 48.3, province: "East Java" },
+//       ],
+//     },
+//     {
+//       division: "Team Cheer New Comer Novice",
+//       results: [
+//         { placement: 1, team: "Oracle", score: 67.8, province: "West Java" },
+//         { placement: 2, team: "Python", score: 61.3, province: "Central Java" },
+//         { placement: 3, team: "Athena", score: 54.8, province: "DKI Jakarta" },
+//       ],
+//     },
+//     {
+//       division: "Team Cheer Novice",
+//       results: [
+//         { placement: 1, team: "Skyzone", score: 58.7, province: "DKI Jakarta" },
+//       ],
+//     },
+//   ],
+// };
