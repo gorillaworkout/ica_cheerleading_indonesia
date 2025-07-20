@@ -15,9 +15,8 @@ const navigation = [
 	{ name: "Add Results", href: "/admin/results/add", icon: Medal },
 	{ name: "Add Image Public", href: "/admin/gallery", icon: Image },
 	{ name: "Add News", href: "/admin/news/add", icon: Image },
-	{ name: "Manage Roles", href: "/admin/roles", icon: UserCheck },
 	{ name: "Manage Users", href: "/admin/users", icon: Users },
-	{ name: "Settings", href: "/admin/settings", icon: Settings },
+	// { name: "Settings", href: "/admin/settings", icon: Settings },
 ]
 
 export function AdminSidebar() {

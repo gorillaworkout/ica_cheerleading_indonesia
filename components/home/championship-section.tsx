@@ -1,5 +1,6 @@
 "use client";
 
+import { formatDate } from "@/utils/dateFormat";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Calendar, ArrowRight, MapPin, Users, Trophy, Star, Zap } from "lucide-react"
@@ -130,11 +131,7 @@ export function ChampionshipSection() {
                       </div>
                       <div>
                         <p className="text-gray-400 text-sm">Event Date</p>
-                        <p className="text-white font-medium">{new Date(competition.date).toLocaleDateString('id-ID', { 
-                          day: 'numeric', 
-                          month: 'long', 
-                          year: 'numeric' 
-                        })}</p>
+                        <p className="text-white font-medium">{formatDate(competition.date)}</p>
                       </div>
                     </div>
                     
@@ -169,11 +166,7 @@ export function ChampionshipSection() {
                       <p className="text-white">
                         <span className="text-gray-300">Deadline:</span>{" "}
                         <span className="font-semibold">
-                          {new Date(competition.registrationDeadline).toLocaleDateString('id-ID', {
-                            day: 'numeric',
-                            month: 'long',
-                            year: 'numeric'
-                          })}
+                          {formatDate(competition.registrationDeadline)}
                         </span>
                       </p>
                     </div>

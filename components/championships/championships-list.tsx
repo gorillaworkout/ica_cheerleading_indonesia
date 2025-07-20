@@ -1,5 +1,6 @@
 "use client"
 
+import { formatDate } from "@/utils/dateFormat";
 import { useState, useMemo } from "react"
 import Image from "next/image"
 import Link from "next/link"
@@ -127,7 +128,7 @@ export function ChampionshipsList() {
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div className="flex items-center space-x-2">
                     <Calendar className="h-4 w-4 text-red-600" />
-                    <span>{new Date(competition.date).toLocaleDateString()}</span>
+                    <span>{formatDate(competition.date)}</span>
                   </div>
                   <div className="flex items-center space-x-2">
                     <MapPin className="h-4 w-4 text-red-600" />
@@ -142,7 +143,7 @@ export function ChampionshipsList() {
                 {competition.registrationOpen && (
                   <div className="text-sm text-gray-600">
                     <strong>Registration Deadline:</strong>{" "}
-                    {new Date(competition.registrationDeadline).toLocaleDateString()}
+                    {formatDate(competition.registrationDeadline)}
                   </div>
                 )}
 

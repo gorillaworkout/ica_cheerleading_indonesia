@@ -36,7 +36,7 @@ async function generateMemberId(provinceCode: string) {
 export function LoginForm() {
   const [lastSignInEmail, setLastSignInEmail] = useState("")
   const dispatch = useAppDispatch()
-  const { loading, error, user, hydrated } = useAppSelector((state) => state.auth)
+  const { loading, error, user } = useAppSelector((state) => state.auth)
   const provinces = useAppSelector((state) => state.provinces.provinces)  // Get provinces from Redux
 
   const [activeTab, setActiveTab] = useState<"signin" | "signup">("signin")

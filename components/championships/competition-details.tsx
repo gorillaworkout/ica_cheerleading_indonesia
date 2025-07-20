@@ -1,4 +1,5 @@
 "use client"
+import { formatDate } from "@/utils/dateFormat";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -69,7 +70,7 @@ export function CompetitionDetails({ competition }: CompetitionDetailsProps) {
                     <Calendar className="h-5 w-5 text-red-600" />
                     <div>
                       <p className="font-medium">Date</p>
-                      <p className="text-gray-600">{new Date(competition.date).toLocaleDateString()}</p>
+                      <p className="text-gray-600">{formatDate(competition.date)}</p>
                     </div>
                   </div>
                   <div className="flex items-center space-x-3">
@@ -83,7 +84,7 @@ export function CompetitionDetails({ competition }: CompetitionDetailsProps) {
                     <Clock className="h-5 w-5 text-red-600" />
                     <div>
                       <p className="font-medium">Registration Deadline</p>
-                      <p className="text-gray-600">{new Date(competition.registrationDeadline).toLocaleDateString()}</p>
+                      <p className="text-gray-600">{formatDate(competition.registrationDeadline)}</p>
                     </div>
                   </div>
                   <div className="flex items-center space-x-3">
@@ -150,7 +151,7 @@ export function CompetitionDetails({ competition }: CompetitionDetailsProps) {
                   <>
                     <div className="text-center text-sm text-gray-600">
                       <p>Registration closes on</p>
-                      <p className="font-medium">{new Date(competition.registrationDeadline).toLocaleDateString()}</p>
+                      <p className="font-medium">{formatDate(competition.registrationDeadline)}</p>
                     </div>
                     <Link href={`/championships/${competition.id}/register`}>
                       <Button className="w-full bg-red-600 hover:bg-red-700" size="lg">

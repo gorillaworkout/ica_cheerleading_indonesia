@@ -54,7 +54,7 @@ export default function CheerOrganizationsSection() {
                       className="w-36 h-36 md:w-48 md:h-48 object-contain mb-4"
                     />
                   )}
-                  <p className="text-sm text-gray-600 font-medium">{logo.short}</p>
+                  {/* <p className="text-sm text-gray-600 font-medium">{logo.short}</p> */}
                 </div>
               </ScrollAnimation>
             )

@@ -17,6 +17,7 @@ import { DatePicker } from "../ui/date-picker"
 import { useAppDispatch } from "@/lib/redux/hooks";
 import { fetchSessionAndProfile } from "@/features/auth/authSlice"
 import { Alert, AlertDescription } from "@/components/ui/alert"
+import { formatDate } from "@/utils/dateFormat";
 import { addYears } from "date-fns"
 import ChangePasswordForm from "./change-password"
 export function ProfileForm() {
@@ -389,11 +390,11 @@ export function ProfileForm() {
           </div>
           <div className="flex justify-between">
             <span>Created At:</span>
-            <span>{new Date(profile?.created_at || "").toLocaleDateString()}</span>
+            <span>{formatDate(profile?.created_at)}</span>
           </div>
           <div className="flex justify-between">
             <span>Updated At:</span>
-            <span>{new Date(profile?.updated_at || "").toLocaleDateString()}</span>
+            <span>{formatDate(profile?.updated_at)}</span>
           </div>
         </CardContent>
       </Card>

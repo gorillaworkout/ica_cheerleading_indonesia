@@ -1,6 +1,7 @@
 "use client"
 
-import React, { useEffect, useState } from "react"
+import { formatDate } from "@/utils/dateFormat";
+import { useState, useEffect } from "react";
 import Image from "next/image"
 import { Calendar } from "lucide-react"
 import Link from "next/link"
@@ -62,7 +63,7 @@ export function NewsDetailClient({
           <h1 className="text-4xl font-bold mb-4 text-gray-900">{article.title}</h1>
           <div className="flex items-center text-gray-600 mb-8">
             <Calendar className="h-5 w-5 mr-2" />
-            <time dateTime={article.date}>{new Date(article.date).toLocaleDateString()}</time>
+            <time dateTime={article.date}>{formatDate(article.date)}</time>
           </div>
 
           <article
@@ -128,7 +129,7 @@ export function NewsDetailClient({
                         {newsItem.title}
                       </p>
                       <time className="text-xs text-gray-500 mt-1">
-                        {new Date(newsItem.date).toLocaleDateString()}
+                        {formatDate(newsItem.date)}
                       </time>
                     </div>
                   </Link>

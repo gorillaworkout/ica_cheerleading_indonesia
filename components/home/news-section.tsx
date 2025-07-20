@@ -1,4 +1,6 @@
 "use client"
+
+import { formatDate } from "@/utils/dateFormat";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Calendar, ArrowRight } from "lucide-react"
@@ -58,7 +60,7 @@ export function NewsSection() {
                     <CardHeader>
                       <div className="flex items-center text-sm text-gray-500 mb-2">
                         <Calendar className="h-4 w-4 mr-1" />
-                        {new Date(article.date).toLocaleDateString()}
+                        {formatDate(article.date)}
                       </div>
                       <CardTitle className="text-xl line-clamp-2">{article.title}</CardTitle>
                     </CardHeader>

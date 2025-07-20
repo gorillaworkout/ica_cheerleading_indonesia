@@ -1,5 +1,6 @@
 "use client"
 
+import { formatDate } from "@/utils/dateFormat";
 import React, { useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
@@ -83,7 +84,7 @@ export default function NewsPage() {
                             <CardHeader>
                                 <div className="flex items-center text-sm text-gray-500 mb-2">
                                     <Calendar className="h-4 w-4 mr-1" />
-                                    {new Date(article.date).toLocaleDateString()}
+                                    {formatDate(article.date)}
                                 </div>
                                 <CardTitle className="text-xl line-clamp-2" dangerouslySetInnerHTML={{ __html: article.title }}></CardTitle>
                             </CardHeader>
