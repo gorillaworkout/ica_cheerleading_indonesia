@@ -10,11 +10,37 @@ const nextConfig = {
   
   // Image optimization
   images: {
-    domains: [
-      'placeholder.svg',
-      'indonesiancheer.org',
-      'supabase.com',
-      'xltutyqtnerbybrguvhi.supabase.co'
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'placeholder.svg',
+      },
+      {
+        protocol: 'https',
+        hostname: 'indonesiancheer.org',
+      },
+      {
+        protocol: 'https',
+        hostname: 'supabase.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'xltutyqtnerbybrguvhi.supabase.co',
+        pathname: '/storage/v1/object/public/**',
+      },
+      {
+        protocol: 'https',
+        hostname: '*.supabase.co',
+        pathname: '/storage/v1/object/public/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'via.placeholder.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+      },
     ],
     formats: ['image/webp', 'image/avif'],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
