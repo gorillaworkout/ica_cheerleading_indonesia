@@ -13,6 +13,7 @@ import { fetchDivisions } from "@/features/divisions/divisionsSlice"
 import { fetchCompetitions } from "@/features/competitions/competitionsSlice"
 import { fetchNews } from "@/features/news/newsSlice"
 import { fetchProvinces } from "@/features/provinces/provincesSlice"
+import { fetchCoaches, fetchFeaturedCoaches } from "@/features/coaches/coachesSlice"
 import { debugEnvironment, debugSupabaseConnection } from "@/utils/debug"
 
 export function AuthInit() {
@@ -31,6 +32,8 @@ export function AuthInit() {
     dispatch(fetchCompetitions()) // Fetch competitions using Redux
     dispatch(fetchNews()) // Fetch news using Redux
     dispatch(fetchProvinces()) // Fetch provinces using Redux
+    dispatch(fetchCoaches()) // Fetch coaches using Redux
+    dispatch(fetchFeaturedCoaches()) // Fetch featured coaches using Redux
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
@@ -43,11 +46,15 @@ export function AuthInit() {
           dispatch(fetchCompetitions())
           dispatch(fetchNews())
           dispatch(fetchProvinces())
+          dispatch(fetchCoaches())
+          dispatch(fetchFeaturedCoaches())
         } else if (event === "SIGNED_OUT") {
           console.log("SIGNED OUT 26 auth-init")
           dispatch(setAuthState({ session: null, user: null }))
           dispatch(clearProfile())
           dispatch(fetchPublicImages())
+          dispatch(fetchCoaches())
+          dispatch(fetchFeaturedCoaches())
         }
         // You can handle other events if needed
       }

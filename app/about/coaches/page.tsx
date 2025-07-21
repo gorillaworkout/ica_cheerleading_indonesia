@@ -1,3 +1,5 @@
+"use client"
+
 import type { Metadata } from "next"
 import Link from "next/link"
 import { Header } from "@/components/layout/header"
@@ -7,17 +9,11 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { BookOpen, Users, Award } from "lucide-react"
 import Image from "next/image"
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
-import { cookies } from 'next/headers'
+import { useAppSelector } from "@/lib/redux/hooks"
+import { selectCoaches, selectCoachesLoading } from "@/features/coaches/coachesSlice"
 
-export const metadata: Metadata = {
-  title: "Coaches - ICA",
-  description: "Meet our certified coaches who bring years of experience and expertise to help develop the next generation of cheerleaders.",
-  openGraph: {
-    title: "Coaches - ICA",
-    description: "Meet our certified coaches who bring years of experience and expertise to help develop the next generation of cheerleaders.",
-  },
-}
+// Note: Metadata cannot be used in client components
+// Consider moving to layout.tsx or using a wrapper component if needed
 
 // Types for coach data
 interface Coach {
@@ -46,28 +42,9 @@ interface Coach {
   updated_at: string
 }
 
-// Fetch coaches data from Supabase
-async function getCoaches(): Promise<Coach[]> {
-  const supabase = createServerComponentClient({ cookies })
-  
-  const { data: coaches, error } = await supabase
-    .from('coaches')
-    .select('*')
-    .eq('is_active', true)
-    .order('sort_order', { ascending: true })
-    .order('name', { ascending: true })
-
-  if (error) {
-    console.error('Error fetching coaches:', error)
-    return []
-  }
-
-  return coaches || []
-}
-
-
-export default async function Coaches() {
-  const coaches = await getCoaches()
+export default function Coaches() {
+  const coaches = useAppSelector(selectCoaches)
+  const loading = useAppSelector(selectCoachesLoading)
 
   return (
     <div className="min-h-screen bg-white">
@@ -118,7 +95,12 @@ export default async function Coaches() {
               </p>
             </div>
 
-            {coaches.length === 0 ? (
+            {loading ? (
+              <div className="text-center py-12">
+                <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-red-600"></div>
+                <p className="text-gray-600 text-lg mt-4">Loading coaches...</p>
+              </div>
+            ) : coaches.length === 0 ? (
               <div className="text-center py-12">
                 <p className="text-gray-600 text-lg">No coaches available at the moment.</p>
               </div>

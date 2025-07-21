@@ -1,6 +1,6 @@
-import type { Metadata } from "next"
+"use client"
+
 import Link from "next/link"
-import { notFound } from "next/navigation"
 import { Header } from "@/components/layout/header"
 import { Footer } from "@/components/layout/footer"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -21,8 +21,8 @@ import {
   Zap
 } from "lucide-react"
 import Image from "next/image"
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
-import { cookies } from 'next/headers'
+import { useAppSelector } from "@/lib/redux/hooks"
+import { selectCoachById, selectCoachesLoading } from "@/features/coaches/coachesSlice"
 
 // Types for coach data
 interface Coach {
@@ -55,50 +55,40 @@ interface CoachDetailPageProps {
   params: { id: string }
 }
 
-// Fetch coach data from Supabase
-async function getCoach(id: string): Promise<Coach | null> {
-  const supabase = createServerComponentClient({ cookies })
-  
-  const { data: coach, error } = await supabase
-    .from('coaches')
-    .select('*')
-    .eq('id', id)
-    .eq('is_active', true)
-    .single()
+export default function CoachDetail({ params }: CoachDetailPageProps) {
+  const coach = useAppSelector((state) => selectCoachById(state, params.id))
+  const loading = useAppSelector(selectCoachesLoading)
 
-  if (error || !coach) {
-    return null
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-white">
+        <Header />
+        <main className="container mx-auto px-4 py-16 text-center">
+          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-red-600"></div>
+          <p className="text-gray-600 text-lg mt-4">Loading coach profile...</p>
+        </main>
+        <Footer />
+      </div>
+    )
   }
-
-  return coach
-}
-
-export async function generateMetadata({ params }: CoachDetailPageProps): Promise<Metadata> {
-  const coach = await getCoach(params.id)
-  
-  if (!coach) {
-    return {
-      title: "Coach Not Found",
-      description: "The requested coach profile could not be found.",
-    }
-  }
-
-  return {
-    title: `${coach.name} - ICA Coach`,
-    description: `Learn more about ${coach.name}, ${coach.title} at Indonesian Cheerleading Association.`,
-    openGraph: {
-      title: `${coach.name} - ICA Coach`,
-      description: `Learn more about ${coach.name}, ${coach.title} at Indonesian Cheerleading Association.`,
-      images: coach.image_url ? [coach.image_url] : undefined,
-    },
-  }
-}
-
-export default async function CoachDetail({ params }: CoachDetailPageProps) {
-  const coach = await getCoach(params.id)
 
   if (!coach) {
-    notFound()
+    return (
+      <div className="min-h-screen bg-white">
+        <Header />
+        <main className="container mx-auto px-4 py-16 text-center">
+          <h1 className="text-3xl font-bold text-gray-900 mb-4">Coach Not Found</h1>
+          <p className="text-gray-600 mb-8">The requested coach profile could not be found.</p>
+          <Link href="/about/coaches">
+            <Button className="bg-red-600 hover:bg-red-700">
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Back to Coaches
+            </Button>
+          </Link>
+        </main>
+        <Footer />
+      </div>
+    )
   }
 
   return (
