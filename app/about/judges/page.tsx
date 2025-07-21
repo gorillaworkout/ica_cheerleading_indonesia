@@ -16,33 +16,6 @@ export const metadata: Metadata = {
   },
 }
 
-const coaches = [
-  {
-    id: "1",
-    name: "Sarah Johnson",
-    specialization: "Elite Level Training",
-    experience: "15 years",
-    certifications: ["Level 5 Certified", "Safety Instructor"],
-    image: "/placeholder.svg?height=200&width=200",
-  },
-  {
-    id: "2",
-    name: "Mike Davis",
-    specialization: "Youth Development",
-    experience: "12 years",
-    certifications: ["Youth Specialist", "Tumbling Coach"],
-    image: "/placeholder.svg?height=200&width=200",
-  },
-  {
-    id: "3",
-    name: "Emma Wilson",
-    specialization: "Choreography & Performance",
-    experience: "10 years",
-    certifications: ["Choreography Expert", "Performance Coach"],
-    image: "/placeholder.svg?height=200&width=200",
-  },
-]
-
 const judges = [
   {
     id: "1",

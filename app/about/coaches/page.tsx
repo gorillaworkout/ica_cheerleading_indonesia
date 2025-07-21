@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import Link from "next/link"
 import { Header } from "@/components/layout/header"
 import { Footer } from "@/components/layout/footer"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -6,71 +7,68 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { BookOpen, Users, Award } from "lucide-react"
 import Image from "next/image"
+import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
+import { cookies } from 'next/headers'
 
 export const metadata: Metadata = {
-  title: "Education",
-  description: "Explore ICA educational programs, coaching certifications, and judge training courses.",
+  title: "Coaches - ICA",
+  description: "Meet our certified coaches who bring years of experience and expertise to help develop the next generation of cheerleaders.",
   openGraph: {
-    title: "Education - ICA",
-    description: "Explore ICA educational programs, coaching certifications, and judge training courses.",
+    title: "Coaches - ICA",
+    description: "Meet our certified coaches who bring years of experience and expertise to help develop the next generation of cheerleaders.",
   },
 }
 
-const coaches = [
-  {
-    id: "1",
-    name: "Sarah Johnson",
-    specialization: "Elite Level Training",
-    experience: "15 years",
-    certifications: ["Level 5 Certified", "Safety Instructor"],
-    image: "/placeholder.svg?height=200&width=200",
-  },
-  {
-    id: "2",
-    name: "Mike Davis",
-    specialization: "Youth Development",
-    experience: "12 years",
-    certifications: ["Youth Specialist", "Tumbling Coach"],
-    image: "/placeholder.svg?height=200&width=200",
-  },
-  {
-    id: "3",
-    name: "Emma Wilson",
-    specialization: "Choreography & Performance",
-    experience: "10 years",
-    certifications: ["Choreography Expert", "Performance Coach"],
-    image: "/placeholder.svg?height=200&width=200",
-  },
-]
+// Types for coach data
+interface Coach {
+  id: string
+  name: string
+  title: string
+  specialization: string
+  experience: string
+  bio: string
+  location: string
+  email: string
+  phone: string
+  image_url: string
+  philosophy: string
+  certifications: string[]
+  achievements: string[]
+  specialties: string[]
+  teams_coached: number
+  champions_produced: number
+  years_experience: number
+  success_rate: number
+  is_active: boolean
+  is_featured: boolean
+  sort_order: number
+  created_at: string
+  updated_at: string
+}
 
-const judges = [
-  {
-    id: "1",
-    name: "Dr. Lisa Chen",
-    level: "Master Judge",
-    experience: "20 years",
-    specialties: ["Technical Skills", "Safety Standards"],
-    image: "/placeholder.svg?height=200&width=200",
-  },
-  {
-    id: "2",
-    name: "John Smith",
-    level: "Senior Judge",
-    experience: "18 years",
-    specialties: ["Performance", "Choreography"],
-    image: "/placeholder.svg?height=200&width=200",
-  },
-  {
-    id: "3",
-    name: "Amy Brown",
-    level: "Certified Judge",
-    experience: "8 years",
-    specialties: ["Youth Divisions", "Beginner Levels"],
-    image: "/placeholder.svg?height=200&width=200",
-  },
-]
+// Fetch coaches data from Supabase
+async function getCoaches(): Promise<Coach[]> {
+  const supabase = createServerComponentClient({ cookies })
+  
+  const { data: coaches, error } = await supabase
+    .from('coaches')
+    .select('*')
+    .eq('is_active', true)
+    .order('sort_order', { ascending: true })
+    .order('name', { ascending: true })
 
-export default function Coaches() {
+  if (error) {
+    console.error('Error fetching coaches:', error)
+    return []
+  }
+
+  return coaches || []
+}
+
+
+export default async function Coaches() {
+  const coaches = await getCoaches()
+
   return (
     <div className="min-h-screen bg-white">
       <Header />
@@ -78,7 +76,7 @@ export default function Coaches() {
         {/* Hero Section */}
         <section className="relative h-[400px] overflow-hidden">
           <Image
-            src="/placeholder.svg?height=400&width=1200"
+            src="/medal.jpeg?height=400&width=1200"
             alt="Education and Training"
             fill
             className="object-cover"
@@ -89,7 +87,7 @@ export default function Coaches() {
             <div className="text-center text-white max-w-4xl px-4">
               <h1 className="text-5xl md:text-6xl font-bold mb-4">Coaches</h1>
               <p className="text-xl md:text-2xl mb-8">
-                Learn from the best coaches  in the cheerleading community
+                Learn from the best coaches in the cheerleading community
               </p>
               <div className="flex flex-wrap justify-center gap-4">
                 <div className="flex items-center space-x-2 bg-white bg-opacity-20 rounded-lg px-4 py-2">
@@ -120,42 +118,55 @@ export default function Coaches() {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {coaches.map((coach) => (
-                <Card key={coach.id} className="text-center hover:shadow-lg transition-shadow">
-                  <CardHeader>
-                    <div className="mx-auto w-24 h-24 rounded-full overflow-hidden mb-4">
-                      <Image
-                        src={coach.image || "/placeholder.svg"}
-                        alt={coach.name}
-                        width={96}
-                        height={96}
-                        className="object-cover"
-                      />
-                    </div>
-                    <CardTitle className="text-xl">{coach.name}</CardTitle>
-                    <p className="text-red-600 font-medium">{coach.specialization}</p>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="text-sm text-gray-600">
-                      <p>
-                        <strong>Experience:</strong> {coach.experience}
-                      </p>
-                    </div>
-                    <div className="flex flex-wrap justify-center gap-2">
-                      {coach.certifications.map((cert, index) => (
-                        <Badge key={index} variant="outline" className="text-xs">
-                          {cert}
-                        </Badge>
-                      ))}
-                    </div>
-                    <Button variant="outline" className="w-full bg-transparent">
-                      View Profile
-                    </Button>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+            {coaches.length === 0 ? (
+              <div className="text-center py-12">
+                <p className="text-gray-600 text-lg">No coaches available at the moment.</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {coaches.map((coach) => (
+                  <Card key={coach.id} className="text-center hover:shadow-lg transition-shadow">
+                    <CardHeader>
+                      <div className="mx-auto w-24 h-24 rounded-full overflow-hidden mb-4">
+                        <Image
+                          src={coach.image_url || "/placeholder.svg"}
+                          alt={coach.name}
+                          width={96}
+                          height={96}
+                          className="object-cover"
+                        />
+                      </div>
+                      <CardTitle className="text-xl">{coach.name}</CardTitle>
+                      <p className="text-red-600 font-medium">{coach.specialization}</p>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <div className="text-sm text-gray-600">
+                        <p>
+                          <strong>Experience:</strong> {coach.experience}
+                        </p>
+                      </div>
+                      <div className="flex flex-wrap justify-center gap-2">
+                        {coach.certifications.slice(0, 3).map((cert, index) => (
+                          <Badge key={index} variant="outline" className="text-xs">
+                            {cert}
+                          </Badge>
+                        ))}
+                        {coach.certifications.length > 3 && (
+                          <Badge variant="outline" className="text-xs">
+                            +{coach.certifications.length - 3} more
+                          </Badge>
+                        )}
+                      </div>
+                      <Link href={`/about/coaches/${coach.id}`}>
+                        <Button variant="outline" className="w-full bg-transparent mt-2">
+                          View Profile
+                        </Button>
+                      </Link>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )}
           </div>
         </section>
 
