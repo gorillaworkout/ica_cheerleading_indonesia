@@ -287,7 +287,7 @@ export function ProfileForm() {
             </div>
             <div className="space-y-2">
               <Label>Province</Label>
-              <select value={formData.provinceCode} onChange={(e) => setFormData({ ...formData, provinceCode: e.target.value })} required className="w-full border rounded px-2 py-2">
+              <select disabled={!formData.is_edit_allowed}  value={formData.provinceCode} onChange={(e) => setFormData({ ...formData, provinceCode: e.target.value })} required className="w-full border rounded px-2 py-2">
                 <option value="">Choose Province</option>
                 {provinces.map((prov) => (
                   <option key={prov.id_province} value={prov.id_province}>
@@ -299,6 +299,7 @@ export function ProfileForm() {
             <div className="space-y-2">
               <Label>ID Photo (KTP/KK/KIA) </Label>
               <Input
+              disabled={!formData.is_edit_allowed} 
                 type="file"
                 accept="image/*"
                 onChange={(e) => {
@@ -320,6 +321,7 @@ export function ProfileForm() {
             <div className="space-y-2">
               <Label>Profile Photo</Label>
               <Input
+              disabled={!formData.is_edit_allowed} 
                 type="file"
                 accept="image/*"
                 onChange={(e) => {

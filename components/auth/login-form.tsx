@@ -314,7 +314,7 @@ export function LoginForm() {
                     <option value="">Choose Role</option>
                     <option value="coach">Coach</option>
                     <option value="athlete">Athlete</option>
-                    <option value="judge">Judge</option>
+                    {/* <option value="judge">Judge</option> */}
                   </select>
                 </div>
               </div>

@@ -3,17 +3,14 @@
 import { useEffect } from "react"
 import { supabase } from "@/lib/supabase"
 import { useAppDispatch } from "@/lib/redux/hooks"
-import {
-  fetchSessionAndProfile,
-  setAuthState,
-  clearProfile,
-} from "@/features/auth/authSlice"
+import { fetchSessionAndProfile, setAuthState, clearProfile } from "@/features/auth/authSlice"
 import { fetchPublicImages } from "@/features/publicImages/publicImagesSlice"
 import { fetchDivisions } from "@/features/divisions/divisionsSlice"
 import { fetchCompetitions } from "@/features/competitions/competitionsSlice"
 import { fetchNews } from "@/features/news/newsSlice"
 import { fetchProvinces } from "@/features/provinces/provincesSlice"
 import { fetchCoaches, fetchFeaturedCoaches } from "@/features/coaches/coachesSlice"
+import { fetchLicenseCourses } from "@/features/license-courses/licenseCoursesSlice"
 import { debugEnvironment, debugSupabaseConnection } from "@/utils/debug"
 
 export function AuthInit() {
@@ -34,6 +31,7 @@ export function AuthInit() {
     dispatch(fetchProvinces()) // Fetch provinces using Redux
     dispatch(fetchCoaches()) // Fetch coaches using Redux
     dispatch(fetchFeaturedCoaches()) // Fetch featured coaches using Redux
+    dispatch(fetchLicenseCourses(true)) // Fetch license courses using Redux (active only)
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
