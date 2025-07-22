@@ -3,11 +3,12 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
-import { LayoutDashboard, Trophy, Users, Settings, Anvil, Medal, UserCheck, Building2, Menu, X, Image, GraduationCap } from "lucide-react"
+import { LayoutDashboard, Trophy, Users, Home, Anvil, Medal, UserCheck, Building2, Menu, X, Image, GraduationCap } from "lucide-react"
 import { useState } from "react"
 import { useMediaQuery } from "@/hooks/use-media-query"
 
 const navigation = [
+	{ name: "Home", href: "/", icon: Home },
 	{ name: "Dashboard", href: "/admin", icon: LayoutDashboard },
 	{ name: "Add Province", href: "/admin/province/add", icon: Building2 },
 	{ name: "Add Division", href: "/admin/divisions/add", icon: Trophy },
