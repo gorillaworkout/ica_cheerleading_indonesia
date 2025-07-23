@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import { use } from "react"
 import { Header } from "@/components/layout/header"
 import { Footer } from "@/components/layout/footer"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -23,6 +24,7 @@ import {
 import Image from "next/image"
 import { useAppSelector } from "@/lib/redux/hooks"
 import { selectCoachById, selectCoachesLoading } from "@/features/coaches/coachesSlice"
+import { generateStorageUrl } from "@/utils/getPublicImageUrl"
 
 // Types for coach data
 interface Coach {
@@ -52,11 +54,12 @@ interface Coach {
 }
 
 interface CoachDetailPageProps {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }
 
 export default function CoachDetail({ params }: CoachDetailPageProps) {
-  const coach = useAppSelector((state) => selectCoachById(state, params.id))
+  const resolvedParams = use(params)
+  const coach = useAppSelector((state) => selectCoachById(state, resolvedParams.id))
   const loading = useAppSelector(selectCoachesLoading)
 
   if (loading) {
@@ -92,16 +95,16 @@ export default function CoachDetail({ params }: CoachDetailPageProps) {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-white via-gray-50 to-red-50">
+    <div className="min-h-screen bg-white">
       <Header />
       
       <main>
         {/* Hero Section with Futuristic Design */}
         <section className="relative overflow-hidden">
           {/* Background Pattern */}
-          <div className="absolute inset-0 bg-gradient-to-r from-red-600 via-red-500 to-white opacity-10">
+          <div className="absolute inset-0 bg-gradient-to-r from-red-600 via-red-500 to-red-600 opacity-5">
             <div className="absolute inset-0" style={{
-              backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ef4444' fill-opacity='0.1'%3E%3Cpath d='M30 0l30 30-30 30L0 30z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+              backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ef4444' fill-opacity='0.05'%3E%3Cpath d='M30 0l30 30-30 30L0 30z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
             }} />
           </div>
           
@@ -109,7 +112,7 @@ export default function CoachDetail({ params }: CoachDetailPageProps) {
             {/* Back Button */}
             <div className="mb-8">
               <Link href="/about/coaches">
-                <Button variant="outline" className="bg-white/80 backdrop-blur-sm border-red-200 hover:bg-red-50">
+                <Button variant="outline" className="bg-white border-red-200 hover:bg-red-50 text-red-600">
                   <ArrowLeft className="mr-2 h-4 w-4" />
                   Back to Coaches
                 </Button>
@@ -120,16 +123,16 @@ export default function CoachDetail({ params }: CoachDetailPageProps) {
             <div className="grid lg:grid-cols-3 gap-8">
               {/* Profile Image and Basic Info */}
               <div className="lg:col-span-1">
-                <Card className="bg-white/80 backdrop-blur-sm border-red-100 shadow-2xl">
+                <Card className="bg-white border-gray-100 shadow-lg">
                   <CardContent className="p-8 text-center">
-                    <div className="relative mx-auto w-48 h-48 rounded-full overflow-hidden mb-6 ring-4 ring-red-100">
+                    <div className="relative mx-auto w-48 h-48 rounded-full overflow-hidden mb-6 ring-4 ring-gray-100">
                       <Image
-                        src={coach.image_url || "/placeholder.svg"}
+                        src={coach.image_url ? generateStorageUrl(coach.image_url) : "/placeholder.svg"}
                         alt={coach.name}
                         fill
                         className="object-cover"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-red-600/20 to-transparent" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-red-600/10 to-transparent" />
                     </div>
                     
                     <h1 className="text-3xl font-bold text-gray-900 mb-2">{coach.name}</h1>
@@ -153,19 +156,19 @@ export default function CoachDetail({ params }: CoachDetailPageProps) {
 
                     {/* Stats Grid */}
                     <div className="grid grid-cols-2 gap-4 mt-8">
-                      <div className="bg-gradient-to-br from-red-50 to-white p-4 rounded-lg">
+                      <div className="bg-gray-50 border border-gray-100 p-4 rounded-lg">
                         <div className="text-2xl font-bold text-red-600">{coach.teams_coached}</div>
                         <div className="text-xs text-gray-600">Teams Coached</div>
                       </div>
-                      <div className="bg-gradient-to-br from-red-50 to-white p-4 rounded-lg">
+                      <div className="bg-gray-50 border border-gray-100 p-4 rounded-lg">
                         <div className="text-2xl font-bold text-red-600">{coach.champions_produced}</div>
                         <div className="text-xs text-gray-600">Champions</div>
                       </div>
-                      <div className="bg-gradient-to-br from-red-50 to-white p-4 rounded-lg">
+                      <div className="bg-gray-50 border border-gray-100 p-4 rounded-lg">
                         <div className="text-2xl font-bold text-red-600">{coach.years_experience}</div>
                         <div className="text-xs text-gray-600">Years Exp.</div>
                       </div>
-                      <div className="bg-gradient-to-br from-red-50 to-white p-4 rounded-lg">
+                      <div className="bg-gray-50 border border-gray-100 p-4 rounded-lg">
                         <div className="text-2xl font-bold text-red-600">{coach.success_rate}%</div>
                         <div className="text-xs text-gray-600">Success Rate</div>
                       </div>
@@ -177,7 +180,7 @@ export default function CoachDetail({ params }: CoachDetailPageProps) {
               {/* Detailed Information */}
               <div className="lg:col-span-2 space-y-6">
                 {/* Bio Section */}
-                <Card className="bg-white/80 backdrop-blur-sm border-red-100 shadow-xl">
+                <Card className="bg-white border-gray-100 shadow-lg">
                   <CardHeader>
                     <CardTitle className="flex items-center space-x-2 text-2xl">
                       <Users className="h-6 w-6 text-red-600" />
@@ -190,7 +193,7 @@ export default function CoachDetail({ params }: CoachDetailPageProps) {
                 </Card>
 
                 {/* Philosophy */}
-                <Card className="bg-white/80 backdrop-blur-sm border-red-100 shadow-xl">
+                <Card className="bg-white border-gray-100 shadow-lg">
                   <CardHeader>
                     <CardTitle className="flex items-center space-x-2 text-2xl">
                       <Target className="h-6 w-6 text-red-600" />
@@ -205,7 +208,7 @@ export default function CoachDetail({ params }: CoachDetailPageProps) {
                 </Card>
 
                 {/* Achievements */}
-                <Card className="bg-white/80 backdrop-blur-sm border-red-100 shadow-xl">
+                <Card className="bg-white border-gray-100 shadow-lg">
                   <CardHeader>
                     <CardTitle className="flex items-center space-x-2 text-2xl">
                       <Trophy className="h-6 w-6 text-red-600" />
@@ -215,7 +218,7 @@ export default function CoachDetail({ params }: CoachDetailPageProps) {
                   <CardContent>
                     <div className="grid md:grid-cols-2 gap-4">
                       {coach.achievements.map((achievement, index) => (
-                        <div key={index} className="flex items-start space-x-3 p-4 bg-gradient-to-r from-red-50 to-white rounded-lg">
+                        <div key={index} className="flex items-start space-x-3 p-4 bg-gray-50 border border-gray-100 rounded-lg">
                           <Award className="h-5 w-5 text-red-500 mt-0.5 flex-shrink-0" />
                           <span className="text-gray-700">{achievement}</span>
                         </div>
@@ -225,7 +228,7 @@ export default function CoachDetail({ params }: CoachDetailPageProps) {
                 </Card>
 
                 {/* Specialties */}
-                <Card className="bg-white/80 backdrop-blur-sm border-red-100 shadow-xl">
+                <Card className="bg-white border-gray-100 shadow-lg">
                   <CardHeader>
                     <CardTitle className="flex items-center space-x-2 text-2xl">
                       <Zap className="h-6 w-6 text-red-600" />
@@ -238,7 +241,7 @@ export default function CoachDetail({ params }: CoachDetailPageProps) {
                         <Badge 
                           key={index} 
                           variant="outline" 
-                          className="bg-gradient-to-r from-red-50 to-white border-red-200 text-red-700 hover:bg-red-100 px-4 py-2 text-sm"
+                          className="bg-white border-red-200 text-red-700 hover:bg-red-50 px-4 py-2 text-sm"
                         >
                           {specialty}
                         </Badge>
@@ -248,7 +251,7 @@ export default function CoachDetail({ params }: CoachDetailPageProps) {
                 </Card>
 
                 {/* Certifications */}
-                <Card className="bg-white/80 backdrop-blur-sm border-red-100 shadow-xl">
+                <Card className="bg-white border-gray-100 shadow-lg">
                   <CardHeader>
                     <CardTitle className="flex items-center space-x-2 text-2xl">
                       <Shield className="h-6 w-6 text-red-600" />
@@ -258,7 +261,7 @@ export default function CoachDetail({ params }: CoachDetailPageProps) {
                   <CardContent>
                     <div className="grid md:grid-cols-2 gap-4">
                       {coach.certifications.map((cert, index) => (
-                        <div key={index} className="flex items-center space-x-3 p-4 bg-gradient-to-r from-red-50 to-white rounded-lg">
+                        <div key={index} className="flex items-center space-x-3 p-4 bg-gray-50 border border-gray-100 rounded-lg">
                           <Star className="h-5 w-5 text-red-500" />
                           <span className="text-gray-700 font-medium">{cert}</span>
                         </div>

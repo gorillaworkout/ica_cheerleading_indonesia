@@ -9,8 +9,10 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { BookOpen, Users, Award } from "lucide-react"
 import Image from "next/image"
-import { useAppSelector } from "@/lib/redux/hooks"
-import { selectCoaches, selectCoachesLoading } from "@/features/coaches/coachesSlice"
+import { useAppSelector, useAppDispatch } from "@/lib/redux/hooks"
+import { selectCoaches, selectCoachesLoading, fetchCoaches } from "@/features/coaches/coachesSlice"
+import { getPublicImageUrl, generateStorageUrl } from "@/utils/getPublicImageUrl"
+import { useState, useEffect } from "react"
 
 // Note: Metadata cannot be used in client components
 // Consider moving to layout.tsx or using a wrapper component if needed
@@ -41,10 +43,55 @@ interface Coach {
   created_at: string
   updated_at: string
 }
-
 export default function Coaches() {
   const coaches = useAppSelector(selectCoaches)
   const loading = useAppSelector(selectCoachesLoading)
+  const dispatch = useAppDispatch()
+  const [coachImages, setCoachImages] = useState<Record<string, string>>({})
+
+  // Fetch coaches data on component mount
+  useEffect(() => {
+    dispatch(fetchCoaches())
+  }, [dispatch])
+
+  useEffect(() => {
+    const loadImages = async () => {
+      const imagePromises = coaches.map(async (coach) => {
+        try {
+          // Handle empty or null image_url
+          if (!coach.image_url) {
+            return { id: coach.id, url: "/placeholder.svg" }
+          }
+          
+          // Try async method first
+          let imageUrl = await getPublicImageUrl(coach.image_url)
+          
+          // Fallback to sync method if async fails
+          if (!imageUrl) {
+            imageUrl = generateStorageUrl(coach.image_url)
+          }
+          
+          return { id: coach.id, url: imageUrl || "/placeholder.svg" }
+        } catch (error) {
+          console.error(`Error loading image for coach ${coach.id}:`, error)
+          // Final fallback to sync method
+          const fallbackUrl = generateStorageUrl(coach.image_url)
+          return { id: coach.id, url: fallbackUrl }
+        }
+      })
+      
+      const images = await Promise.all(imagePromises)
+      const imageMap = images.reduce((acc, { id, url }) => {
+        acc[id] = url
+        return acc
+      }, {} as Record<string, string>)
+      setCoachImages(imageMap)
+    }
+
+    if (coaches.length > 0) {
+      loadImages()
+    }
+  }, [coaches])
 
   return (
     <div className="min-h-screen bg-white">
@@ -89,10 +136,7 @@ export default function Coaches() {
           <div className="container mx-auto px-4">
             <div className="text-center mb-12">
               <h2 className="text-3xl font-bold text-gray-900 mb-4">ICA Certified Coaches</h2>
-              <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-                Our certified coaches bring years of experience and expertise to help develop the next generation of
-                cheerleaders.
-              </p>
+              <p className="text-lg text-gray-600">Meet our professional coaching staff</p>
             </div>
 
             {loading ? (
@@ -111,11 +155,15 @@ export default function Coaches() {
                     <CardHeader>
                       <div className="mx-auto w-24 h-24 rounded-full overflow-hidden mb-4">
                         <Image
-                          src={coach.image_url || "/placeholder.svg"}
+                          src={coachImages[coach.id] || "/placeholder.svg"}
                           alt={coach.name}
                           width={96}
                           height={96}
                           className="object-cover"
+                          onError={(e) => {
+                            console.error(`Failed to load image for coach ${coach.name}:`, coachImages[coach.id])
+                            e.currentTarget.src = "/placeholder.svg"
+                          }}
                         />
                       </div>
                       <CardTitle className="text-xl">{coach.name}</CardTitle>

@@ -120,6 +120,8 @@ export const signUpWithEmailThunk = createAsyncThunk(
     const userId = data.user?.id;
     if (!userId) return rejectWithValue("User ID not found");
 
+    console.log('User created successfully with ID:', userId);
+
     let id_photo_url: string | null = null;
     let profile_photo_url:string | null = null
     if (id_photo_file) {
@@ -142,9 +144,11 @@ export const signUpWithEmailThunk = createAsyncThunk(
 
     const now = new Date().toISOString();
 
-    const { error: profileError } = await supabase.from("profiles").insert({
-      id: userId,
-      user_id: userId,
+    // Try to insert profile with error handling for foreign key constraint
+    let profileData: any = null;
+    const { data: initialProfileData, error: profileError } = await supabase.from("profiles").insert({
+      id: userId, // profiles.id = auth.users.id (UUID)
+      user_id: userId, // Keep this as text for compatibility
       member_code,
       email,
       display_name,
@@ -156,14 +160,115 @@ export const signUpWithEmailThunk = createAsyncThunk(
       id_photo_url,
       profile_photo_url,
       is_verified: false,
-      created_at: now,
-      updated_at: now,
-      is_edit_allowed: false
-    });
+      is_edit_allowed: false,
+      is_request_edit: false
+    }).select().single();
 
-    if (profileError) return rejectWithValue(profileError.message);
+    profileData = initialProfileData;
 
-    return { session: data.session, user: data.user };
+    if (profileError) {
+      console.error('Profile creation error:', profileError);
+      
+      // If it's a foreign key constraint error, try alternative approach
+      if (profileError.message.includes('profiles_id_fkey')) {
+        // Wait a bit for auth user to be fully committed
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        // Retry the insert
+        const { data: retryProfileData, error: retryError } = await supabase.from("profiles").insert({
+          id: userId,
+          user_id: userId,
+          member_code,
+          email,
+          display_name,
+          gender,
+          birth_date,
+          phone_number,
+          province_code,
+          role,
+          id_photo_url,
+          profile_photo_url,
+          is_verified: false,
+          is_edit_allowed: false,
+          is_request_edit: false
+        }).select().single();
+        
+        if (retryError) {
+          return rejectWithValue(`Failed to create profile after retry: ${retryError.message}`);
+        }
+        // Update profileData with retry data
+        profileData = retryProfileData;
+      } else {
+        return rejectWithValue(`Failed to create profile: ${profileError.message}`);
+      }
+    }
+
+    console.log('Profile created successfully for user:', userId);
+    console.log('Profile data:', profileData);
+    console.log('User role:', role);
+    console.log('Role type:', typeof role);
+    console.log('Role === "coach":', role === 'coach');
+
+    // If role is coach, create coach profile
+    if (role === 'coach') {
+      console.log('✅ Entering coach creation block for user:', userId);
+      
+      const coachData = {
+        // id akan auto-generated oleh database (gen_random_uuid())
+        name: display_name || email.split('@')[0],
+        title: 'Cheerleading Coach',
+        specialization: 'General Cheerleading',
+        experience: '0-1 years',
+        bio: `Passionate cheerleading coach committed to developing athletes' skills and teamwork.`,
+        location: province_code || '',
+        email: email,
+        phone: phone_number || '',
+        image_url: profile_photo_url,
+        philosophy: 'Building confidence, teamwork, and excellence through cheerleading.',
+        certifications: [],
+        achievements: [],
+        specialties: ['Cheerleading'],
+        teams_coached: 0,
+        champions_produced: 0,
+        years_experience: 0,
+        success_rate: 0,
+        is_active: true,
+        is_featured: false,
+        sort_order: 0,
+        created_by: userId,
+        updated_by: userId,
+        user_id: profileData?.id || userId  // Reference to profiles.id (UUID)
+        
+      };
+      
+      console.log('🔍 Coach data to insert:', JSON.stringify(coachData, null, 2));
+      
+      const { data: coachInsertData, error: coachError } = await supabase.from("coaches").insert(coachData).select();
+
+      if (coachError) {
+        console.error('Failed to create coach profile:', coachError);
+        console.error('Coach error details:', JSON.stringify(coachError, null, 2));
+        // You might want to rollback the profile creation here
+        // For now, we'll continue but log the error
+        return rejectWithValue(`Profile created but failed to create coach profile: ${coachError.message}`);
+      }
+      
+      console.log('✅ Coach profile created successfully for user:', userId);
+      console.log('🎯 Coach insert result:', coachInsertData);
+    } else {
+      console.log('❌ User role is not coach, skipping coach profile creation. Role:', role);
+    }
+
+    // Sign out user after successful registration (don't auto login)
+    await supabase.auth.signOut();
+    console.log('🚪 User signed out after successful registration');
+
+    // Return null session to indicate user needs to login manually
+    return { 
+      session: null, 
+      user: null,
+      message: "Registration successful! Please check your email and login manually."
+    };
   }
 );
 
@@ -221,10 +326,13 @@ const authSlice = createSlice({
       state.error = null;
     })
     .addCase(signUpWithEmailThunk.fulfilled, (state, action) => {
-      state.session = action.payload.session;
-      state.user = action.payload.user;
+      // Don't set session and user (user needs to login manually)
+      state.session = null;
+      state.user = null;
       state.loading = false;
       state.error = null;
+      // You can show success message if needed
+      console.log('Registration completed successfully - user needs to login manually');
     })
     .addCase(signUpWithEmailThunk.rejected, (state, action) => {
       state.session = null;
