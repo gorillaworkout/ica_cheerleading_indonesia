@@ -14,7 +14,6 @@ import { Badge } from "@/components/ui/badge"
 import { Switch } from "@/components/ui/switch"
 import { X, Plus, Users } from "lucide-react"
 import Image from "next/image"
-import { generateStorageUrl } from "@/utils/getPublicImageUrl"
 import { AuditService, getClientInfo } from "@/lib/audit"
 
 interface CoachData {
@@ -90,15 +89,17 @@ export function CoachForm() {
           setCoachData(data)
           if (data.image_url) {
             // Generate storage URL for images
-            const imageUrl = data.image_url.includes('/') 
+            const imagePath = data.image_url.includes('/') 
               ? data.image_url 
               : `profile-photos/${data.image_url}`
             
             const { data: urlData } = supabase.storage
               .from("uploads")
-              .getPublicUrl(imageUrl)
+              .getPublicUrl(imagePath)
             
-            setImagePreview(urlData?.publicUrl || "/placeholder.svg")
+            if (urlData?.publicUrl) {
+              setImagePreview(urlData.publicUrl)
+            }
           }
         } else if (profile) {
           // Pre-fill with profile data if no coach data exists
@@ -111,15 +112,17 @@ export function CoachForm() {
           }))
           if (profile.profile_photo_url) {
             // Generate storage URL for profile photo
-            const imageUrl = profile.profile_photo_url.includes('/') 
+            const imagePath = profile.profile_photo_url.includes('/') 
               ? profile.profile_photo_url 
               : `profile-photos/${profile.profile_photo_url}`
             
             const { data: urlData } = supabase.storage
               .from("uploads")
-              .getPublicUrl(imageUrl)
+              .getPublicUrl(imagePath)
             
-            setImagePreview(urlData?.publicUrl || "/placeholder.svg")
+            if (urlData?.publicUrl) {
+              setImagePreview(urlData.publicUrl)
+            }
             setCoachData(prev => ({ ...prev, image_url: profile.profile_photo_url }))
           }
         }
