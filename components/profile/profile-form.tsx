@@ -23,6 +23,7 @@ import ChangePasswordForm from "./change-password"
 import { CoachForm } from "./coach-form"
 import { AuditService, getClientInfo } from "@/lib/audit"
 import { AccountHistory } from "./account-history"
+import { IDCardSection } from "./id-card-section"
 export function ProfileForm() {
   const { user, profile } = useAppSelector((state) => state.auth)
   const provinces = useAppSelector((state) => state.provinces.provinces)  // Get provinces from Redux
@@ -457,6 +458,9 @@ export function ProfileForm() {
                 </form>
               </CardContent>
             </Card>
+
+            {/* ID Card Section - Moved to left column for better width */}
+            <IDCardSection />
 
             {/* Coach Form in Main Area for Better Width Usage */}
             <CoachForm />

@@ -28,6 +28,8 @@ import {
   Award,
   Building2,
   Calendar,
+  CreditCard,
+  Settings as SettingsIcon,
 } from "lucide-react";
 import { SocialMedia } from "./socialMedia";
 
@@ -315,6 +317,14 @@ export function Header() {
                       <Link href="/profile" className="flex items-center gap-3 px-3 py-2 text-sm hover:bg-gray-50 rounded-lg transition-colors">
                         <Settings className="h-4 w-4 text-gray-500" />
                         Profile Settings
+                      </Link>
+                      <Link href="/profile/id-card-generator" className="flex items-center gap-3 px-3 py-2 text-sm hover:bg-gray-50 rounded-lg transition-colors">
+                        <CreditCard className="h-4 w-4 text-gray-500" />
+                        Generate ID Card
+                      </Link>
+                      <Link href="/profile/id-card-editor" className="flex items-center gap-3 px-3 py-2 text-sm hover:bg-gray-50 rounded-lg transition-colors">
+                        <SettingsIcon className="h-4 w-4 text-gray-500" />
+                        ID Card Editor
                       </Link>
                       <hr className="my-2" />
                       <button

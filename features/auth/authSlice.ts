@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { supabase } from "@/lib/supabase";
+import { AutoIDCardGenerator } from "@/utils/autoGenerateIdCard";
 import type { Session, User } from "@supabase/supabase-js";
 import { Profile } from "@/types/profiles/profiles";
 
@@ -208,6 +209,25 @@ export const signUpWithEmailThunk = createAsyncThunk(
     console.log('User role:', role);
     console.log('Role type:', typeof role);
     console.log('Role === "coach":', role === 'coach');
+
+    // Auto-generate ID card after profile creation
+    console.log('🎨 Starting auto ID card generation for user:', userId);
+    try {
+      // Only generate ID card if all required data is present
+      if (display_name && birth_date && gender && province_code && profile_photo_url) {
+        const idCardGenerated = await AutoIDCardGenerator.generateAndSaveIDCard(userId);
+        if (idCardGenerated) {
+          console.log('✅ ID card auto-generated successfully for user:', userId);
+        } else {
+          console.warn('⚠️ ID card generation failed, but registration will continue');
+        }
+      } else {
+        console.warn('⚠️ Missing required data for ID card generation, skipping');
+      }
+    } catch (error) {
+      console.error('❌ Error during ID card auto-generation:', error);
+      // Continue with registration even if ID card generation fails
+    }
 
     // If role is coach, create coach profile
     if (role === 'coach') {

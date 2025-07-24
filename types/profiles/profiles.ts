@@ -13,6 +13,8 @@ export interface Profile {
   phone_number: string | null;
   id_photo_url: string | null;
   profile_photo_url: string | null;
+  id_card_url: string | null;
+  id_card_image: string | null; // New field for auto-generated ID card
   is_verified: boolean | null;
   province_code: string | null;
   member_code: string | null;

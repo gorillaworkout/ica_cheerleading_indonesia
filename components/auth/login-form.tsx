@@ -329,8 +329,8 @@ export function LoginForm() {
                   <Label>Gender</Label>
                   <select value={signUpData.gender} onChange={(e) => setSignUpData({ ...signUpData, gender: e.target.value })} required className="w-full border rounded px-2 py-2">
                     <option value="">Choose Gender</option>
-                    <option value="lakilaki">Laki Laki</option>
-                    <option value="perempuan">Perempuan</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
                   </select>
                 </div>
 

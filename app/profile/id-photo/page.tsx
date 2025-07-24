@@ -5,9 +5,11 @@ import { getPublicImageUrl } from "@/utils/getPublicImageUrl"
 import { ArrowLeft, ExternalLink } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
+import { useEffect, useState } from "react"
 
 export default function IDPhotoPage() {
   const { profile } = useAppSelector((state) => state.auth)
+  const [imageUrl, setImageUrl] = useState<string | null>(null)
 
   if (!profile)
     return (
@@ -15,6 +17,12 @@ export default function IDPhotoPage() {
         Loading profile...
       </div>
     )
+
+  useEffect(() => {
+    if (profile?.id_photo_url) {
+      getPublicImageUrl(profile.id_photo_url).then(setImageUrl)
+    }
+  }, [profile?.id_photo_url])
 
   if (!profile.id_photo_url)
     return (
@@ -30,7 +38,13 @@ export default function IDPhotoPage() {
       </div>
     )
 
-  const imageUrl = getPublicImageUrl(profile.id_photo_url)
+  if (!imageUrl)
+    return (
+      <div className="h-screen flex items-center justify-center text-gray-600 bg-white">
+        Loading image...
+      </div>
+    )
+
 
   return (
     <div className="h-screen w-full flex items-center justify-center bg-gradient-to-b from-white to-red-50 px-4 relative">
