@@ -37,17 +37,76 @@ export function IDCardSection() {
     setLoading(false)
   }, [profile])
 
-  const downloadIDCard = () => {
+  const downloadIDCard = async () => {
     if (!idCardUrl) return
     
+    try {
     // Use member_code or fallback to user ID for filename
     const memberCode = profile?.member_code || user?.id?.slice(0, 8) || 'unknown'
-    
+      const filename = `ICA-ID-Card-${memberCode}.png`
+      
+      console.log('📥 Starting ID card download:', { url: idCardUrl, filename })
+      
+      // Fetch the image to create a proper blob for download
+      const response = await fetch(idCardUrl, {
+        method: 'GET',
+        headers: {
+          'Accept': 'image/png, image/jpeg, image/*'
+        }
+      })
+      
+      if (!response.ok) {
+        throw new Error(`Failed to fetch image: ${response.status}`)
+      }
+      
+      // Get the blob data
+      const blob = await response.blob()
+      console.log('📄 Blob created:', { type: blob.type, size: blob.size })
+      
+      // Create blob URL for download
+      const blobUrl = window.URL.createObjectURL(blob)
+      
+      // Create download link
+      const link = document.createElement('a')
+      link.href = blobUrl
+      link.download = filename
+      link.style.display = 'none'
+      
+      // Add to DOM, click, and remove
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      
+      // Clean up blob URL
+      setTimeout(() => {
+        window.URL.revokeObjectURL(blobUrl)
+      }, 100)
+      
+      console.log('✅ ID card download triggered successfully')
+      
+      toast({
+        title: "Download Started",
+        description: `ID Card berhasil didownload sebagai ${filename}`,
+        className: "border-green-500 bg-green-50"
+      })
+      
+    } catch (error) {
+      console.error('❌ Download failed:', error)
+      
+      // Fallback: direct link download
+      console.log('🔄 Trying fallback download method...')
+      const memberCode = profile?.member_code || user?.id?.slice(0, 8) || 'unknown'
     const link = document.createElement('a')
     link.href = idCardUrl
     link.download = `ICA-ID-Card-${memberCode}.png`
-    link.target = '_blank'
     link.click()
+      
+      toast({
+        title: "Download Started",
+        description: "ID Card download started (fallback method)",
+        className: "border-blue-500 bg-blue-50"
+      })
+    }
   }
 
   const handleGenerateIDCard = async () => {

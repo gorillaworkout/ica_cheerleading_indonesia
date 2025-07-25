@@ -56,9 +56,9 @@ export function Footer() {
           <div>
             <h3 className="font-semibold mb-4">Contact</h3>
             <p className="text-gray-400 text-sm">
-              Email: info@ica-cheerleading.org
+              Email: indonesiancheerassociation@gmail.com
               <br />
-              Phone: +1 (555) 123-4567
+              {/* Phone: +1 (555) 123-456 */}
             </p>
           </div>
         </div>

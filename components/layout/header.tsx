@@ -100,7 +100,8 @@ export function Header() {
   const menuRef = useRef<HTMLDivElement>(null);
   const dispatch = useAppDispatch();
   const router = useRouter();
-  const { user, profile, loading } = useAppSelector((state) => state.auth);
+  // Pastikan state.auth memiliki tipe yang benar, misal AuthState
+  const { user, profile, loading } = useAppSelector((state: { auth: any }) => state.auth);
   const isAdmin = profile?.role === "admin";
   const isCoach = profile?.role === "coach" || isAdmin;
   const [isSigningOut, setIsSigningOut] = useState(false);
@@ -318,14 +319,14 @@ export function Header() {
                         <Settings className="h-4 w-4 text-gray-500" />
                         Profile Settings
                       </Link>
-                      <Link href="/profile/id-card-generator" className="flex items-center gap-3 px-3 py-2 text-sm hover:bg-gray-50 rounded-lg transition-colors">
+                      {/* <Link href="/profile/id-card-generator" className="flex items-center gap-3 px-3 py-2 text-sm hover:bg-gray-50 rounded-lg transition-colors">
                         <CreditCard className="h-4 w-4 text-gray-500" />
                         Generate ID Card
                       </Link>
                       <Link href="/profile/id-card-editor" className="flex items-center gap-3 px-3 py-2 text-sm hover:bg-gray-50 rounded-lg transition-colors">
                         <SettingsIcon className="h-4 w-4 text-gray-500" />
                         ID Card Editor
-                      </Link>
+                      </Link> */}
                       <hr className="my-2" />
                       <button
                         onClick={handleSignOut}

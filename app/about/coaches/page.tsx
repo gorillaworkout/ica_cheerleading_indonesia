@@ -151,44 +151,77 @@ export default function Coaches() {
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {coaches.map((coach) => (
-                  <Card key={coach.id} className="text-center hover:shadow-lg transition-shadow">
-                    <CardHeader>
-                      <div className="mx-auto w-24 h-24 rounded-full overflow-hidden mb-4">
+                                  <Card key={coach.id} className="text-center hover:shadow-lg transition-shadow overflow-hidden group">
+                  <CardHeader className="pb-4">
+                    {/* Enhanced Profile Image Container */}
+                    <div className="relative mx-auto mb-6">
+                      {/* Outer glow ring */}
+                      <div className="absolute -inset-1 bg-gradient-to-r from-red-400 via-red-500 to-red-600 rounded-full opacity-0 group-hover:opacity-20 blur transition-opacity duration-300"></div>
+                      
+                      {/* Image container with better sizing */}
+                      <div className="relative w-32 h-32 rounded-full overflow-hidden ring-4 ring-white shadow-lg">
                         <Image
                           src={coachImages[coach.id] || "/placeholder.svg"}
                           alt={coach.name}
-                          width={96}
-                          height={96}
-                          className="object-cover"
+                          fill
+                          sizes="128px"
+                          className="object-cover hover:scale-105 transition-transform duration-300"
                           onError={(e) => {
                             console.error(`Failed to load image for coach ${coach.name}:`, coachImages[coach.id])
                             e.currentTarget.src = "/placeholder.svg"
                           }}
                         />
+                        {/* Subtle overlay gradient */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                       </div>
-                      <CardTitle className="text-xl">{coach.name}</CardTitle>
-                      <p className="text-red-600 font-medium">{coach.specialization}</p>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                      <div className="text-sm text-gray-600">
-                        <p>
-                          <strong>Experience:</strong> {coach.experience}
-                        </p>
+                      
+                      {/* Status indicator */}
+                      <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 border-2 border-white rounded-full flex items-center justify-center">
+                        <div className="w-2 h-2 bg-white rounded-full"></div>
                       </div>
-                      <div className="flex flex-wrap justify-center gap-2">
-                        {coach.certifications.slice(0, 3).map((cert, index) => (
-                          <Badge key={index} variant="outline" className="text-xs">
-                            {cert}
-                          </Badge>
-                        ))}
-                        {coach.certifications.length > 3 && (
-                          <Badge variant="outline" className="text-xs">
-                            +{coach.certifications.length - 3} more
-                          </Badge>
-                        )}
+                    </div>
+                    
+                    <CardTitle className="text-xl text-gray-900 mb-1 group-hover:text-red-600 transition-colors duration-200">{coach.name}</CardTitle>
+                    <p className="text-red-600 font-medium text-sm">{coach.specialization}</p>
+                  </CardHeader>
+                    <CardContent className="space-y-4 pt-2">
+                      {/* Experience Section with Icon */}
+                      <div className="flex items-center justify-center space-x-2 text-sm text-gray-600 bg-gray-50 rounded-lg py-2 px-3">
+                        <Award className="h-4 w-4 text-red-500" />
+                        <span><strong>Experience:</strong> {coach.experience}</span>
                       </div>
-                      <Link href={`/about/coaches/${coach.id}`}>
-                        <Button variant="outline" className="w-full bg-transparent mt-2">
+                      
+                      {/* Certifications with improved styling */}
+                      <div className="space-y-2">
+                        <p className="text-xs text-gray-500 font-medium uppercase tracking-wide">Certifications</p>
+                        <div className="flex flex-wrap justify-center gap-2">
+                          {coach.certifications.slice(0, 3).map((cert, index) => (
+                            <Badge 
+                              key={index} 
+                              variant="outline" 
+                              className="text-xs border-red-200 text-red-700 hover:bg-red-50 transition-colors duration-200"
+                            >
+                              {cert}
+                            </Badge>
+                          ))}
+                          {coach.certifications.length > 3 && (
+                            <Badge 
+                              variant="outline" 
+                              className="text-xs border-gray-200 text-gray-600 bg-gray-50"
+                            >
+                              +{coach.certifications.length - 3} more
+                            </Badge>
+                          )}
+                        </div>
+                      </div>
+                      
+                      {/* Enhanced View Profile Button */}
+                      <Link href={`/about/coaches/${coach.id}`} className="block mt-4">
+                        <Button 
+                          variant="outline" 
+                          className="w-full bg-transparent border-red-200 text-red-600 hover:bg-red-600 hover:text-white hover:border-red-600 transition-all duration-200 group"
+                        >
+                          <Users className="mr-2 h-4 w-4 group-hover:scale-110 transition-transform duration-200" />
                           View Profile
                         </Button>
                       </Link>
