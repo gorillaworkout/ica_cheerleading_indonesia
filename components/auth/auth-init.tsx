@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { supabase } from "@/lib/supabase"
 import { useAppDispatch } from "@/lib/redux/hooks"
 import { fetchSessionAndProfile, setAuthState, clearProfile } from "@/features/auth/authSlice"
@@ -12,9 +12,12 @@ import { fetchProvinces } from "@/features/provinces/provincesSlice"
 import { fetchCoaches, fetchFeaturedCoaches } from "@/features/coaches/coachesSlice"
 import { fetchLicenseCourses } from "@/features/license-courses/licenseCoursesSlice"
 import { debugEnvironment, debugSupabaseConnection } from "@/utils/debug"
+import { usePathname } from "next/navigation"
 
 export function AuthInit() {
   const dispatch = useAppDispatch()
+  const pathname = usePathname()
+  const [isClientMounted, setIsClientMounted] = useState(false)
 
   useEffect(() => {
     // Debug environment on app start
@@ -22,7 +25,42 @@ export function AuthInit() {
     debugEnvironment();
     debugSupabaseConnection();
     
-    // Initial fetch on component mount
+    setIsClientMounted(true)
+  }, [])
+
+  useEffect(() => {
+    if (!isClientMounted) return
+
+    // ✅ CRITICAL FIX: Check for recovery token before doing anything
+    const isRecoveryFlow = () => {
+      const hash = window.location.hash
+      const isResetPage = pathname === '/reset-password'
+      const hasRecoveryToken = hash.includes('access_token=') && hash.includes('type=recovery')
+      
+      console.log('🔍 Recovery flow check:', {
+        pathname,
+        isResetPage,
+        hasRecoveryToken,
+        hash: hash ? 'Present' : 'Empty'
+      })
+      
+      return isResetPage && hasRecoveryToken
+    }
+    
+    // ✅ Skip auth initialization if we're in recovery flow
+    if (isRecoveryFlow()) {
+      console.log('⏭️ Skipping AuthInit for recovery flow - let reset page handle it')
+      
+      // Only fetch public data that doesn't require auth
+      dispatch(fetchPublicImages())
+      dispatch(fetchCoaches())
+      dispatch(fetchFeaturedCoaches())
+      dispatch(fetchLicenseCourses(true))
+      
+      return // Early return - don't set up auth state change listener
+    }
+    
+    // Normal flow - Initial fetch on component mount
     dispatch(fetchSessionAndProfile())
     dispatch(fetchPublicImages())
     dispatch(fetchDivisions())
@@ -35,6 +73,12 @@ export function AuthInit() {
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
+        // ✅ Skip auth state changes during recovery flow
+        if (isRecoveryFlow()) {
+          console.log('⏭️ Skipping auth state change during recovery flow')
+          return
+        }
+        
         if (event === "SIGNED_IN" && session?.user) {
           console.log("SIGNED IN 22 auth-init")
           dispatch(setAuthState({ session, user: session.user }))
@@ -61,7 +105,7 @@ export function AuthInit() {
     return () => {
       subscription.unsubscribe()
     }
-  }, [dispatch])
+  }, [dispatch, pathname, isClientMounted])
 
   return null // no UI needed here
 }

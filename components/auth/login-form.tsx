@@ -82,11 +82,14 @@ export function LoginForm() {
     } catch (err: any) {
       const msg = typeof err === "string" ? err : err?.message || "Unknown error"
 
-      if (msg.includes("email_not_confirmed") || msg.includes("not confirmed")) {
-        setLocalError("Email belum dikonfirmasi. Silakan cek email kamu untuk aktivasi.")
+      if (msg.includes("email_not_confirmed") || msg.includes("not confirmed") || msg.includes("Email belum dikonfirmasi")) {
+        setLocalError("Email belum dikonfirmasi. Silakan cek email Anda untuk aktivasi.")
         setEmailForResend(emailUsed)
+        setSuccess(null)
+      } else if (msg.includes("Invalid login credentials")) {
+        setLocalError("Email atau password salah. Silakan coba lagi.")
       } else {
-        setLocalError("Gagal login. Coba lagi.")
+        setLocalError(msg)
       }
     }
   }
@@ -121,8 +124,9 @@ export function LoginForm() {
         })
       ).unwrap()
 
-      setSuccess("Check your email to confirm your account.")
+      setSuccess("Registrasi berhasil! Silakan cek email Anda dan klik link aktivasi untuk mengaktifkan akun.")
       setEmailForResend(signUpData.email)
+      setActiveTab("signin") // Switch to login tab
     } catch (err: any) {
       setLocalError(err?.message || "Failed to sign up")
     }
@@ -133,20 +137,101 @@ export function LoginForm() {
     setLocalError(null)
 
     try {
+      // Debug Supabase configuration
+      console.log('🔧 Supabase config check:', {
+        url: process.env.NEXT_PUBLIC_SUPABASE_URL ? 'Present' : 'Missing',
+        key: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ? 'Present' : 'Missing',
+        emailToResend: emailForResend
+      })
+      
+      console.log('🔄 Attempting to resend verification email to:', emailForResend)
+      
       const { error } = await supabase.auth.resend({
         type: "signup",
         email: emailForResend,
+        options: {
+          emailRedirectTo: `${window.location.origin}/auth/callback`
+        }
       })
 
+      console.log('📧 Resend result:', { error })
+
       if (error) {
-        setLocalError("Gagal mengirim ulang email verifikasi.")
+        console.error('❌ Resend email error:', error)
+        
+        // Try fallback method 1: signup trigger
+        console.log('🔄 Trying fallback method 1: signup trigger...')
+        try {
+          const { error: signupError } = await supabase.auth.signUp({
+            email: emailForResend,
+            password: 'dummy-password-for-resend', // Won't create account if exists
+            options: {
+              emailRedirectTo: `${window.location.origin}/auth/callback`
+            }
+          })
+          
+          if (!signupError || signupError.message?.includes('already registered')) {
+            console.log('✅ Fallback method 1 successful')
+            setSuccess("Email verifikasi berhasil dikirim ulang.")
+            setCooldown(true)
+            setRemainingTime(120)
+            return
+          }
+        } catch (fallbackError) {
+          console.error('❌ Fallback method 1 failed:', fallbackError)
+        }
+
+        // Try fallback method 2: custom API endpoint
+        console.log('🔄 Trying fallback method 2: custom API...')
+        try {
+          const response = await fetch('/api/auth/resend-verification', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email: emailForResend })
+          })
+          
+          const result = await response.json()
+          
+          if (response.ok) {
+            console.log('✅ Fallback method 2 successful:', result)
+            
+            if (result.already_verified) {
+              setSuccess("Email sudah terverifikasi. Silakan login langsung.")
+            } else {
+              setSuccess(`Email verifikasi berhasil dikirim ulang (${result.method}).`)
+            }
+            
+            setCooldown(true)
+            setRemainingTime(120)
+            return
+          } else {
+            console.error('❌ Fallback method 2 failed:', result)
+          }
+        } catch (apiError) {
+          console.error('❌ Fallback method 2 failed:', apiError)
+        }
+        
+        // Handle specific error cases
+        if (error.message?.includes('API key')) {
+          setLocalError("Konfigurasi API tidak valid. Silakan hubungi administrator.")
+        } else if (error.message?.includes('rate limit')) {
+          setLocalError("Terlalu banyak permintaan. Silakan tunggu beberapa menit sebelum mencoba lagi.")
+        } else if (error.message?.includes('not found')) {
+          setLocalError("Email tidak ditemukan. Pastikan email yang Anda masukkan benar.")
+        } else {
+          setLocalError(`Gagal mengirim ulang email verifikasi: ${error.message}`)
+        }
       } else {
+        console.log('✅ Resend email successful')
         setSuccess("Email verifikasi berhasil dikirim ulang.")
         setCooldown(true)
         setRemainingTime(120) // 2 menit
       }
-    } catch {
-      setLocalError("Terjadi kesalahan tak terduga.")
+    } catch (error) {
+      console.error('❌ Unexpected error during resend:', error)
+      setLocalError("Terjadi kesalahan tak terduga. Silakan coba lagi.")
     }
   }
 
@@ -208,35 +293,48 @@ export function LoginForm() {
           </Alert>
         )}
         {emailForResend && (
-          <div className="mt-4 p-4 border border-blue-300 rounded-lg bg-blue-50 text-sm text-blue-700 space-y-3">
-            <div className="flex items-start space-x-2">
-              <svg
-                className="h-5 w-5 mt-1 text-blue-500 shrink-0"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M13 16h-1v-4h-1m1-4h.01M12 20a8 8 0 100-16 8 8 0 000 16z"
-                />
-              </svg>
-              <p>
-                Belum menerima email aktivasi? Klik tombol di bawah untuk mengirim ulang email verifikasi ke:{" "}
-                <span className="font-medium">{emailForResend}</span>
-              </p>
+          <div className="mb-6 p-6 bg-gradient-to-r from-orange-50 to-red-50 border-2 border-orange-200 rounded-xl shadow-sm">
+            <div className="flex items-start space-x-3 mb-4">
+              <div className="flex-shrink-0">
+                <MailCheck className="w-6 h-6 text-orange-600" />
+              </div>
+              <div className="flex-1">
+                <h3 className="font-semibold text-orange-800 mb-2">Email Belum Diverifikasi</h3>
+                <p className="text-orange-700 text-sm leading-relaxed">
+                  Silakan cek email Anda dan klik link aktivasi untuk mengaktifkan akun. Jika belum menerima email, 
+                  klik tombol di bawah untuk mengirim ulang ke:
+                </p>
+                <p className="font-medium text-orange-800 mt-1">{emailForResend}</p>
+              </div>
             </div>
-            <div className="flex justify-end">
+            
+            <div className="flex flex-col sm:flex-row gap-3 items-center justify-between">
+              <div className="text-xs text-orange-600">
+                📧 Cek folder spam/junk jika email tidak ditemukan di inbox
+              </div>
               <button
                 onClick={handleResendEmail}
                 disabled={cooldown}
-                className={`px-4 py-2 rounded-md text-white transition ${cooldown ? "bg-gray-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"
-                  }`}
+                className={`px-6 py-3 rounded-lg font-medium transition-all flex items-center space-x-2 ${
+                  cooldown 
+                    ? "bg-gray-300 text-gray-500 cursor-not-allowed" 
+                    : "bg-orange-600 hover:bg-orange-700 text-white shadow-md hover:shadow-lg"
+                }`}
               >
-                {cooldown ? `Tunggu ${remainingTime}s` : "Kirim Ulang Email"}
+                {cooldown ? (
+                  <>
+                    <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <span>Tunggu {remainingTime}s</span>
+                  </>
+                ) : (
+                  <>
+                    <MailCheck className="w-4 h-4" />
+                    <span>Kirim Ulang Email</span>
+                  </>
+                )}
               </button>
             </div>
           </div>

@@ -148,12 +148,37 @@ export class AutoIDCardGenerator {
             }
           })
 
-          // Draw rounded photo
+          // Draw rounded photo with proper aspect ratio
           const photoX = 70
           const photoY = 200
           const photoWidth = 310
           const photoHeight = 325
           const photoRadius = 20
+
+          // Calculate aspect ratio and cropping
+          const imgAspectRatio = photoImg.naturalWidth / photoImg.naturalHeight
+          const targetAspectRatio = photoWidth / photoHeight
+          
+          let drawWidth, drawHeight, drawX, drawY
+          let sourceX = 0, sourceY = 0, sourceWidth = photoImg.naturalWidth, sourceHeight = photoImg.naturalHeight
+
+          if (imgAspectRatio > targetAspectRatio) {
+            // Image is wider than target - crop sides
+            sourceWidth = photoImg.naturalHeight * targetAspectRatio
+            sourceX = (photoImg.naturalWidth - sourceWidth) / 2
+            drawWidth = photoWidth
+            drawHeight = photoHeight
+            drawX = photoX
+            drawY = photoY
+          } else {
+            // Image is taller than target - crop top/bottom
+            sourceHeight = photoImg.naturalWidth / targetAspectRatio
+            sourceY = (photoImg.naturalHeight - sourceHeight) / 2
+            drawWidth = photoWidth
+            drawHeight = photoHeight
+            drawX = photoX
+            drawY = photoY
+          }
 
           ctx.save()
           ctx.beginPath()
@@ -168,8 +193,22 @@ export class AutoIDCardGenerator {
           ctx.quadraticCurveTo(photoX, photoY, photoX + photoRadius, photoY)
           ctx.closePath()
           ctx.clip()
-          ctx.drawImage(photoImg, photoX, photoY, photoWidth, photoHeight)
+          
+          // Draw image with proper aspect ratio (crop instead of stretch)
+          ctx.drawImage(
+            photoImg,
+            sourceX, sourceY, sourceWidth, sourceHeight, // Source rectangle (cropped)
+            drawX, drawY, drawWidth, drawHeight // Destination rectangle
+          )
           ctx.restore()
+          
+          console.log('📸 Photo aspect ratio fixed:', {
+            originalSize: { width: photoImg.naturalWidth, height: photoImg.naturalHeight },
+            originalAspect: imgAspectRatio.toFixed(2),
+            targetAspect: targetAspectRatio.toFixed(2),
+            cropArea: { x: sourceX, y: sourceY, width: sourceWidth, height: sourceHeight },
+            drawArea: { x: drawX, y: drawY, width: drawWidth, height: drawHeight }
+          })
         } catch (error) {
           console.error('Error loading photo:', error)
         }
@@ -250,13 +289,15 @@ export class AutoIDCardGenerator {
 
   // Main function to generate and save ID card
   static async generateAndSaveIDCard(userId: string): Promise<boolean> {
+    console.log('🚀 AutoIDCardGenerator.generateAndSaveIDCard called for user:', userId);
     try {
       // Check authentication status
       const { data: { user }, error: authError } = await supabase.auth.getUser()
       if (authError || !user) {
-        console.error('User not authenticated for ID card generation:', { authError, userId })
+        console.error('❌ User not authenticated for ID card generation:', { authError, userId })
         return false
       }
+      console.log('✅ User authenticated:', { userId: user.id, email: user.email });
 
       console.log('Starting ID card generation for authenticated user:', {
         userId,
@@ -311,9 +352,15 @@ export class AutoIDCardGenerator {
 
       // Check if required data exists
       if (!profile.display_name || !profile.birth_date || !profile.gender || !profile.province_code) {
-        console.error('Missing required profile data for ID card generation')
+        console.error('❌ Missing required profile data for ID card generation:', {
+          display_name: profile.display_name || 'MISSING',
+          birth_date: profile.birth_date || 'MISSING',
+          gender: profile.gender || 'MISSING', 
+          province_code: profile.province_code || 'MISSING'
+        })
         return false
       }
+      console.log('✅ All required profile data present for ID card generation');
 
       // Check if member_code exists
       if (!profile.member_code) {

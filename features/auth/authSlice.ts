@@ -29,8 +29,10 @@ export const fetchSessionAndProfile = createAsyncThunk("auth/fetchSessionAndProf
   const { data: { session } } = await supabase.auth.getSession();
 
   if (!session) {
-    // Clear supabase auth data di localStorage kalau session null
-    supabase.auth.signOut(); // ini otomatis clear localStorage untuk supabase auth
+    // ✅ CRITICAL FIX: Don't call signOut() automatically
+    // This was interfering with password reset recovery tokens
+    // Let the app handle signOut explicitly when needed
+    console.log('📝 No session found in fetchSessionAndProfile - returning null without signOut')
     return { session: null, user: null, profile: null };
   }
 
@@ -115,7 +117,14 @@ export const signUpWithEmailThunk = createAsyncThunk(
     },
     { rejectWithValue }
   ) => {
-    const { data, error } = await supabase.auth.signUp({ email, password });
+    // Enable email confirmation with redirect URL
+    const { data, error } = await supabase.auth.signUp({ 
+      email, 
+      password,
+      options: {
+        emailRedirectTo: `${window.location.origin}/auth/callback`
+      }
+    });
     if (error) return rejectWithValue(error.message);
 
     const userId = data.user?.id;
@@ -125,22 +134,33 @@ export const signUpWithEmailThunk = createAsyncThunk(
 
     let id_photo_url: string | null = null;
     let profile_photo_url:string | null = null
+    
     if (id_photo_file) {
+      console.log('📤 Uploading ID photo for user:', userId);
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from("uploads")
         .upload(`id-photos/${userId}-${Date.now()}`, id_photo_file);
 
-      if (uploadError) return rejectWithValue(uploadError.message);
+      if (uploadError) {
+        console.error('❌ ID photo upload error:', uploadError);
+        return rejectWithValue(`Failed to upload ID photo: ${uploadError.message}`);
+      }
       id_photo_url = uploadData?.path ?? null;
+      console.log('✅ ID photo uploaded:', id_photo_url);
     }
 
      if (profile_photo_file) {
+      console.log('📤 Uploading profile photo for user:', userId);
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from("uploads")
         .upload(`profile-photos/${userId}-${Date.now()}`, profile_photo_file);
 
-      if (uploadError) return rejectWithValue(uploadError.message);
+      if (uploadError) {
+        console.error('❌ Profile photo upload error:', uploadError);
+        return rejectWithValue(`Failed to upload profile photo: ${uploadError.message}`);
+      }
       profile_photo_url = uploadData?.path ?? null;
+      console.log('✅ Profile photo uploaded:', profile_photo_url);
     }
 
     const now = new Date().toISOString();
@@ -210,25 +230,6 @@ export const signUpWithEmailThunk = createAsyncThunk(
     console.log('Role type:', typeof role);
     console.log('Role === "coach":', role === 'coach');
 
-    // Auto-generate ID card after profile creation
-    console.log('🎨 Starting auto ID card generation for user:', userId);
-    try {
-      // Only generate ID card if all required data is present
-      if (display_name && birth_date && gender && province_code && profile_photo_url) {
-        const idCardGenerated = await AutoIDCardGenerator.generateAndSaveIDCard(userId);
-        if (idCardGenerated) {
-          console.log('✅ ID card auto-generated successfully for user:', userId);
-        } else {
-          console.warn('⚠️ ID card generation failed, but registration will continue');
-        }
-      } else {
-        console.warn('⚠️ Missing required data for ID card generation, skipping');
-      }
-    } catch (error) {
-      console.error('❌ Error during ID card auto-generation:', error);
-      // Continue with registration even if ID card generation fails
-    }
-
     // If role is coach, create coach profile
     if (role === 'coach') {
       console.log('✅ Entering coach creation block for user:', userId);
@@ -279,7 +280,10 @@ export const signUpWithEmailThunk = createAsyncThunk(
       console.log('❌ User role is not coach, skipping coach profile creation. Role:', role);
     }
 
+
+
     // Sign out user after successful registration (don't auto login)
+    console.log('🔐 Signing out user after all operations completed');
     await supabase.auth.signOut();
     console.log('🚪 User signed out after successful registration');
 
@@ -287,7 +291,7 @@ export const signUpWithEmailThunk = createAsyncThunk(
     return { 
       session: null, 
       user: null,
-      message: "Registration successful! Please check your email and login manually."
+      message: "Registrasi berhasil! Silakan cek email Anda untuk aktivasi akun sebelum login."
     };
   }
 );

@@ -60,11 +60,31 @@ export function IDCardSection() {
       return
     }
 
-    // Check if required profile data exists
-    if (!profile?.display_name || !profile?.birth_date || !profile?.gender || !profile?.province_code || !profile?.profile_photo_url) {
+    // 🔒 SECURITY: Check if user is verified by admin
+    if (!profile?.is_verified) {
+      toast({
+        title: "Account Not Verified",
+        description: "Akun Anda belum diverifikasi oleh admin. Silakan tunggu proses verifikasi dari admin sebelum generate ID Card.",
+        variant: "destructive"
+      })
+      return
+    }
+
+    // 🚫 ONE-TIME GENERATION: Check if ID card already exists  
+    if (profile?.id_card_image && idCardUrl) {
+      toast({
+        title: "ID Card Already Generated",
+        description: "ID Card sudah pernah dibuat. Anda hanya bisa generate sekali.",
+        variant: "destructive"
+      })
+      return
+    }
+
+    // Check if required profile data exists (profile photo is optional)
+    if (!profile?.display_name || !profile?.birth_date || !profile?.gender || !profile?.province_code) {
       toast({
         title: "Incomplete Profile",
-        description: "Please complete your profile information first (name, birth date, gender, province, and profile photo).",
+        description: "Please complete your profile information first (name, birth date, gender, and province). Profile photo is optional.",
         variant: "destructive"
       })
       return
@@ -80,10 +100,29 @@ export function IDCardSection() {
           description: "ID Card generated successfully!",
         })
         
-        // Reload the page to show the new ID card
-        setTimeout(() => {
-          window.location.reload()
-        }, 1000)
+        // 🔄 REFRESH DATA: Update profile and ID card URL without page reload
+        // Fetch updated profile data
+        const { data: updatedProfile } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', user.id)
+          .single()
+        
+        if (updatedProfile?.id_card_image) {
+          // Generate new public URL
+          const imagePath = updatedProfile.id_card_image.includes('/') 
+            ? updatedProfile.id_card_image 
+            : `id-cards/${updatedProfile.id_card_image}`
+          
+          const { data: urlData } = supabase.storage
+            .from("uploads")
+            .getPublicUrl(imagePath)
+          
+          if (urlData?.publicUrl) {
+            setIdCardUrl(urlData.publicUrl)
+            console.log('✅ ID Card URL updated without refresh:', urlData.publicUrl)
+          }
+        }
       } else {
         toast({
           title: "Error",
@@ -181,19 +220,33 @@ export function IDCardSection() {
               </Button>
               <Button
                 onClick={handleGenerateIDCard}
-                disabled={generating}
+                disabled={
+                  generating || 
+                  !Boolean(profile?.is_verified) || 
+                  Boolean(profile?.id_card_image && idCardUrl)
+                }
                 variant="outline"
-                className="flex-1 border-red-200 text-red-700 hover:bg-red-50"
+                className="flex-1 border-red-200 text-red-700 hover:bg-red-50 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {generating ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    {idCardUrl ? 'Regenerating...' : 'Generating...'}
+                    Generating...
+                  </>
+                ) : !Boolean(profile?.is_verified) ? (
+                  <>
+                    <CreditCard className="mr-2 h-4 w-4" />
+                    Not Verified by Admin
+                  </>
+                ) : (profile?.id_card_image && idCardUrl) ? (
+                  <>
+                    <CreditCard className="mr-2 h-4 w-4" />
+                    Already Generated
                   </>
                 ) : (
                   <>
                     <RefreshCw className="mr-2 h-4 w-4" />
-                    {idCardUrl ? 'Regenerate Card' : 'Generate Card'}
+                    Generate Card
                   </>
                 )}
               </Button>
@@ -241,17 +294,27 @@ export function IDCardSection() {
               Generate your official ICA membership ID card to access exclusive member benefits and events.
             </p>
             <div className="space-y-4">
-              {/* Check if all requirements are met */}
-              {profile?.display_name && profile?.birth_date && profile?.gender && profile?.province_code && profile?.profile_photo_url ? (
+              {/* Check verification status and profile requirements */}
+              {!Boolean(profile?.is_verified) ? (
+                <div className="text-center p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                  <p className="text-yellow-800 font-medium">⏳ Account Not Verified</p>
+                  <p className="text-yellow-700 text-sm mt-1">Akun Anda belum diverifikasi oleh admin. Silakan tunggu proses verifikasi sebelum generate ID Card.</p>
+                </div>
+              ) : profile?.display_name && profile?.birth_date && profile?.gender && profile?.province_code ? (
                 <Button 
                   onClick={handleGenerateIDCard}
-                  disabled={generating}
-                  className="bg-red-600 hover:bg-red-700 px-8"
+                  disabled={generating || Boolean(profile?.id_card_image)}
+                  className="bg-red-600 hover:bg-red-700 px-8 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {generating ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                       Generating...
+                    </>
+                  ) : Boolean(profile?.id_card_image) ? (
+                    <>
+                      <CreditCard className="mr-2 h-4 w-4" />
+                      Already Generated
                     </>
                   ) : (
                     <>
