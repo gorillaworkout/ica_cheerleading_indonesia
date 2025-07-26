@@ -23,6 +23,8 @@ import { IndonesiaDatePicker } from "../ui/indonesia-date-picker"
 import { useToast } from "@/hooks/use-toast"
 import { formatDateToLocalString, getTodayLocalString } from "@/utils/dateFormat"
 import { formatDateForIndonesianDatabase } from "@/utils/safeDateUtils"
+import { RegistrationConfirmationModal } from "./registration-confirmation-modal"
+import { fetchProvinces } from "@/features/provinces/provincesSlice"
 
 async function generateMemberId(provinceCode: string) {
   const year = new Date().getFullYear().toString().slice(-2)
@@ -71,6 +73,7 @@ export function LoginForm() {
 
   const [cooldown, setCooldown] = useState(false)
   const [remainingTime, setRemainingTime] = useState(0)
+  const [showConfirmationModal, setShowConfirmationModal] = useState(false)
 
 
   const handleSignIn = async (e: React.FormEvent) => {
@@ -156,10 +159,16 @@ export function LoginForm() {
       return
     }
 
+    // Show confirmation modal instead of proceeding directly
+    setShowConfirmationModal(true)
+  }
+
+  const handleConfirmRegistration = async () => {
+    setLocalError(null)
+    setShowConfirmationModal(false)
+
     try {
       const memberCode = await generateMemberId(signUpData.provinceCode)
-
-
 
       await dispatch(
         signUpWithEmailThunk({
@@ -412,11 +421,17 @@ export function LoginForm() {
     }
   }, [error])
 
+  // Fetch provinces on component mount
+  useEffect(() => {
+    dispatch(fetchProvinces())
+  }, [dispatch])
+
   const [tempBirthDate, setTempBirthDate] = useState<Date | undefined>(
     signUpData.birthDate ? new Date(signUpData.birthDate) : undefined
   )
   return (
-    <Card className={`w-full transition-all duration-300 ${activeTab === "signup" ? "max-w-3xl" : "max-w-lg"}`}>
+    <>
+      <Card className={`w-full transition-all duration-300 ${activeTab === "signup" ? "max-w-3xl" : "max-w-lg"}`}>
       <CardHeader>
         <CardTitle className="text-center">Sign In to ICA</CardTitle>
       </CardHeader>
@@ -449,7 +464,7 @@ export function LoginForm() {
               </div>
             </div>
             
-            <div className="flex flex-col sm:flex-row gap-3 items-center justify-between">
+            <div className="flex flex-col  gap-3 items-center justify-between">
               <div className="text-xs text-orange-600">
                 📧 Cek folder spam/junk jika email tidak ditemukan di inbox
               </div>
@@ -459,7 +474,7 @@ export function LoginForm() {
                 className={`px-6 py-3 rounded-lg font-medium transition-all flex items-center space-x-2 ${
                   cooldown 
                     ? "bg-gray-300 text-gray-500 cursor-not-allowed" 
-                    : "bg-orange-600 hover:bg-orange-700 text-white shadow-md hover:shadow-lg"
+                    : "bg-red-600 hover:bg-red-700 text-white shadow-md hover:shadow-lg"
                 }`}
               >
                 {cooldown ? (
@@ -655,5 +670,16 @@ export function LoginForm() {
         </Tabs>
       </CardContent>
     </Card>
+
+    {/* Registration Confirmation Modal */}
+    <RegistrationConfirmationModal
+      isOpen={showConfirmationModal}
+      onClose={() => setShowConfirmationModal(false)}
+      onConfirm={handleConfirmRegistration}
+      data={signUpData}
+      provinces={provinces}
+      loading={loading}
+    />
+    </>
   )
 }
