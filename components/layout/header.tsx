@@ -330,12 +330,12 @@ export function Header() {
                           Admin Dashboard
                         </Link>
                       )}
-                      {isCoach && (
+                      {/* {isCoach && (
                         <Link href="/coach" className="flex items-center gap-3 px-3 py-2 text-sm hover:bg-gray-50 rounded-lg transition-colors">
                           <Users className="h-4 w-4 text-gray-500" />
                           Coach Dashboard
                         </Link>
-                      )}
+                      )} */}
                       <Link href="/profile" className="flex items-center gap-3 px-3 py-2 text-sm hover:bg-gray-50 rounded-lg transition-colors">
                         <Settings className="h-4 w-4 text-gray-500" />
                         Profile Settings

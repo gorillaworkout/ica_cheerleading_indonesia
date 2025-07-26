@@ -323,8 +323,8 @@ export default function TermsConditionsPage() {
               </p>
               
               <div className="space-y-2 opacity-90">
-                <p><strong>Email Support:</strong> support@indonesiancheer.org</p>
-                <p><strong>Email Legal:</strong> legal@indonesiancheer.org</p>
+                <p><strong>Email Support:</strong> indonesiancheerassociation@gmail.com</p>
+                <p><strong>Email Legal:</strong> indonesiancheerassociation@gmail.com</p>
                 <p><strong>Alamat:</strong> Indonesian Cheer Association, Jakarta, Indonesia</p>
                 <p><strong>Telepon:</strong> +62-21-XXXX-XXXX</p>
               </div>

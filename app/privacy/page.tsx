@@ -268,9 +268,8 @@ export default function PrivacyPolicyPage() {
               </p>
               
               <div className="space-y-2 opacity-90">
-                <p><strong>Email:</strong> privacy@indonesiancheer.org</p>
+                <p><strong>Email:</strong> indonesiancheerassociation@gmail.com</p>
                 <p><strong>Alamat:</strong> Indonesian Cheer Association, Jakarta, Indonesia</p>
-                <p><strong>Telepon:</strong> +62-21-XXXX-XXXX</p>
               </div>
             </div>
 
