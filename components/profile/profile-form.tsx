@@ -17,7 +17,7 @@ import { DatePicker } from "../ui/date-picker"
 import { useAppDispatch } from "@/lib/redux/hooks";
 import { fetchSessionAndProfile } from "@/features/auth/authSlice"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { formatDate } from "@/utils/dateFormat";
+import { formatDateToLocalString, formatDate } from "@/utils/dateFormat";
 import { addYears } from "date-fns"
 import ChangePasswordForm from "./change-password"
 import { CoachForm } from "./coach-form"
@@ -358,7 +358,8 @@ export function ProfileForm() {
                         date={tempBirthDate}
                         onChange={(date) => {
                           setTempBirthDate(date)
-                          setFormData({ ...formData, birthDate: date ? date.toISOString().split("T")[0] : "" });
+                          // Use utility function to safely format date
+                          setFormData({ ...formData, birthDate: formatDateToLocalString(date) });
                         }}
                       />
                     </div>
@@ -520,7 +521,13 @@ export function ProfileForm() {
                 <div className="flex justify-between items-center py-2 border-b border-gray-100">
                   <span className="text-gray-600 font-medium">Member Since</span>
                   <span className="text-sm text-gray-700">
-                    {formatDate(profile?.created_at)}
+                    {profile?.created_at
+                      ? new Date(profile.created_at).toLocaleDateString("id-ID", {
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric",
+                        })
+                      : "N/A"}
                   </span>
                 </div>
                 

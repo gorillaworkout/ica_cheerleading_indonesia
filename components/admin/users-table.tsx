@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
-import { toast } from "@/hooks/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { FullScreenLoader } from "@/components/ui/fullScreenLoader";
@@ -46,6 +46,7 @@ export function UsersTable() {
   
   const dispatch = useAppDispatch();
   const { provinces } = useAppSelector((state) => state.provinces);
+  const { toast } = useToast();
 
   useEffect(() => {
     dispatch(fetchProvinces());
@@ -101,6 +102,15 @@ export function UsersTable() {
 
   const handleSaveEdit = async (updatedUser: Profile): Promise<void> => {
     try {
+      console.log("Updating user with data:", {
+        id: updatedUser.id,
+        display_name: updatedUser.display_name,
+        role: updatedUser.role,
+        gender: updatedUser.gender,
+        birth_date: updatedUser.birth_date,
+        province_code: updatedUser.province_code,
+      });
+
       const { error } = await supabase
         .from("profiles")
         .update({
@@ -109,109 +119,195 @@ export function UsersTable() {
           gender: updatedUser.gender,
           birth_date: updatedUser.birth_date,
           province_code: updatedUser.province_code,
+          updated_at: new Date().toISOString(),
         })
         .eq("id", updatedUser.id);
 
       if (error) {
         console.error("Error updating user:", error);
+        
+        toast({
+          title: "Update Failed",
+          description: `Failed to update user: ${error.message || 'Unknown error'}`,
+          variant: "destructive",
+        });
         return;
       }
 
       toast({
         title: "Edit Successful",
         description: "The user has been updated successfully.",
+        variant: "default",
       });
       setEditUser(null);
       fetchUsers();
     } catch (err) {
       console.error("Unexpected error:", err);
+      
+      toast({
+        title: "Unexpected Error",
+        description: `An unexpected error occurred: ${err instanceof Error ? err.message : 'Unknown error'}`,
+        variant: "destructive",
+      });
     }
   };
 
   const handleDelete = async (id: string) => {
     try {
+      console.log("Deleting user with ID:", id);
+      
       const { error } = await supabase.from("profiles").delete().eq("id", id);
       if (error) {
         console.error("Error deleting user:", error);
+        
+        toast({
+          title: "Delete Failed",
+          description: `Failed to delete user: ${error.message || 'Unknown error'}`,
+          variant: "destructive",
+        });
         return;
       }
+      
       toast({
         title: "Delete Successful",
         description: "The user has been deleted successfully.",
+        variant: "default",
       });
       fetchUsers();
     } catch (err) {
       console.error("Unexpected error:", err);
+      
+      toast({
+        title: "Unexpected Error",
+        description: `An unexpected error occurred: ${err instanceof Error ? err.message : 'Unknown error'}`,
+        variant: "destructive",
+      });
     }
   };
 
   const approveUser = async (userId: string) => {
     setApproving(userId);
-    const { error } = await supabase
-      .from("profiles")
-      .update({ is_verified: true })
-      .eq("id", userId);
+    
+    try {
+      console.log("Approving user with ID:", userId);
+      
+      const { error } = await supabase
+        .from("profiles")
+        .update({ 
+          is_verified: true,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", userId);
 
-    if (error) {
-      console.error(error);
-      toast({ 
-        title: "Error", 
-        description: "Failed to approve user.",
+      if (error) {
+        console.error("Error approving user:", error);
+        
+        toast({
+          title: "Approval Failed",
+          description: `Failed to approve user: ${error.message || 'Unknown error'}`,
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Approval Successful",
+          description: "User has been approved successfully.",
+          variant: "default",
+        });
+        fetchUsers();
+      }
+    } catch (err) {
+      console.error("Unexpected error:", err);
+      
+      toast({
+        title: "Unexpected Error",
+        description: `An unexpected error occurred: ${err instanceof Error ? err.message : 'Unknown error'}`,
         variant: "destructive",
       });
-    } else {
-      toast({ 
-        title: "Success", 
-        description: "User approved successfully." 
-      });
-      fetchUsers();
     }
+    
     setApproving(null);
   };
 
   const approveEditRequest = async (userId: string) => {
     setApproving(userId);
-    const { error } = await supabase
-      .from("profiles")
-      .update({ is_edit_allowed: true, is_request_edit: false })
-      .eq("id", userId);
+    
+    try {
+      console.log("Approving edit request for user ID:", userId);
+      
+      const { error } = await supabase
+        .from("profiles")
+        .update({ 
+          is_edit_allowed: true, 
+          is_request_edit: false,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", userId);
 
-    if (error) {
-      console.error(error);
-      toast({ 
-        title: "Error", 
-        description: "Failed to approve edit request.",
+      if (error) {
+        console.error("Error approving edit request:", error);
+        
+        toast({
+          title: "Edit Approval Failed",
+          description: `Failed to approve edit request: ${error.message || 'Unknown error'}`,
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Edit Request Approved",
+          description: "User edit request has been approved successfully.",
+          variant: "default",
+        });
+        fetchUsers();
+      }
+    } catch (err) {
+      console.error("Unexpected error:", err);
+      
+      toast({
+        title: "Unexpected Error",
+        description: `An unexpected error occurred: ${err instanceof Error ? err.message : 'Unknown error'}`,
         variant: "destructive",
       });
-    } else {
-      toast({ 
-        title: "Success", 
-        description: "Edit request approved." 
-      });
-      fetchUsers();
     }
+    
     setApproving(null);
   };
 
   const rejectEditRequest = async (userId: string) => {
-    const { error } = await supabase
-      .from("profiles")
-      .update({ is_request_edit: false })
-      .eq("id", userId);
+    try {
+      console.log("Rejecting edit request for user ID:", userId);
+      
+      const { error } = await supabase
+        .from("profiles")
+        .update({ 
+          is_request_edit: false,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", userId);
 
-    if (error) {
-      console.error(error);
-      toast({ 
-        title: "Error", 
-        description: "Failed to reject edit request.",
+      if (error) {
+        console.error("Error rejecting edit request:", error);
+        
+        toast({
+          title: "Edit Rejection Failed",
+          description: `Failed to reject edit request: ${error.message || 'Unknown error'}`,
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Edit Request Rejected",
+          description: "User edit request has been rejected successfully.",
+          variant: "default",
+        });
+        fetchUsers();
+      }
+    } catch (err) {
+      console.error("Unexpected error:", err);
+      
+      toast({
+        title: "Unexpected Error",
+        description: `An unexpected error occurred: ${err instanceof Error ? err.message : 'Unknown error'}`,
         variant: "destructive",
       });
-    } else {
-      toast({ 
-        title: "Success", 
-        description: "Edit request rejected." 
-      });
-      fetchUsers();
     }
   };
 
@@ -237,9 +333,9 @@ export function UsersTable() {
     const roleColors = {
       admin: "bg-purple-100 text-purple-600 border-purple-200",
       coach: "bg-blue-100 text-blue-600 border-blue-200", 
-      user: "bg-gray-100 text-gray-600 border-gray-200"
+      athlete: "bg-gray-100 text-gray-600 border-gray-200"
     };
-    return <span className={`px-2 py-1 text-xs font-medium rounded-full border ${roleColors[role as keyof typeof roleColors] || roleColors.user}`}>{role}</span>;
+    return <span className={`px-2 py-1 text-xs font-medium rounded-full border ${roleColors[role as keyof typeof roleColors] || roleColors.athlete}`}>{role}</span>;
   };
 
   if (loading && users.length === 0) return <FullScreenLoader />;
@@ -565,7 +661,7 @@ export function UsersTable() {
                   }
                   className="w-full px-4 py-3 bg-gray-50/50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all duration-300"
                 >
-                  <option value="user">User</option>
+                  <option value="athlete">Athlete</option>
                   <option value="coach">Coach</option>
                   <option value="admin">Admin</option>
                 </select>

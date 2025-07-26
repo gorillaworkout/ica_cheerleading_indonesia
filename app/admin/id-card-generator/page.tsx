@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
+import { useToast } from "@/hooks/use-toast"
 import { useAppSelector } from "@/lib/redux/hooks"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -22,7 +23,8 @@ interface IDCardData {
   photo: string
 }
 
-export default function IDCardGenerator() {
+export default function IdCardGeneratorPage() {
+  const { toast } = useToast()
   const { user, profile } = useAppSelector((state) => state.auth)
   const provinces = useAppSelector((state) => state.provinces.provinces)
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -322,7 +324,11 @@ export default function IDCardGenerator() {
 
     } catch (error) {
       console.error('Error generating ID card:', error)
-      alert('Failed to generate ID card. Please try again.')
+              toast({
+          title: "Generation Failed",
+          description: "Failed to generate ID card. Please try again.",
+          variant: "destructive",
+        })
     } finally {
       setIsGenerating(false)
     }

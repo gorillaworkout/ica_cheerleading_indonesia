@@ -3,12 +3,13 @@
 import { useState, useEffect } from "react"
 import { supabase } from "@/lib/supabase"
 import { useRouter, useSearchParams } from "next/navigation"
-import { toast } from "@/components/ui/use-toast"
+import { useToast } from "@/hooks/use-toast"
 import { Header } from "@/components/layout/header"
 import { Footer } from "@/components/layout/footer"
 import { FullScreenLoader } from "@/components/ui/fullScreenLoader"
 
 export default function ResetPasswordPage() {
+    const { toast } = useToast()
     const [password, setPassword] = useState("")
     const [loading, setLoading] = useState(false)
     const router = useRouter()
@@ -220,7 +221,14 @@ export default function ResetPasswordPage() {
                         title: "Sukses", 
                         description: "Password berhasil diubah. Silakan login dengan password baru." 
                     })
-                    router.push("/login")
+                    
+                    // Set flag for login page toast
+                    localStorage.setItem("passwordResetSuccess", "true")
+                    
+                    // Delay redirect to let user see toast
+                    setTimeout(() => {
+                        router.push("/login")
+                    }, 2000)
                 } else {
                     throw new Error(result.error || 'Password reset failed')
                 }
@@ -240,8 +248,15 @@ export default function ResetPasswordPage() {
                 toast({ title: "Error", description: error.message })
             } else {
                 toast({ title: "Sukses", description: "Password berhasil diubah. Silakan login ulang." })
-                await supabase.auth.signOut()
-                router.push("/login")
+                
+                // Set flag for login page toast
+                localStorage.setItem("passwordResetSuccess", "true")
+                
+                // Delay redirect to let user see toast
+                setTimeout(async () => {
+                    await supabase.auth.signOut()
+                    router.push("/login")
+                }, 2000)
             }
         }
 

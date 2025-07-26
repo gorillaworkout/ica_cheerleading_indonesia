@@ -1,4 +1,6 @@
-import type { Metadata } from "next"
+"use client"
+
+import { useEffect } from "react"
 import { HeroSection } from "@/components/home/hero-section"
 import { IntroSection } from "@/components/home/intro-section"
 import { NewsSection } from "@/components/home/news-section"
@@ -9,28 +11,85 @@ import { ChampionshipSection } from "@/components/home/championship-section"
 import CheerOrganizationsSection from "@/components/home/cheer-organization-section"
 import { ScrollAnimation } from "@/components/ui/scroll-animation-safe"
 import { generateSEOMetadata, generateJSONLD, breadcrumbSchema } from "@/lib/seo"
+import { useToast } from "@/hooks/use-toast"
 
-export const metadata: Metadata = generateSEOMetadata({
-  title: "Beranda - ICA Indonesian Cheer Association",
-  description: "Selamat datang di Indonesian Cheer Association - Platform resmi kompetisi cheerleading terbesar di Indonesia. Bergabunglah dengan komunitas cheerleading nasional.",
-  keywords: [
-    "beranda ICA",
-    "cheerleading indonesia",
-    "kompetisi cheerleading nasional",
-    "komunitas cheerleading",
-    "olahraga cheerleading indonesia",
-    "turnamen cheerleading",
-    "pelatihan cheerleading professional"
-  ],
-  canonicalUrl: "https://indonesiancheer.org",
-  type: "website"
-})
+// Metadata moved to layout.tsx since this is now a client component
 
 const breadcrumbs = breadcrumbSchema([
   { name: "Beranda", url: "https://indonesiancheer.org" }
 ])
 
 export default function HomePage() {
+  const { toast } = useToast()
+
+  useEffect(() => {
+    // Cek apakah user baru saja logout/login/register/authenticate
+    const justLoggedOut = localStorage.getItem("justLoggedOut")
+    const justLoggedIn = localStorage.getItem("justLoggedIn")
+    const justRegistered = localStorage.getItem("justRegistered")
+    const justAuthenticated = localStorage.getItem("justAuthenticated")
+    
+    // Priority order: Login > Register > Authenticate > Logout
+    // This prevents multiple toasts from showing at once
+    
+    if (justLoggedIn === "true") {
+      // Tampilkan toast login success di homepage
+      toast({
+        title: "Login Successful!",
+        description: "Welcome back! You have successfully logged in.",
+        variant: "default",
+      })
+      
+      // Clear all flags when showing login toast
+      localStorage.removeItem("justLoggedIn")
+      localStorage.removeItem("justLoggedOut")
+      localStorage.removeItem("justRegistered")
+      localStorage.removeItem("justAuthenticated")
+      return
+    }
+    
+    if (justRegistered === "true") {
+      // Tampilkan toast registration success di homepage
+      toast({
+        title: "Registration Successful!",
+        description: "Please check your email and click the activation link to activate your account before logging in.",
+        variant: "default",
+      })
+      
+      // Clear all flags when showing register toast
+      localStorage.removeItem("justRegistered")
+      localStorage.removeItem("justLoggedOut")
+      localStorage.removeItem("justAuthenticated")
+      return
+    }
+    
+    if (justAuthenticated === "true") {
+      // Tampilkan toast authentication success di homepage
+      toast({
+        title: "Authentication Successful!",
+        description: "You have been successfully authenticated and logged in.",
+        variant: "default",
+      })
+      
+      // Clear all flags when showing authenticate toast
+      localStorage.removeItem("justAuthenticated")
+      localStorage.removeItem("justLoggedOut")
+      return
+    }
+    
+    if (justLoggedOut === "true") {
+      // Tampilkan toast logout success di homepage
+      toast({
+        title: "Logged Out Successfully!",
+        description: "You have been logged out. See you again soon!",
+        variant: "default",
+      })
+      
+      // Hapus flag setelah toast ditampilkan
+      localStorage.removeItem("justLoggedOut")
+    }
+  }, [toast])
+
   return (
     <div className="min-h-screen bg-white">
       {/* Structured Data - Breadcrumbs */}

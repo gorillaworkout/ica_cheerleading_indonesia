@@ -2,11 +2,12 @@
 
 import { useState, useEffect } from "react"
 import { supabase } from "@/lib/supabase"
-import { toast } from "@/hooks/use-toast"
+import { useToast } from "@/hooks/use-toast"
 import { Header } from "@/components/layout/header"
 import { Footer } from "@/components/layout/footer"
 
 export default function ForgotPasswordPage() {
+  const { toast } = useToast()
   const [email, setEmail] = useState("")
   const [loading, setLoading] = useState(false)
   const [isRateLimited, setIsRateLimited] = useState(false)

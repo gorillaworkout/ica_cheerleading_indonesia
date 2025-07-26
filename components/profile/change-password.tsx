@@ -8,9 +8,11 @@ import { Eye, EyeOff } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useAppDispatch } from "@/lib/redux/hooks"
 import { clearAuth } from "@/features/auth/authSlice"
+import { useToast } from "@/hooks/use-toast"
 
 export default function ChangePasswordForm() {
     const dispatch = useAppDispatch();
+    const { toast } = useToast();
   const [password, setPassword] = useState("")
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState("")
@@ -19,7 +21,14 @@ export default function ChangePasswordForm() {
     
 const handleChangePassword = async () => {
   if (password.length < 6) {
-    setMessage("Password minimal 6 karakter.")
+    const errorMsg = "Password must be at least 6 characters."
+    setMessage(errorMsg)
+    
+    toast({
+      title: "Password Too Short",
+      description: errorMsg,
+      variant: "destructive",
+    })
     return
   }
 
@@ -30,16 +39,35 @@ const handleChangePassword = async () => {
   console.log("update user done")
   if (error) {
     setMessage(error.message)
+    
+    toast({
+      title: "Password Update Failed",
+      description: error.message,
+      variant: "destructive",
+    })
   } else {
-    setMessage("Password berhasil diubah! Silakan login ulang.")
+    const successMsg = "Password successfully changed! Please login again."
+    setMessage(successMsg)
     setPassword("")
 
-    // Logout user supaya harus login ulang
-    await supabase.auth.signOut()
-    dispatch(clearAuth())
+    toast({
+      title: "Password Changed Successfully!",
+      description: "You will be logged out and redirected to login page.",
+      variant: "default",
+    })
 
-    // Reload halaman penuh supaya redux benar-benar reset
-    window.location.href = "/login"
+    // Set flag for login page toast
+    localStorage.setItem("passwordChangedSuccess", "true")
+
+    // Delay logout and redirect to let user see toast
+    setTimeout(async () => {
+      // Logout user supaya harus login ulang
+      await supabase.auth.signOut()
+      dispatch(clearAuth())
+
+      // Reload halaman penuh supaya redux benar-benar reset
+      window.location.href = "/login"
+    }, 2000)
   }
 
   setLoading(false)

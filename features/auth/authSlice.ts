@@ -165,6 +165,14 @@ export const signUpWithEmailThunk = createAsyncThunk(
 
     const now = new Date().toISOString();
 
+    // Verify birth_date format
+    if (birth_date) {
+      const datePattern = /^\d{4}-\d{2}-\d{2}$/
+      if (!datePattern.test(birth_date)) {
+        return rejectWithValue("Invalid birth date format. Please try again.")
+      }
+    }
+    
     // Try to insert profile with error handling for foreign key constraint
     let profileData: any = null;
     const { data: initialProfileData, error: profileError } = await supabase.from("profiles").insert({

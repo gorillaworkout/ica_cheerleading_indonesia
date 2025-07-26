@@ -19,6 +19,10 @@ import { useRouter } from "next/navigation"
 import { supabase } from "@/lib/supabase"
 import { profile } from "console"
 import { DatePicker } from "../ui/date-picker"
+import { IndonesiaDatePicker } from "../ui/indonesia-date-picker"
+import { useToast } from "@/hooks/use-toast"
+import { formatDateToLocalString, getTodayLocalString } from "@/utils/dateFormat"
+import { formatDateForIndonesianDatabase } from "@/utils/safeDateUtils"
 
 async function generateMemberId(provinceCode: string) {
   const year = new Date().getFullYear().toString().slice(-2)
@@ -39,10 +43,12 @@ export function LoginForm() {
   // Perbaiki error dengan memberikan tipe pada state.auth
   const { loading, error, user } = useAppSelector((state: any) => state.auth)
   const provinces = useAppSelector((state: any) => state.provinces.provinces)  // Get provinces from Redux
+  const { toast } = useToast()
 
   const [activeTab, setActiveTab] = useState<"signin" | "signup">("signin")
   const [emailForResend, setEmailForResend] = useState("")
-  const today = new Date().toISOString().split("T")[0]
+  // Use utility function to get today's date safely
+  const today = getTodayLocalString()
   const router = useRouter()
 
   const [signInData, setSignInData] = useState({ email: "", password: "" })
@@ -59,7 +65,6 @@ export function LoginForm() {
     idPhoto: null as File | null,
     profilePhoto: null as File | null,
   })
-
 
   const [localError, setLocalError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
@@ -78,19 +83,57 @@ export function LoginForm() {
     try {
       await dispatch(signInWithEmailThunk(signInData)).unwrap()
       await dispatch(fetchSessionAndProfile()).unwrap()
-      router.push("/")
-      localStorage.removeItem("lastSignInEmail")
+      
+      toast({
+        title: "Login Successful!",
+        description: "Welcome back! You have successfully logged in.",
+        variant: "default",
+      })
+      
+      // Clear any conflicting flags first
+      localStorage.removeItem("justLoggedOut")
+      localStorage.removeItem("justRegistered")
+      localStorage.removeItem("justAuthenticated")
+      
+      // Set flag for homepage toast
+      localStorage.setItem("justLoggedIn", "true")
+      
+      // Delay redirect to let user see toast
+      setTimeout(() => {
+        router.push("/")
+        localStorage.removeItem("lastSignInEmail")
+      }, 1500)
     } catch (err: any) {
       const msg = typeof err === "string" ? err : err?.message || "Unknown error"
 
       if (msg.includes("email_not_confirmed") || msg.includes("not confirmed") || msg.includes("Email belum dikonfirmasi")) {
-        setLocalError("Email belum dikonfirmasi. Silakan cek email Anda untuk aktivasi.")
+        const errorMsg = "Email not confirmed. Please check your email for activation."
+        setLocalError(errorMsg)
         setEmailForResend(emailUsed)
         setSuccess(null)
+        
+        toast({
+          title: "Email Not Confirmed",
+          description: errorMsg,
+          variant: "destructive",
+        })
       } else if (msg.includes("Invalid login credentials")) {
-        setLocalError("Email atau password salah. Silakan coba lagi.")
+        const errorMsg = "Invalid email or password. Please try again."
+        setLocalError(errorMsg)
+        
+        toast({
+          title: "Login Failed",
+          description: errorMsg,
+          variant: "destructive",
+        })
       } else {
         setLocalError(msg)
+        
+        toast({
+          title: "Login Failed",
+          description: msg,
+          variant: "destructive",
+        })
       }
     }
   }
@@ -102,12 +145,21 @@ export function LoginForm() {
     setLocalError(null)
 
     if (!signUpData.provinceCode) {
-      setLocalError("Please select a province.")
+      const errorMsg = "Please select a province."
+      setLocalError(errorMsg)
+      
+      toast({
+        title: "Registration Failed",
+        description: errorMsg,
+        variant: "destructive",
+      })
       return
     }
 
     try {
       const memberCode = await generateMemberId(signUpData.provinceCode)
+
+
 
       await dispatch(
         signUpWithEmailThunk({
@@ -125,11 +177,53 @@ export function LoginForm() {
         })
       ).unwrap()
 
-      setSuccess("Registrasi berhasil! Silakan cek email Anda dan klik link aktivasi untuk mengaktifkan akun.")
+      const successMsg = "Registration successful! Please check your email and click the activation link to activate your account."
+      setSuccess(successMsg)
       setEmailForResend(signUpData.email)
-      setActiveTab("signin") // Switch to login tab
+      
+      toast({
+        title: "Registration Successful!",
+        description: "Please check your email and click the activation link to activate your account before logging in.",
+        variant: "default",
+      })
+      
+      // Clear any conflicting flags first
+      localStorage.removeItem("justLoggedOut")
+      localStorage.removeItem("justLoggedIn")
+      localStorage.removeItem("justAuthenticated")
+      
+      // Set flag for homepage toast
+      localStorage.setItem("justRegistered", "true")
+      
+      // Delay redirect to let user see toast
+      setTimeout(() => {
+        router.push("/")
+      }, 2000) // 2 seconds delay for registration (longer to read the message)
+      
+      // Clear form data
+      setSignUpData({
+        email: "",
+        password: "",
+        displayName: "",
+        gender: "",
+        birthDate: "",
+        phoneNumber: "",
+        role: "",
+        provinceCode: "",
+        idPhoto: null,
+        profilePhoto: null,
+      })
+
+      
     } catch (err: any) {
-      setLocalError(err?.message || "Failed to sign up")
+      const errorMsg = err?.message || "Failed to sign up"
+      setLocalError(errorMsg)
+      
+      toast({
+        title: "Registration Failed",
+        description: errorMsg,
+        variant: "destructive",
+      })
     }
   }
 
@@ -173,7 +267,15 @@ export function LoginForm() {
           
           if (!signupError || signupError.message?.includes('already registered')) {
             console.log('✅ Fallback method 1 successful')
-            setSuccess("Email verifikasi berhasil dikirim ulang.")
+            const successMsg = "Verification email has been resent successfully."
+            setSuccess(successMsg)
+            
+            toast({
+              title: "Email Resent!",
+              description: successMsg,
+              variant: "default",
+            })
+            
             setCooldown(true)
             setRemainingTime(120)
             return
@@ -199,10 +301,24 @@ export function LoginForm() {
             console.log('✅ Fallback method 2 successful:', result)
             
             if (result.already_verified) {
-              setSuccess("Email sudah terverifikasi. Silakan login langsung.")
-            } else {
-              setSuccess(`Email verifikasi berhasil dikirim ulang (${result.method}).`)
-            }
+              const successMsg = "Email already verified. You can login directly."
+              setSuccess(successMsg)
+              
+              toast({
+                title: "Already Verified!",
+                description: successMsg,
+                variant: "default",
+              })
+                          } else {
+                const successMsg = `Verification email has been resent successfully (${result.method}).`
+                setSuccess(successMsg)
+                
+                toast({
+                  title: "Email Resent!",
+                  description: successMsg,
+                  variant: "default",
+                })
+              }
             
             setCooldown(true)
             setRemainingTime(120)
@@ -215,24 +331,48 @@ export function LoginForm() {
         }
         
         // Handle specific error cases
+        let errorMsg = ""
         if (error.message?.includes('API key')) {
-          setLocalError("Konfigurasi API tidak valid. Silakan hubungi administrator.")
+          errorMsg = "Invalid API configuration. Please contact administrator."
         } else if (error.message?.includes('rate limit')) {
-          setLocalError("Terlalu banyak permintaan. Silakan tunggu beberapa menit sebelum mencoba lagi.")
+          errorMsg = "Too many requests. Please wait a few minutes before trying again."
         } else if (error.message?.includes('not found')) {
-          setLocalError("Email tidak ditemukan. Pastikan email yang Anda masukkan benar.")
+          errorMsg = "Email not found. Please make sure the email you entered is correct."
         } else {
-          setLocalError(`Gagal mengirim ulang email verifikasi: ${error.message}`)
+          errorMsg = `Failed to resend verification email: ${error.message}`
         }
+        
+        setLocalError(errorMsg)
+        
+        toast({
+          title: "Resend Failed",
+          description: errorMsg,
+          variant: "destructive",
+        })
       } else {
         console.log('✅ Resend email successful')
-        setSuccess("Email verifikasi berhasil dikirim ulang.")
+        const successMsg = "Verification email has been resent successfully."
+        setSuccess(successMsg)
+        
+        toast({
+          title: "Email Resent!",
+          description: successMsg,
+          variant: "default",
+        })
+        
         setCooldown(true)
         setRemainingTime(120) // 2 menit
       }
     } catch (error) {
       console.error('❌ Unexpected error during resend:', error)
-      setLocalError("Terjadi kesalahan tak terduga. Silakan coba lagi.")
+      const errorMsg = "An unexpected error occurred. Please try again."
+      setLocalError(errorMsg)
+      
+      toast({
+        title: "Unexpected Error",
+        description: errorMsg,
+        variant: "destructive",
+      })
     }
   }
 
@@ -397,11 +537,15 @@ export function LoginForm() {
 
                 <div className="space-y-1">
                   <Label>Date of Birth</Label>
-                  <DatePicker
+                  <IndonesiaDatePicker
                     date={tempBirthDate}
                     onChange={(date) => {
                       setTempBirthDate(date)
-                      setSignUpData({ ...signUpData, birthDate: date ? date.toISOString().split("T")[0] : "" })
+                      
+                      // Use BULLETPROOF utility function for Indonesian timezone
+                      const formattedDate = formatDateForIndonesianDatabase(date)
+                      
+                      setSignUpData({ ...signUpData, birthDate: formattedDate })
                     }}
                     disabled={false}
                   />

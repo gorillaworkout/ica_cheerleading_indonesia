@@ -7,6 +7,7 @@ import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
 import { clearAuth } from "@/features/auth/authSlice";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
+import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { AnimatePresence, motion } from "framer-motion";
 import {
@@ -100,6 +101,7 @@ export function Header() {
   const menuRef = useRef<HTMLDivElement>(null);
   const dispatch = useAppDispatch();
   const router = useRouter();
+  const { toast } = useToast();
   // Pastikan state.auth memiliki tipe yang benar, misal AuthState
   const { user, profile, loading } = useAppSelector((state: { auth: any }) => state.auth);
   const isAdmin = profile?.role === "admin";
@@ -155,8 +157,27 @@ export function Header() {
     await supabase.auth.signOut();
     dispatch(clearAuth());
     localStorage.removeItem("lastSignInEmail");
-    router.push("/");
-    setIsSigningOut(false);
+    
+    // Clear any conflicting flags first
+    localStorage.removeItem("justLoggedIn");
+    localStorage.removeItem("justRegistered");
+    localStorage.removeItem("justAuthenticated");
+    
+    // Set flag untuk toast di homepage
+    localStorage.setItem("justLoggedOut", "true");
+    
+    // Show immediate toast feedback
+    toast({
+      title: "Logging Out...",
+      description: "Please wait while we log you out.",
+      variant: "default",
+    });
+    
+    // Delay redirect supaya user melihat feedback
+    setTimeout(() => {
+      router.push("/");
+      setIsSigningOut(false);
+    }, 1500); // 1.5 detik delay
   };
 
   return (

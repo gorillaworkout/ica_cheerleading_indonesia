@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
+import { useToast } from "@/hooks/use-toast"
 import { useAppSelector } from "@/lib/redux/hooks"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -83,6 +84,7 @@ export default function IDCardEditor() {
     const canvasRef = useRef<HTMLCanvasElement>(null)
     const [templateImage, setTemplateImage] = useState<HTMLImageElement | null>(null)
     const [righteousFont, setRighteousFont] = useState<FontFace | null>(null)
+    const { toast } = useToast()
 
     const [idCardData, setIdCardData] = useState<IDCardData>({
         memberID: 'ICA12345',
@@ -552,7 +554,11 @@ const regDate = formatRegistrationDate(profile?.created_at || idCardData.registr
 ctx.fillText(regDate, ${styleSettings.regDateValueX}, ${styleSettings.regDateValueY})
 `
         navigator.clipboard.writeText(code)
-        alert('Code copied to clipboard!')
+        toast({
+          title: "Code Copied!",
+          description: "Code has been copied to clipboard successfully.",
+          variant: "default",
+        })
     }
 
     return (

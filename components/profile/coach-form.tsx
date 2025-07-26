@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { useToast } from "@/hooks/use-toast"
 import { useAppSelector, useAppDispatch } from "@/lib/redux/hooks"
 import { supabase } from "@/lib/supabase"
 import { fetchCoaches } from "@/features/coaches/coachesSlice"
@@ -72,6 +73,7 @@ export function CoachForm() {
   const [newSpecialty, setNewSpecialty] = useState("")
   const [imageFile, setImageFile] = useState<File | null>(null)
   const [imagePreview, setImagePreview] = useState<string | null>(null)
+  const { toast } = useToast()
 
   // Load existing coach data
   useEffect(() => {
@@ -263,14 +265,22 @@ export function CoachForm() {
         ...clientInfo
       })
 
-      alert("Coach profile saved successfully!")
+              toast({
+          title: "Coach Profile Saved!",
+          description: "Your coach profile has been saved successfully.",
+          variant: "default",
+        })
       
       // Refresh coaches data in Redux
       dispatch(fetchCoaches())
       
     } catch (error) {
       console.error("Error saving coach profile:", error)
-      alert("Failed to save coach profile. Please try again.")
+              toast({
+          title: "Save Failed",
+          description: "Failed to save coach profile. Please try again.",
+          variant: "destructive",
+        })
     } finally {
       setLoading(false)
     }
@@ -299,6 +309,7 @@ export function CoachForm() {
               <Label htmlFor="name" className="text-gray-700 font-medium">Full Name *</Label>
               <Input
                 id="name"
+                disabled
                 value={coachData.name}
                 onChange={(e) => setCoachData(prev => ({ ...prev, name: e.target.value }))}
                 className="border-gray-200 focus:border-red-400 focus:ring-red-400"
@@ -486,7 +497,6 @@ export function CoachForm() {
                   >
                     <option value="">Select ICA License Course</option>
                     {licenseCourses
-                      .filter(course => course.organization === 'ICA')
                       .map((course) => (
                       <option key={course.id} value={course.course_name}>
                         {course.course_name}{course.level ? ` - ${course.level}` : ''}{course.module ? ` ${course.module}` : ''}

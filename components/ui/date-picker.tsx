@@ -50,7 +50,7 @@ export function DatePicker({ date, onChange, disabled }: DatePickerProps) {
           toYear={today.getFullYear()}
           initialFocus
           disabled={{
-            after: maxDate, // ✅ Ini yang membatasi
+            after: maxDate,
           }}
         />
       </PopoverContent>
