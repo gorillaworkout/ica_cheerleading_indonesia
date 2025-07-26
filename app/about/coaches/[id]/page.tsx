@@ -22,9 +22,11 @@ import {
   Zap
 } from "lucide-react"
 import Image from "next/image"
-import { useAppSelector } from "@/lib/redux/hooks"
-import { selectCoachById, selectCoachesLoading } from "@/features/coaches/coachesSlice"
+import { useAppSelector, useAppDispatch } from "@/lib/redux/hooks"
+import { selectCoachById, selectCoachesLoading, fetchCoaches } from "@/features/coaches/coachesSlice"
+import { selectProvinces, fetchProvinces } from "@/features/provinces/provincesSlice"
 import { generateStorageUrl } from "@/utils/getPublicImageUrl"
+import { useEffect } from "react"
 
 // Types for coach data
 interface Coach {
@@ -61,6 +63,30 @@ export default function CoachDetail({ params }: CoachDetailPageProps) {
   const resolvedParams = use(params)
   const coach = useAppSelector((state) => selectCoachById(state, resolvedParams.id))
   const loading = useAppSelector(selectCoachesLoading)
+  const provinces = useAppSelector(selectProvinces)
+  const dispatch = useAppDispatch()
+
+  // Fetch data on component mount
+  useEffect(() => {
+    dispatch(fetchCoaches())
+    dispatch(fetchProvinces())
+  }, [dispatch])
+
+  // Helper function to get province name
+  const getProvinceName = (location?: string) => {
+    if (!location) return 'N/A'
+    
+    // First try to find by province code
+    const province = provinces.find(p => p.id_province === location)
+    if (province) return province.name
+    
+    // If not found, check if location already contains province name
+    const existingProvince = provinces.find(p => p.name.toLowerCase() === location.toLowerCase())
+    if (existingProvince) return existingProvince.name
+    
+    // If still not found, return the location as is (might be a full address)
+    return location
+  }
 
   if (loading) {
     return (
@@ -142,7 +168,7 @@ export default function CoachDetail({ params }: CoachDetailPageProps) {
                     <div className="space-y-3 text-sm text-gray-600">
                       <div className="flex items-center justify-center space-x-2">
                         <MapPin className="h-4 w-4 text-red-500" />
-                        <span>{coach.location}</span>
+                        <span>{getProvinceName(coach.location)}</span>
                       </div>
                       <div className="flex items-center justify-center space-x-2">
                         <Mail className="h-4 w-4 text-red-500" />
@@ -167,10 +193,6 @@ export default function CoachDetail({ params }: CoachDetailPageProps) {
                       <div className="bg-gray-50 border border-gray-100 p-4 rounded-lg">
                         <div className="text-2xl font-bold text-red-600">{coach.years_experience}</div>
                         <div className="text-xs text-gray-600">Years Exp.</div>
-                      </div>
-                      <div className="bg-gray-50 border border-gray-100 p-4 rounded-lg">
-                        <div className="text-2xl font-bold text-red-600">{coach.success_rate}%</div>
-                        <div className="text-xs text-gray-600">Success Rate</div>
                       </div>
                     </div>
                   </CardContent>

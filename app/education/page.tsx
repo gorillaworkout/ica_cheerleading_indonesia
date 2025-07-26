@@ -9,8 +9,10 @@ import { Badge } from "@/components/ui/badge"
 import { BookOpen, Users, Award } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
-import { useAppSelector } from "@/lib/redux/hooks"
+import { useAppSelector, useAppDispatch } from "@/lib/redux/hooks"
 import { selectFeaturedCoaches, selectCoachesLoading } from "@/features/coaches/coachesSlice"
+import { selectProvinces, fetchProvinces } from "@/features/provinces/provincesSlice"
+import { useEffect } from "react"
 
 // Note: Metadata cannot be used in client components
 // Consider moving to layout.tsx or using a wrapper component if needed
@@ -72,6 +74,29 @@ const judges = [
 export default function EducationPage() {
   const coaches = useAppSelector(selectFeaturedCoaches)
   const loading = useAppSelector(selectCoachesLoading)
+  const provinces = useAppSelector(selectProvinces)
+  const dispatch = useAppDispatch()
+
+  // Fetch provinces data on component mount
+  useEffect(() => {
+    dispatch(fetchProvinces())
+  }, [dispatch])
+
+  // Helper function to get province name
+  const getProvinceName = (location?: string) => {
+    if (!location) return 'N/A'
+    
+    // First try to find by province code
+    const province = provinces.find(p => p.id_province === location)
+    if (province) return province.name
+    
+    // If not found, check if location already contains province name
+    const existingProvince = provinces.find(p => p.name.toLowerCase() === location.toLowerCase())
+    if (existingProvince) return existingProvince.name
+    
+    // If still not found, return the location as is (might be a full address)
+    return location
+  }
 
   return (
     <div className="min-h-screen bg-white">
@@ -153,6 +178,7 @@ export default function EducationPage() {
                         </div>
                         <CardTitle className="text-xl">{coach.name}</CardTitle>
                         <p className="text-red-600 font-medium">{coach.specialization}</p>
+                        <p className="text-gray-500 text-xs mt-1">{getProvinceName(coach.location)}</p>
                       </CardHeader>
                       <CardContent className="space-y-4">
                         <div className="text-sm text-gray-600">

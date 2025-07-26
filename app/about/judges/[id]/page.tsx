@@ -24,9 +24,11 @@ import {
   Trophy
 } from "lucide-react"
 import Image from "next/image"
-import { useAppSelector } from "@/lib/redux/hooks"
-import { selectJudgeById, selectJudgesLoading } from "@/features/judges/judgesSlice"
+import { useAppSelector, useAppDispatch } from "@/lib/redux/hooks"
+import { selectJudgeById, selectJudgesLoading, fetchJudges, fetchJudgeById } from "@/features/judges/judgesSlice"
+import { selectProvinces, fetchProvinces } from "@/features/provinces/provincesSlice"
 import { generateStorageUrl } from "@/utils/getPublicImageUrl"
+import { useEffect, useState } from "react"
 
 // Types for judge data
 interface Judge {
@@ -62,6 +64,43 @@ export default function JudgeDetail({ params }: JudgeDetailPageProps) {
   const resolvedParams = use(params)
   const judge = useAppSelector((state) => selectJudgeById(state, resolvedParams.id))
   const loading = useAppSelector(selectJudgesLoading)
+  const provinces = useAppSelector(selectProvinces)
+  const dispatch = useAppDispatch()
+  const [judgeNotFound, setJudgeNotFound] = useState(false)
+
+  // Fetch data on component mount
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // First try to fetch all judges
+        await dispatch(fetchJudges()).unwrap()
+        
+        // Fetch provinces
+        dispatch(fetchProvinces())
+      } catch (error) {
+        console.error('Error fetching judge data:', error)
+        setJudgeNotFound(true)
+      }
+    }
+    
+    fetchData()
+  }, [dispatch, resolvedParams.id])
+
+  // Helper function to get province name
+  const getProvinceName = (location?: string) => {
+    if (!location) return 'N/A'
+    
+    // First try to find by province code
+    const province = provinces.find(p => p.id_province === location)
+    if (province) return province.name
+    
+    // If not found, check if location already contains province name
+    const existingProvince = provinces.find(p => p.name.toLowerCase() === location.toLowerCase())
+    if (existingProvince) return existingProvince.name
+    
+    // If still not found, return the location as is (might be a full address)
+    return location
+  }
 
   if (loading) {
     return (
@@ -76,7 +115,7 @@ export default function JudgeDetail({ params }: JudgeDetailPageProps) {
     )
   }
 
-  if (!judge) {
+  if (!judge && judgeNotFound) {
     return (
       <div className="min-h-screen bg-white">
         <Header />
@@ -93,6 +132,45 @@ export default function JudgeDetail({ params }: JudgeDetailPageProps) {
         <Footer />
       </div>
     )
+  }
+
+  // Show loading if still loading and judge not found yet
+  if (loading && !judge) {
+    return (
+      <div className="min-h-screen bg-white">
+        <Header />
+        <main className="container mx-auto px-4 py-16 text-center">
+          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-red-600"></div>
+          <p className="text-gray-600 text-lg mt-4">Loading judge profile...</p>
+        </main>
+        <Footer />
+      </div>
+    )
+  }
+
+  // Show not found if not loading and judge not found
+  if (!loading && !judge) {
+    return (
+      <div className="min-h-screen bg-white">
+        <Header />
+        <main className="container mx-auto px-4 py-16 text-center">
+          <h1 className="text-3xl font-bold text-gray-900 mb-4">Judge Not Found</h1>
+          <p className="text-gray-600 mb-8">The requested judge profile could not be found.</p>
+          <Link href="/about/judges">
+            <Button className="bg-red-600 hover:bg-red-700">
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Back to Judges
+            </Button>
+          </Link>
+        </main>
+        <Footer />
+      </div>
+    )
+  }
+
+  // Ensure judge exists before rendering
+  if (!judge) {
+    return null
   }
 
   return (
@@ -174,7 +252,7 @@ export default function JudgeDetail({ params }: JudgeDetailPageProps) {
                     <div className="space-y-3 text-sm text-gray-600">
                       <div className="flex items-center justify-center space-x-2">
                         <MapPin className="h-4 w-4 text-red-500" />
-                        <span>{judge.location}</span>
+                        <span>{getProvinceName(judge.location)}</span>
                       </div>
                       <div className="flex items-center justify-center space-x-2">
                         <Mail className="h-4 w-4 text-red-500" />

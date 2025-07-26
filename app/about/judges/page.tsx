@@ -11,6 +11,7 @@ import { Scale, Users, Award, Gavel, Medal, ShieldCheck } from "lucide-react"
 import Image from "next/image"
 import { useAppSelector, useAppDispatch } from "@/lib/redux/hooks"
 import { selectJudges, selectJudgesLoading, fetchJudges } from "@/features/judges/judgesSlice"
+import { selectProvinces, fetchProvinces } from "@/features/provinces/provincesSlice"
 import { getPublicImageUrl, generateStorageUrl } from "@/utils/getPublicImageUrl"
 import { useState, useEffect } from "react"
 
@@ -45,13 +46,31 @@ interface Judge {
 export default function Judges() {
   const judges = useAppSelector(selectJudges)
   const loading = useAppSelector(selectJudgesLoading)
+  const provinces = useAppSelector(selectProvinces)
   const dispatch = useAppDispatch()
   const [judgeImages, setJudgeImages] = useState<Record<string, string>>({})
 
   // Fetch judges data on component mount
   useEffect(() => {
     dispatch(fetchJudges())
+    dispatch(fetchProvinces())
   }, [dispatch])
+
+  // Helper function to get province name
+  const getProvinceName = (location?: string) => {
+    if (!location) return 'N/A'
+    
+    // First try to find by province code
+    const province = provinces.find(p => p.id_province === location)
+    if (province) return province.name
+    
+    // If not found, check if location already contains province name
+    const existingProvince = provinces.find(p => p.name.toLowerCase() === location.toLowerCase())
+    if (existingProvince) return existingProvince.name
+    
+    // If still not found, return the location as is (might be a full address)
+    return location
+  }
 
   useEffect(() => {
     const loadImages = async () => {
@@ -211,7 +230,8 @@ export default function Judges() {
                       </div>
                       
                       <CardTitle className="text-xl text-gray-900 mb-2 group-hover:text-red-600 transition-colors duration-200">{judge.name}</CardTitle>
-                      <p className="text-red-600 font-medium text-sm mb-3">{judge.specialization}</p>
+                      <p className="text-red-600 font-medium text-sm mb-1">{judge.specialization}</p>
+                      <p className="text-gray-500 text-xs mb-3">{getProvinceName(judge.location)}</p>
                       
                       {/* Clean Certification Level Badge */}
                       <div className={`inline-flex justify-center items-center space-x-1 px-3 py-1 rounded-full text-xs font-medium ${

@@ -11,6 +11,7 @@ import { BookOpen, Users, Award } from "lucide-react"
 import Image from "next/image"
 import { useAppSelector, useAppDispatch } from "@/lib/redux/hooks"
 import { selectCoaches, selectCoachesLoading, fetchCoaches } from "@/features/coaches/coachesSlice"
+import { selectProvinces, selectProvinceNameById, fetchProvinces } from "@/features/provinces/provincesSlice"
 import { getPublicImageUrl, generateStorageUrl } from "@/utils/getPublicImageUrl"
 import { useState, useEffect } from "react"
 
@@ -46,13 +47,31 @@ interface Coach {
 export default function Coaches() {
   const coaches = useAppSelector(selectCoaches)
   const loading = useAppSelector(selectCoachesLoading)
+  const provinces = useAppSelector(selectProvinces)
   const dispatch = useAppDispatch()
   const [coachImages, setCoachImages] = useState<Record<string, string>>({})
 
   // Fetch coaches data on component mount
   useEffect(() => {
     dispatch(fetchCoaches())
+    dispatch(fetchProvinces())
   }, [dispatch])
+
+  // Helper function to get province name
+  const getProvinceName = (location?: string) => {
+    if (!location) return 'N/A'
+    
+    // First try to find by province code
+    const province = provinces.find(p => p.id_province === location)
+    if (province) return province.name
+    
+    // If not found, check if location already contains province name
+    const existingProvince = provinces.find(p => p.name.toLowerCase() === location.toLowerCase())
+    if (existingProvince) return existingProvince.name
+    
+    // If still not found, return the location as is (might be a full address)
+    return location
+  }
 
   useEffect(() => {
     const loadImages = async () => {
@@ -183,6 +202,7 @@ export default function Coaches() {
                     
                     <CardTitle className="text-xl text-gray-900 mb-1 group-hover:text-red-600 transition-colors duration-200">{coach.name}</CardTitle>
                     <p className="text-red-600 font-medium text-sm">{coach.specialization}</p>
+                    <p className="text-gray-500 text-xs mt-1">{getProvinceName(coach.location)}</p>
                   </CardHeader>
                     <CardContent className="space-y-4 pt-2">
                       {/* Experience Section with Icon */}

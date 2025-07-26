@@ -26,7 +26,8 @@ export default function AdminDashboard() {
   const competitions = useSelector((state: RootState) => state.competitions.competitions);
   const provinces = useSelector((state: RootState) => state.provinces.provinces);
   const divisions = useSelector((state: RootState) => state.divisions.divisions);
-  const profile = useSelector((state: RootState) => state.auth?.profile);
+  // Perbaiki error: pastikan state.auth bertipe yang benar dan memiliki property profile
+  const profile = useSelector((state: RootState) => (state.auth && "profile" in state.auth ? (state.auth as any).profile : null));
   const router = useRouter();
 
   useEffect(() => {
@@ -360,7 +361,7 @@ export default function AdminDashboard() {
                     ))
                   ) : recentCompetitions.length > 0 ? (
                     recentCompetitions.map((comp, index) => (
-                      <div key={comp.id} className="group/item p-4 bg-gradient-to-r from-gray-50 to-white rounded-xl border border-gray-100 hover:border-gray-200 transition-all duration-200 hover:shadow-md">
+                      <div key={comp.id || `comp-${index}`} className="group/item p-4 bg-gradient-to-r from-gray-50 to-white rounded-xl border border-gray-100 hover:border-gray-200 transition-all duration-200 hover:shadow-md">
                         <div className="flex items-center justify-between">
                           <div className="flex-1">
                             <div className="flex items-center gap-2 mb-1">
@@ -445,7 +446,7 @@ export default function AdminDashboard() {
                     ))
                   ) : topProvinces.length > 0 ? (
                     topProvinces.map((province, index) => (
-                      <div key={province.id} className="group/item flex items-center gap-3 p-3 bg-gradient-to-r from-gray-50 to-white rounded-xl border border-gray-100 hover:border-gray-200 transition-all duration-200 hover:shadow-md">
+                      <div key={province.id || `province-${index}`} className="group/item flex items-center gap-3 p-3 bg-gradient-to-r from-gray-50 to-white rounded-xl border border-gray-100 hover:border-gray-200 transition-all duration-200 hover:shadow-md">
                         <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
                           index === 0 ? 'bg-yellow-100 text-yellow-700 border border-yellow-200' :
                           index === 1 ? 'bg-gray-100 text-gray-700 border border-gray-200' :

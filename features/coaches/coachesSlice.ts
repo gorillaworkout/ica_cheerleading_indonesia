@@ -49,6 +49,8 @@ export const fetchCoaches = createAsyncThunk(
   'coaches/fetchCoaches',
   async (_, { rejectWithValue }) => {
     try {
+      console.log('🗺️ Fetching coaches from Supabase...')
+      
       const { data, error } = await supabase
         .from('coaches')
         .select('*')
@@ -57,12 +59,14 @@ export const fetchCoaches = createAsyncThunk(
         .order('name', { ascending: true })
 
       if (error) {
+        console.error('❌ Supabase error fetching coaches:', error)
         throw error
       }
 
+      console.log('✅ Coaches fetched successfully:', data?.length, 'coaches')
       return data || []
     } catch (error: any) {
-      console.error('Error fetching coaches:', error)
+      console.error('❌ Error fetching coaches:', error)
       return rejectWithValue(error.message || 'Failed to fetch coaches')
     }
   }
@@ -72,18 +76,26 @@ export const fetchFeaturedCoaches = createAsyncThunk(
   'coaches/fetchFeaturedCoaches',
   async (_, { rejectWithValue }) => {
     try {
+      console.log('🗺️ Fetching featured coaches from Supabase...')
+      
       const { data, error } = await supabase
-        .from('featured_coaches')
+        .from('coaches')
         .select('*')
+        .eq('is_active', true)
+        .eq('is_featured', true)
+        .order('sort_order', { ascending: true })
+        .order('name', { ascending: true })
         .limit(3)
 
       if (error) {
+        console.error('❌ Supabase error fetching featured coaches:', error)
         throw error
       }
 
+      console.log('✅ Featured coaches fetched successfully:', data?.length, 'coaches')
       return data || []
     } catch (error: any) {
-      console.error('Error fetching featured coaches:', error)
+      console.error('❌ Error fetching featured coaches:', error)
       return rejectWithValue(error.message || 'Failed to fetch featured coaches')
     }
   }
