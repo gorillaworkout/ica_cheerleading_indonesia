@@ -12,7 +12,7 @@ import CheerOrganizationsSection from "@/components/home/cheer-organization-sect
 import { ScrollAnimation } from "@/components/ui/scroll-animation-safe"
 import { generateSEOMetadata, generateJSONLD, breadcrumbSchema } from "@/lib/seo"
 import { useToast } from "@/hooks/use-toast"
-
+import { HeroImageSection } from "@/components/home/hero-image-section"
 // Metadata moved to layout.tsx since this is now a client component
 
 const breadcrumbs = breadcrumbSchema([
@@ -89,7 +89,9 @@ export default function HomePage() {
       localStorage.removeItem("justLoggedOut")
     }
   }, [toast])
-
+  const heroSlides = [
+    { src: "/ica-hero.png", alt: "ICA Cheerleading Indonesia Hero Image" }
+  ]
   return (
     <div className="min-h-screen bg-white">
       {/* Structured Data - Breadcrumbs */}
@@ -102,8 +104,9 @@ export default function HomePage() {
       
       <Header />
       <main>
-        <div className="w-full h-fit">
-          <HeroSection showTextAndButtons={false} />
+        <div className="w-[98.5vw] h-screen">
+          {/* <HeroSection showTextAndButtons={false} /> */}
+          <HeroImageSection heroSlides={heroSlides} showTextAndButtons={false} />
         </div>
         <ScrollAnimation delay={0.1} direction="up">
           <div id="introSection">

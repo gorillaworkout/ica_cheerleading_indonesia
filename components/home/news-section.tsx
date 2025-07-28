@@ -42,15 +42,21 @@ export function NewsSection() {
                 <ScrollAnimation key={article.id} delay={0.2 + (index * 0.1)} direction="up">
                   <Card className="overflow-hidden hover:shadow-lg transition-shadow h-full">
                     <div className="relative h-48">
-                      <Image src={
-                        article.images && article.images[0]
-                          ? (article.images[0].startsWith("https://")
-                              ? article.images[0]
-                              : article.images[0].startsWith("/")
+                      <Image 
+                        src={
+                          article.images && article.images[0]
+                            ? (article.images[0].startsWith("https://")
                                 ? article.images[0]
-                                : getPublicImageUrlSync(article.images[0]) || "/placeholder.svg")
-                          : "/placeholder.svg"
-                      } alt={article.title} fill className="object-cover" />
+                                : article.images[0].startsWith("/")
+                                  ? article.images[0]
+                                  : getPublicImageUrlSync(article.images[0]) || "/placeholder.svg")
+                            : "/placeholder.svg"
+                        } 
+                        alt={article.title} 
+                        fill 
+                        className="object-cover"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      />
                       <div className="absolute top-4 left-4">
                         <span className="bg-red-600 text-white px-2 py-1 rounded text-xs font-medium">
                           {article.category}
