@@ -3,13 +3,12 @@
 import { useState, useEffect } from "react"
 import { supabase } from "@/lib/supabase"
 import { useRouter, useSearchParams } from "next/navigation"
-import { useToast } from "@/hooks/use-toast"
+import { toast } from "@/components/ui/use-toast"
 import { Header } from "@/components/layout/header"
 import { Footer } from "@/components/layout/footer"
 import { FullScreenLoader } from "@/components/ui/fullScreenLoader"
 
 export default function ResetPasswordPage() {
-    const { toast } = useToast()
     const [password, setPassword] = useState("")
     const [loading, setLoading] = useState(false)
     const router = useRouter()
@@ -27,9 +26,8 @@ export default function ResetPasswordPage() {
         console.log("📋 Hash:", window.location.hash)
         console.log("🔍 Search params:", window.location.search)
         
-        // ✅ CRITICAL FIX: Don't show wrong page detection on reset-password page
-        // This was causing unnecessary confusion
-        if (window.location.pathname.includes('forgot-password') && !window.location.pathname.includes('reset-password')) {
+        // Check if user is on wrong page
+        if (window.location.pathname.includes('forgot-password')) {
             console.log("⚠️ User is on forgot-password page but has reset token")
             toast({
                 title: "Wrong Page Detected",
@@ -124,28 +122,20 @@ export default function ResetPasswordPage() {
                     console.error("❌ Error parsing hash parameters:", parseError)
                 }
                 
-                // Fallback: wait for Supabase auto-processing with multiple attempts
+                // Fallback: wait for Supabase auto-processing
                 console.log("🔄 Falling back to auto-processing...")
-                let attempts = 0
-                const maxAttempts = 5
-                const checkInterval = 1000 // 1 second
-                
-                const intervalId = setInterval(async () => {
-                    attempts++
-                    console.log(`⏰ Checking session after delay... (attempt ${attempts}/${maxAttempts})`)
-                    
+                setTimeout(async () => {
+                    console.log("⏰ Checking session after delay...")
                     const { data, error } = await supabase.auth.getSession()
                     console.log("📊 Session data:", data)
                     console.log("❌ Session error:", error)
                     
                     if (data.session) {
                         console.log("✅ Supabase auto-processing successful")
-                        clearInterval(intervalId)
                         setResetMethod('supabase')
                         setIsSessionReady(true)
-                    } else if (attempts >= maxAttempts) {
-                        console.log("❌ All recovery methods failed after maximum attempts")
-                        clearInterval(intervalId)
+                    } else {
+                        console.log("❌ All recovery methods failed")
                         toast({ 
                             title: "Reset Token Expired", 
                             description: "Link reset password sudah expired atau tidak valid. Silakan request ulang di halaman lupa password.",
@@ -159,7 +149,7 @@ export default function ResetPasswordPage() {
                             )
                         })
                     }
-                }, checkInterval)
+                }, 2000) // Increase delay to 2 seconds
                 return
             }
             
@@ -188,7 +178,7 @@ export default function ResetPasswordPage() {
         }
         
         checkResetMethod()
-    }, []) // ✅ Remove dependencies to prevent infinite loops during recovery flow
+    }, [router, customToken, resetEmail])
 
     async function handleResetPassword() {
         if (password.length < 6) {
@@ -221,14 +211,7 @@ export default function ResetPasswordPage() {
                         title: "Sukses", 
                         description: "Password berhasil diubah. Silakan login dengan password baru." 
                     })
-                    
-                    // Set flag for login page toast
-                    localStorage.setItem("passwordResetSuccess", "true")
-                    
-                    // Delay redirect to let user see toast
-                    setTimeout(() => {
-                        router.push("/login")
-                    }, 2000)
+                    router.push("/login")
                 } else {
                     throw new Error(result.error || 'Password reset failed')
                 }
@@ -248,15 +231,8 @@ export default function ResetPasswordPage() {
                 toast({ title: "Error", description: error.message })
             } else {
                 toast({ title: "Sukses", description: "Password berhasil diubah. Silakan login ulang." })
-                
-                // Set flag for login page toast
-                localStorage.setItem("passwordResetSuccess", "true")
-                
-                // Delay redirect to let user see toast
-                setTimeout(async () => {
-                    await supabase.auth.signOut()
-                    router.push("/login")
-                }, 2000)
+                await supabase.auth.signOut()
+                router.push("/login")
             }
         }
 
@@ -278,8 +254,6 @@ export default function ResetPasswordPage() {
                             <div>URL: {typeof window !== 'undefined' ? window.location.pathname : ''}</div>
                             <div>Has Hash: {typeof window !== 'undefined' && window.location.hash ? 'Yes' : 'No'}</div>
                             <div>Method: {resetMethod || 'Detecting...'}</div>
-                            <div>Custom Token: {customToken ? 'Present' : 'None'}</div>
-                            <div>Reset Email: {resetEmail ? 'Present' : 'None'}</div>
                         </div>
                     </div>
                 </main>
