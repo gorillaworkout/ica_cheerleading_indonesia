@@ -7,6 +7,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { getPublicImageUrl } from "@/utils/getPublicImageUrl";
+import { getDirectPdfUrl, findPdfFile } from "@/utils/getPublicPdfUrl";
 
 // export const metadata: Metadata = {
 //   title: "Safety Rules & Age Grid",
@@ -17,60 +18,103 @@ import { getPublicImageUrl } from "@/utils/getPublicImageUrl";
 //   },
 // };
 
-const resources = [
-  {
-    title: "Cheerleading & Performance Cheer Safety Rules",
-    items: [
-      { name: "2024 Sport of Cheer Rules & Guidelines", href: "https://cheerunion.org/wp-content/uploads/2024/05/ICU_2024_Rules_CH-PC.pdf" },
-      { name: "2025 Sport of Cheer Rules & Guidelines", href: "https://cheerunion.org/wp-content/uploads/2024/09/ICU_2025_Rules_CH-PC.pdf" },
-    ],
-  },
-  {
-    title: "Cheerleading Discipline Safety Rules",
-    items: [
-      { name: "Cheerleading Discipline Safety Rules", href: "https://cheerunion.org/wp-content/uploads/2024/05/ICU_2024_Rules_Cheerleading.pdf" },
-      { name: "Cheerleading Glossary", href: "https://cheerunion.org/cheerleading-glossary/" },
-    ],
-  },
-  {
-    title: "Performance Cheer Discipline Safety Rules",
-    items: [
-      { name: "Division Rules & Regulations", href: "#" },
-      { name: "Performance Cheer Glossary", href: "https://cheerunion.org/education/performancecheerglossary/" },
-      { name: "Category Definitions", href: "https://cheerunion.org/wp-content/uploads/2023/10/ICU_PC_2022_category-definitions.pdf" },
-    ],
-  },
-  {
-    title: "Special Abilities Safety Rules",
-    items: [
-      { name: "2024 Special Abilities Division Rules & Regulations", href: "https://cheerunion.org/wp-content/uploads/2024/05/ICU_2024_Rules_Special-Abilities.pdf" },
-      { name: "2025 Special Abilities Division Rules & Regulations", href: "https://cheerunion.org/wp-content/uploads/2024/09/ICU_2025_Rules_Special-Abilities.pdf" },
-    ],
-  },
-  {
-    title: "Adaptive Abilities (ParaCheer) Safety Rules",
-    items: [
-      { name: "2024 Adaptive Abilities Division Rules & Regulations", href: "https://cheerunion.org/wp-content/uploads/2024/05/ICU_2024_Rules_Adaptive-Abilities.pdf" },
-      { name: "2025 Adaptive Abilities Division Rules & Regulations", href: "https://cheerunion.org/wp-content/uploads/2024/09/ICU_2025_Rules_Adaptive-Abilities.pdf" },
-    ],
-  },
-  {
-    title: "Cheerleading Age Grid",
-    items: [
-      { name: "2024 Age Grid", href: "https://cheerunion.org/wp-content/uploads/2024/05/ICU_AgeGrid_2024.pdf" },
-      { name: "2025 Age Grid", href: "https://cheerunion.org/wp-content/uploads/2024/05/ICU_AgeGrid_2025.pdf" },
-    ],
-  },
-];
-
 export default function AgeGrid() {
   const [imageUrl, setImageUrl] = useState<string>("/placeholder.svg")
+  const [pdfUrl, setPdfUrl] = useState<string>("")
   
-    useEffect(() => {
-      getPublicImageUrl("539-medal.jpeg").then((url) => {
-        if (url) setImageUrl(url)
-      })
-    }, [])
+  useEffect(() => {
+    getPublicImageUrl("539-medal.jpeg").then((url) => {
+      if (url) setImageUrl(url)
+    })
+    
+    // Try to find PDF file with multiple strategies
+    const findPdf = async () => {
+      try {
+        // First try direct URL
+        let pdfUrl = getDirectPdfUrl("670-juklak.pdf")
+        
+        // Test if the URL is accessible by trying to find the file
+        const foundPdf = await findPdfFile("670-juklak")
+        if (foundPdf) {
+          setPdfUrl(foundPdf)
+        } else {
+          // If not found, try other possible names
+          const alternatives = ["juklak.pdf", "age-grid.pdf", "ica-age-grid.pdf"]
+          for (const alt of alternatives) {
+            const altPdf = await findPdfFile(alt.replace('.pdf', ''))
+            if (altPdf) {
+              setPdfUrl(altPdf)
+              break
+            }
+          }
+        }
+        
+        // If still not found, use fallback
+        if (!foundPdf) {
+          console.warn("PDF not found in Supabase, using fallback")
+          setPdfUrl("https://cheerunion.org/wp-content/uploads/2024/05/ICU_AgeGrid_2024.pdf")
+        }
+      } catch (error) {
+        console.error("Error finding PDF:", error)
+        // Fallback to external URL
+        setPdfUrl("https://cheerunion.org/wp-content/uploads/2024/05/ICU_AgeGrid_2024.pdf")
+      }
+    }
+    
+    findPdf()
+  }, [])
+
+  const resources = [
+    {
+      title: "Cheerleading & Performance Cheer Safety Rules",
+      items: [
+        { name: "2024 Sport of Cheer Rules & Guidelines", href: "https://cheerunion.org/wp-content/uploads/2024/05/ICU_2024_Rules_CH-PC.pdf" },
+        { name: "2025 Sport of Cheer Rules & Guidelines", href: "https://cheerunion.org/wp-content/uploads/2024/09/ICU_2025_Rules_CH-PC.pdf" },
+      ],
+    },
+    {
+      title: "Cheerleading Discipline Safety Rules",
+      items: [
+        { name: "Cheerleading Discipline Safety Rules", href: "https://cheerunion.org/wp-content/uploads/2024/05/ICU_2024_Rules_Cheerleading.pdf" },
+        { name: "Cheerleading Glossary", href: "https://cheerunion.org/cheerleading-glossary/" },
+      ],
+    },
+    {
+      title: "Performance Cheer Discipline Safety Rules",
+      items: [
+        { name: "Division Rules & Regulations", href: "#" },
+        { name: "Performance Cheer Glossary", href: "https://cheerunion.org/education/performancecheerglossary/" },
+        { name: "Category Definitions", href: "https://cheerunion.org/wp-content/uploads/2023/10/ICU_PC_2022_category-definitions.pdf" },
+      ],
+    },
+    {
+      title: "Special Abilities Safety Rules",
+      items: [
+        { name: "2024 Special Abilities Division Rules & Regulations", href: "https://cheerunion.org/wp-content/uploads/2024/05/ICU_2024_Rules_Special-Abilities.pdf" },
+        { name: "2025 Special Abilities Division Rules & Regulations", href: "https://cheerunion.org/wp-content/uploads/2024/09/ICU_2025_Rules_Special-Abilities.pdf" },
+      ],
+    },
+    {
+      title: "Adaptive Abilities (ParaCheer) Safety Rules",
+      items: [
+        { name: "2024 Adaptive Abilities Division Rules & Regulations", href: "https://cheerunion.org/wp-content/uploads/2024/05/ICU_2024_Rules_Adaptive-Abilities.pdf" },
+        { name: "2025 Adaptive Abilities Division Rules & Regulations", href: "https://cheerunion.org/wp-content/uploads/2024/09/ICU_2025_Rules_Adaptive-Abilities.pdf" },
+      ],
+    },
+    {
+      title: "Cheerleading Age Grid",
+      items: [
+        { 
+          name: "2024 Age Grid", 
+          href: pdfUrl || "https://cheerunion.org/wp-content/uploads/2024/05/ICU_AgeGrid_2024.pdf" 
+        },
+        { 
+          name: "2025 Age Grid", 
+          href: pdfUrl || "https://cheerunion.org/wp-content/uploads/2024/05/ICU_AgeGrid_2025.pdf" 
+        },
+      ],
+    },
+  ];
   
   return (
     <div className="min-h-screen bg-white">
