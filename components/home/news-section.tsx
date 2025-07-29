@@ -73,8 +73,8 @@ export function NewsSection() {
                     <CardContent>
                       <p className="text-gray-400 mb-4 line-clamp-3" dangerouslySetInnerHTML={{ __html: article.content }}></p>
                       <Link href={`/news/${article.slug}`}>
-                        <Button variant="outline" className="w-full group bg-transparent">
-                          Read More
+                        <Button variant="outline" className="w-full group bg-transparent" aria-label={`Read more about ${article.title}`}>
+                          Read More About {article.title.substring(0, 50)}{article.title.length > 50 ? '...' : ''}
                           <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
                         </Button>
                       </Link>

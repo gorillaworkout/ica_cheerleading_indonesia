@@ -30,7 +30,7 @@ export const metadata: Metadata = generateSEOMetadata({
     "pelatihan cheerleading",
     "turnamen cheerleading nasional"
   ],
-  canonicalUrl: "https://indonesiancheer.org",
+  canonicalUrl: "https://indonesiancheer.org/",
   type: "website"
 })
 
@@ -73,11 +73,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         
         {/* Performance hints */}
         <link rel="dns-prefetch" href="//indonesiancheer.org" />
+        <link rel="preload" href="/ica-hero.webp" as="image" fetchPriority="high" />
+        
+        {/* Default SEO Meta Tags - will be overridden by page-specific ones */}
+        <link rel="alternate" hrefLang="id" href="https://indonesiancheer.org" />
+        <link rel="alternate" hrefLang="x-default" href="https://indonesiancheer.org" />
+        
         <meta name="format-detection" content="telephone=no" />
         
         {/* Security */}
         <meta httpEquiv="X-Content-Type-Options" content="nosniff" />
-        <meta httpEquiv="X-Frame-Options" content="DENY" />
         <meta httpEquiv="X-XSS-Protection" content="1; mode=block" />
       </head>
       <body className={`${inter.className} ${inter.variable}`}>

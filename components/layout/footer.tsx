@@ -158,12 +158,18 @@ export function Footer() {
               <div className="mt-6">
                 <p className="text-sm text-gray-300 mb-3">Stay updated with our latest news</p>
                 <div className="flex">
+                  <label htmlFor="newsletter-email" className="sr-only">Enter your email for newsletter</label>
                   <input 
+                    id="newsletter-email"
                     type="email" 
                     placeholder="Enter your email"
+                    aria-label="Enter your email address for newsletter subscription"
                     className="flex-1 px-3 py-2 bg-slate-800/50 border border-slate-700 rounded-l-lg text-sm text-white placeholder-gray-400 focus:outline-none focus:border-red-400 transition-colors duration-300"
                   />
-                  <button className="px-4 py-2 bg-gradient-to-r from-red-500 to-red-600 rounded-r-lg hover:from-red-600 hover:to-red-700 transition-all duration-300 transform hover:scale-105">
+                  <button 
+                    className="px-4 py-2 bg-gradient-to-r from-red-500 to-red-600 rounded-r-lg hover:from-red-600 hover:to-red-700 transition-all duration-300 transform hover:scale-105"
+                    aria-label="Subscribe to newsletter"
+                  >
                     <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd"/>
                     </svg>

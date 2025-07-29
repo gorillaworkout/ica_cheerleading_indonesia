@@ -8,6 +8,9 @@ const nextConfig = {
     ignoreBuildErrors: true,
   },
   
+  // Source maps for debugging
+  productionBrowserSourceMaps: true,
+  
   // Image optimization
   images: {
     remotePatterns: [
@@ -48,6 +51,8 @@ const nextConfig = {
     minimumCacheTTL: 60 * 60 * 24 * 7, // 7 days
     dangerouslyAllowSVG: true,
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
+    loader: 'default',
+    unoptimized: false,
   },
   
   // Compression and caching

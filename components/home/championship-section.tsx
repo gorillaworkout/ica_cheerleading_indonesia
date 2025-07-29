@@ -185,7 +185,10 @@ export function ChampionshipSection() {
                     
                     {competition.registrationOpen && (
                       <Link href={`/championships/${competition.id}/register`} className="flex-1">
-                        <button className="w-full px-6 py-3 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-semibold rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-red-500/25 hover:scale-105 group/btn">
+                        <button 
+                          className="w-full px-6 py-3 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-semibold rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-red-500/25 hover:scale-105 group/btn"
+                          aria-label={`Register for ${competition.title} championship`}
+                        >
                           <div className="flex items-center justify-center gap-2">
                             <Trophy className="w-4 h-4" />
                             <span>Register Now</span>

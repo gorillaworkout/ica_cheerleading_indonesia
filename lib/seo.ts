@@ -91,10 +91,10 @@ export function generateSEOMetadata(config: SEOConfig): Metadata {
       site: "@indonesiancheer",
     },
     alternates: {
-      canonical: canonicalUrl,
+      canonical: canonicalUrl || baseUrl,
       languages: {
-        "id-ID": "/",
-        "en-US": "/en",
+        "id": baseUrl,
+        "x-default": baseUrl,
       },
     },
     other: {
