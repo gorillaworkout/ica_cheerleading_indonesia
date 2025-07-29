@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    console.log('🧪 Testing MailerSend with:', { email, type })
+    // console.log('🧪 Testing MailerSend with:', { email, type })
 
     // Test connection first
     const connectionTest = await MailerSendService.testConnection()

@@ -13,13 +13,13 @@ export function formatDateToLocalString(date: Date | undefined | null): string {
   if (!date) return ""
   
   // Debug logging for timezone issues
-  console.log("🛠️ formatDateToLocalString - Input date:", date)
-  console.log("🛠️ formatDateToLocalString - Date details:", {
-    toString: date.toString(),
-    toISOString: date.toISOString(),
-    getTimezoneOffset: date.getTimezoneOffset(),
-    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
-  })
+  // console.log("🛠️ formatDateToLocalString - Input date:", date)
+  // console.log("🛠️ formatDateToLocalString - Date details:", {
+  //   toString: date.toString(),
+  //   toISOString: date.toISOString(),
+  //   getTimezoneOffset: date.getTimezoneOffset(),
+  //   timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
+  // })
   
   const year = date.getFullYear()
   const month = String(date.getMonth() + 1).padStart(2, '0')
@@ -27,12 +27,12 @@ export function formatDateToLocalString(date: Date | undefined | null): string {
   
   const result = `${year}-${month}-${day}`
   
-  console.log("🛠️ formatDateToLocalString - Extracted parts:", {
-    year,
-    month,
-    day,
-    result
-  })
+  // console.log("🛠️ formatDateToLocalString - Extracted parts:", {
+  //   year,
+  //   month,
+  //   day,
+  //   result
+  // })
   
   return result
 }

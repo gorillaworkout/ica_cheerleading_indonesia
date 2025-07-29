@@ -19,7 +19,6 @@ export const fetchDivisions = createAsyncThunk<Division[], void, { rejectValue: 
       if (error) {
         throw error;
       }
-      console.log(data, 'data divisions')
       return data as Division[];
     } catch (err) {
       return rejectWithValue((err as Error).message);

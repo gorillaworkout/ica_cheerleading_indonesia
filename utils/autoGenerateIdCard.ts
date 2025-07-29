@@ -202,13 +202,13 @@ export class AutoIDCardGenerator {
           )
           ctx.restore()
           
-          console.log('📸 Photo aspect ratio fixed:', {
-            originalSize: { width: photoImg.naturalWidth, height: photoImg.naturalHeight },
-            originalAspect: imgAspectRatio.toFixed(2),
-            targetAspect: targetAspectRatio.toFixed(2),
-            cropArea: { x: sourceX, y: sourceY, width: sourceWidth, height: sourceHeight },
-            drawArea: { x: drawX, y: drawY, width: drawWidth, height: drawHeight }
-          })
+          // console.log('📸 Photo aspect ratio fixed:', {
+          //   originalSize: { width: photoImg.naturalWidth, height: photoImg.naturalHeight },
+          //   originalAspect: imgAspectRatio.toFixed(2),
+          //   targetAspect: targetAspectRatio.toFixed(2),
+          //   cropArea: { x: sourceX, y: sourceY, width: sourceWidth, height: sourceHeight },
+          //   drawArea: { x: drawX, y: drawY, width: drawWidth, height: drawHeight }
+          // })
         } catch (error) {
           console.error('Error loading photo:', error)
         }
@@ -230,12 +230,12 @@ export class AutoIDCardGenerator {
       // Member ID - Use member_code instead of profile.id
       const memberID = profileData.member_code || profileData.id.slice(0, 8).toUpperCase()
       
-      console.log('🔍 ID Card Generation Debug:', {
-        profileId: profileData.id,
-        memberCode: profileData.member_code,
-        finalMemberID: memberID,
-        fallbackUsed: !profileData.member_code
-      })
+      // console.log('🔍 ID Card Generation Debug:', {
+      //   profileId: profileData.id,
+      //   memberCode: profileData.member_code,
+      //   finalMemberID: memberID,
+      //   fallbackUsed: !profileData.member_code
+      // })
       
       ctx.fillText(memberID, 395, 410)
 
@@ -268,7 +268,7 @@ export class AutoIDCardGenerator {
   // Function to delete old ID card from storage
   static async deleteOldIDCard(oldImagePath: string): Promise<boolean> {
     try {
-      console.log('🗑️ Deleting old ID card:', oldImagePath)
+      // console.log('🗑️ Deleting old ID card:', oldImagePath)
       
       const { error } = await supabase.storage
         .from('uploads')
@@ -279,10 +279,10 @@ export class AutoIDCardGenerator {
         return false
       }
 
-      console.log('✅ Old ID card deleted successfully')
+      // console.log('✅ Old ID card deleted successfully')
       return true
     } catch (error) {
-      console.error('Unexpected error deleting old ID card:', error)
+      // console.error('Unexpected error deleting old ID card:', error)
       return false
     }
   }
@@ -299,11 +299,11 @@ export class AutoIDCardGenerator {
       }
 
 
-      console.log('Starting ID card generation for authenticated user:', {
-        userId,
-        authUserId: user.id,
-        userEmail: user.email
-      })
+      // console.log('Starting ID card generation for authenticated user:', {
+      //   userId,
+      //   authUserId: user.id,
+      //   userEmail: user.email
+      // })
 
       // Pre-check: Ensure storage bucket exists
       const bucketExists = await ensureUploadsBucket()
@@ -341,14 +341,14 @@ export class AutoIDCardGenerator {
         return false
       }
 
-      console.log('📊 Profile data fetched:', {
-        id: profile.id,
-        display_name: profile.display_name,
-        member_code: profile.member_code,
-        hasOldIDCard: !!profile.id_card_image,
-        oldIDCardPath: profile.id_card_image,
-        hasAllRequiredFields: !!(profile.display_name && profile.birth_date && profile.gender && profile.province_code)
-      })
+      // console.log('📊 Profile data fetched:', {
+      //   id: profile.id,
+      //   display_name: profile.display_name,
+      //   member_code: profile.member_code,
+      //   hasOldIDCard: !!profile.id_card_image,
+      //   oldIDCardPath: profile.id_card_image,
+      //   hasAllRequiredFields: !!(profile.display_name && profile.birth_date && profile.gender && profile.province_code)
+      // })
 
       // Check if required data exists
       if (!profile.display_name || !profile.birth_date || !profile.gender || !profile.province_code) {
@@ -374,17 +374,17 @@ export class AutoIDCardGenerator {
         console.log('✅ Member code found:', profile.member_code)
       }
 
-      console.log('🎯 Generating ID card with details:', {
-        userId,
-        memberCode: profile.member_code,
-        displayName: profile.display_name,
-        willUseFallback: !profile.member_code,
-        hasOldIDCard: !!profile.id_card_image
-      })
+      // console.log('🎯 Generating ID card with details:', {
+      //   userId,
+      //   memberCode: profile.member_code,
+      //   displayName: profile.display_name,
+      //   willUseFallback: !profile.member_code,
+      //   hasOldIDCard: !!profile.id_card_image
+      // })
 
       // Delete old ID card if exists (for regeneration)
       if (profile.id_card_image) {
-        console.log('🔄 Regenerating ID card - deleting old image first')
+        // console.log('🔄 Regenerating ID card - deleting old image first')
         const deleteSuccess = await this.deleteOldIDCard(profile.id_card_image)
         if (!deleteSuccess) {
           console.warn('⚠️ Failed to delete old ID card, proceeding with generation anyway')
@@ -409,12 +409,12 @@ export class AutoIDCardGenerator {
       const fileName = `id-card-${userId}-${Date.now()}.png`
       const filePath = `id-cards/${fileName}`
       
-      console.log('Attempting to upload ID card:', {
-        fileName,
-        filePath,
-        blobSize: blob.size,
-        blobType: blob.type
-      })
+      // console.log('Attempting to upload ID card:', {
+      //   fileName,
+      //   filePath,
+      //   blobSize: blob.size,
+      //   blobType: blob.type
+      // })
 
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from('uploads')
@@ -452,10 +452,10 @@ export class AutoIDCardGenerator {
         return false
       }
 
-      console.log('Successfully generated public URL for ID card:', {
-        path: uploadData.path,
-        publicUrl: urlData.publicUrl
-      })
+      // console.log('Successfully generated public URL for ID card:', {
+      //   path: uploadData.path,
+      //   publicUrl: urlData.publicUrl
+      // })
 
       // Update user profile with ID card URL  
       const { error: updateError } = await supabase
@@ -473,12 +473,12 @@ export class AutoIDCardGenerator {
         return false
       }
 
-      console.log('Successfully generated and saved ID card for user:', {
-        userId,
-        fileName,
-        filePath: uploadData.path,
-        publicUrl: urlData.publicUrl
-      })
+      // console.log('Successfully generated and saved ID card for user:', {
+      //   userId,
+      //   fileName,
+      //   filePath: uploadData.path,
+      //   publicUrl: urlData.publicUrl
+      // })
 
       return true
 

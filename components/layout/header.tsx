@@ -194,7 +194,7 @@ export function Header() {
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
             <Link href="/" className="flex items-center hover:opacity-80 transition-opacity">
-              <Image src="/ica-text.png" alt="ICA Logo" width={180} height={50} priority />
+              <Image src="/ica-text.webp" alt="ICA Logo" width={180} height={50} priority />
             </Link>
 
             {/* Mobile Menu Button */}

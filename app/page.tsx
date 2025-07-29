@@ -90,7 +90,7 @@ export default function HomePage() {
     }
   }, [toast])
   const heroSlides = [
-    { src: "/ica-hero.png", alt: "ICA Cheerleading Indonesia Hero Image" }
+    { src: "/ica-hero.webp", alt: "ICA Cheerleading Indonesia Hero Image" }
   ]
   return (
     <div className="min-h-screen bg-white">

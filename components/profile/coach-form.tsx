@@ -145,9 +145,7 @@ export function CoachForm() {
 
   // Debug: log available courses
   useEffect(() => {
-    console.log('All license courses:', licenseCourses)
     const icaCoachCourses = licenseCourses.filter(course => course.organization === 'ICA' && course.course_type === 'coach')
-    console.log('ICA Coach courses:', icaCoachCourses)
   }, [licenseCourses])
 
   // Helper function to get province name by code

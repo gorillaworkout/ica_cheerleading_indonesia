@@ -45,8 +45,6 @@ export function IDCardSection() {
     const memberCode = profile?.member_code || user?.id?.slice(0, 8) || 'unknown'
       const filename = `ICA-ID-Card-${memberCode}.png`
       
-      console.log('📥 Starting ID card download:', { url: idCardUrl, filename })
-      
       // Fetch the image to create a proper blob for download
       const response = await fetch(idCardUrl, {
         method: 'GET',
@@ -61,7 +59,6 @@ export function IDCardSection() {
       
       // Get the blob data
       const blob = await response.blob()
-      console.log('📄 Blob created:', { type: blob.type, size: blob.size })
       
       // Create blob URL for download
       const blobUrl = window.URL.createObjectURL(blob)
@@ -82,7 +79,6 @@ export function IDCardSection() {
         window.URL.revokeObjectURL(blobUrl)
       }, 100)
       
-      console.log('✅ ID card download triggered successfully')
       
       toast({
         title: "Download Started",
@@ -94,7 +90,6 @@ export function IDCardSection() {
       console.error('❌ Download failed:', error)
       
       // Fallback: direct link download
-      console.log('🔄 Trying fallback download method...')
       const memberCode = profile?.member_code || user?.id?.slice(0, 8) || 'unknown'
     const link = document.createElement('a')
     link.href = idCardUrl
@@ -179,7 +174,6 @@ export function IDCardSection() {
           
           if (urlData?.publicUrl) {
             setIdCardUrl(urlData.publicUrl)
-            console.log('✅ ID Card URL updated without refresh:', urlData.publicUrl)
           }
         }
       } else {

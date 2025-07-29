@@ -15,11 +15,11 @@ export async function checkAdminAccess(): Promise<boolean> {
       return false
     }
 
-    console.log("✅ User found:", {
-      id: user.id,
-      email: user.email,
-      created_at: user.created_at,
-    })
+    // console.log("✅ User found:", {
+    //   id: user.id,
+    //   email: user.email,
+    //   created_at: user.created_at,
+    // })
 
     // Check user role in profiles table
     const { data: profile, error: profileError } = await supabase
@@ -28,18 +28,18 @@ export async function checkAdminAccess(): Promise<boolean> {
       .eq("id", user.id)
       .single()
 
-    console.log("🔍 Profile query result:", {
-      profile,
-      profileError,
-      userId: user.id,
-    })
+    // console.log("🔍 Profile query result:", {
+    //   profile,
+    //   profileError,
+    //   userId: user.id,
+    // })
 
     if (profileError) {
-      console.log("❌ Profile error:", profileError)
+      // console.log("❌ Profile error:", profileError)
 
       // If profile doesn't exist, create it
       if (profileError.code === "PGRST116") {
-        console.log("🔧 Creating missing profile...")
+        // console.log("🔧 Creating missing profile...")
 
         const { data: newProfile, error: insertError } = await supabase
           .from("profiles")
@@ -53,11 +53,11 @@ export async function checkAdminAccess(): Promise<boolean> {
           .single()
 
         if (insertError) {
-          console.log("❌ Error creating profile:", insertError)
+          // console.log("❌ Error creating profile:", insertError)
           return false
         }
 
-        console.log("✅ Profile created:", newProfile)
+        // console.log("✅ Profile created:", newProfile)
         return newProfile.role === "admin"
       }
 
@@ -65,15 +65,15 @@ export async function checkAdminAccess(): Promise<boolean> {
     }
 
     if (!profile) {
-      console.log("❌ No profile found for user ID:", user.id)
+      // console.log("❌ No profile found for user ID:", user.id)
       return false
     }
 
-    console.log("✅ Profile found:", {
-      id: profile.id,
-      email: profile.email,
-      role: profile.role,
-    })
+    // console.log("✅ Profile found:", {
+    //   id: profile.id,
+    //   email: profile.email,
+    //   role: profile.role,
+    // })
 
     return profile.role === "admin"
   } catch (error) {

@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    console.log('Verifying reset token for email:', email)
+    // console.log('Verifying reset token for email:', email)
 
     // Check if token is valid and not expired
     const { data: tokenData, error: tokenError } = await supabaseAdmin
@@ -92,7 +92,7 @@ export async function POST(request: NextRequest) {
       .update({ used_at: new Date().toISOString() })
       .eq('token', token)
 
-    console.log('Password updated successfully for user:', user.id)
+    // console.log('Password updated successfully for user:', user.id)
 
     return NextResponse.json({ 
       success: true, 

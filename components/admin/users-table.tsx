@@ -102,15 +102,6 @@ export function UsersTable() {
 
   const handleSaveEdit = async (updatedUser: Profile): Promise<void> => {
     try {
-      console.log("Updating user with data:", {
-        id: updatedUser.id,
-        display_name: updatedUser.display_name,
-        role: updatedUser.role,
-        gender: updatedUser.gender,
-        birth_date: updatedUser.birth_date,
-        province_code: updatedUser.province_code,
-      });
-
       const { error } = await supabase
         .from("profiles")
         .update({

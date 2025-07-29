@@ -1,7 +1,7 @@
 import { supabase } from '@/lib/supabase'
 
 async function checkProvincesData() {
-  console.log('🔍 Checking provinces data in database...')
+  // console.log('🔍 Checking provinces data in database...')
   
   try {
     const { data, error } = await supabase
@@ -14,8 +14,8 @@ async function checkProvincesData() {
       return
     }
     
-    console.log('✅ Provinces data found:', data)
-    console.log('📊 Total provinces:', data?.length)
+    // console.log('✅ Provinces data found:', data)
+    // console.log('📊 Total provinces:', data?.length)
     
     // Check specific codes that appear in results
     const specificCodes = ['010', '020', '030']

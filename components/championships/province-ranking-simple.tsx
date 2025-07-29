@@ -113,13 +113,6 @@ export default function ProvinceRankingSimple() {
           .select("division, placement, team, score, province")
           .order("division", { ascending: true })
           .order("placement", { ascending: true });
-
-        console.log("📊 Results query result:", { 
-          data: resultsData, 
-          error: resultsError,
-          count: resultsData?.length 
-        });
-
         if (resultsError) {
           console.error("❌ Error fetching results:", resultsError);
           setError(`Error fetching results: ${resultsError.message}`);

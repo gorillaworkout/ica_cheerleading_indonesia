@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    console.log("🔐 Updating password for custom reset token...")
+    // console.log("🔐 Updating password for custom reset token...")
     
     // Validate and consume reset token
     const { data: tokenData, error: tokenError } = await supabaseAdmin
@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    console.log("✅ Reset token validated successfully")
+    // console.log("✅ Reset token validated successfully")
 
     // Get user by email using listUsers
     const { data: users, error: usersError } = await supabaseAdmin.auth.admin.listUsers({
@@ -101,7 +101,7 @@ export async function POST(request: NextRequest) {
       // Don't fail the request, password was already updated
     }
 
-    console.log("✅ Password updated successfully for user:", email)
+    // console.log("✅ Password updated successfully for user:", email)
     
     return NextResponse.json({ 
       success: true, 

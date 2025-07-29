@@ -12,14 +12,14 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    console.log('🔄 Custom API: Attempting to resend verification email to:', email)
+    // console.log('🔄 Custom API: Attempting to resend verification email to:', email)
 
     // Check if service role key is available
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
     const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 
     if (!supabaseUrl || !serviceRoleKey) {
-      console.log('❌ Missing Supabase configuration for service role')
+      // console.log('❌ Missing Supabase configuration for service role')
       return NextResponse.json(
         { 
           error: 'Server configuration incomplete',
@@ -97,7 +97,7 @@ export async function POST(request: NextRequest) {
         )
       }
 
-      console.log('✅ Generated new verification link for:', email)
+      // console.log('✅ Generated new verification link for:', email)
       return NextResponse.json({
         success: true,
         message: 'Verification email sent successfully (via admin)',
@@ -105,7 +105,7 @@ export async function POST(request: NextRequest) {
       })
     }
 
-    console.log('✅ Admin resend successful for:', email)
+    // console.log('✅ Admin resend successful for:', email)
     return NextResponse.json({
       success: true,
       message: 'Verification email sent successfully',

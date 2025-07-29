@@ -81,7 +81,6 @@ export function AuthInit() {
           dispatch(fetchCoaches())
           dispatch(fetchFeaturedCoaches())
         } else if (event === "SIGNED_OUT") {
-          console.log("SIGNED OUT 26 auth-init")
           dispatch(setAuthState({ session: null, user: null }))
           dispatch(clearProfile())
           dispatch(fetchPublicImages())

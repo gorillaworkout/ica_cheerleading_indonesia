@@ -18,7 +18,7 @@ export default function CoachLayout({
 
   useEffect(() => {
     if (!loading && (!user || profile?.role !== "coach")) {
-      console.log("🔒 Access denied: not logged in or not coach")
+      // console.log("🔒 Access denied: not logged in or not coach")
       router.push("/")
     }
   }, [user, profile, loading, router])

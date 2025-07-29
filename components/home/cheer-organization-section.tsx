@@ -7,9 +7,9 @@ import { ScrollAnimation } from "@/components/ui/scroll-animation-safe";
 
 
 const logos = [
-  { name: "163-icu-logo-new.png", short: "ICU", link: "https://cheerunion.org" },
-  { name: "630-acu-logo.jpg", short: "ACU", link: "https://cheerunion.org" },
-  { name: "072-ica-logo.png", short: "ICA", link: "https://indonesiancheer.org" },
+  { name: "/icu-logo.webp", short: "ICU", link: "https://cheerunion.org" },
+  { name: "/acu-logo.webp", short: "ACU", link: "https://cheerunion.org" },
+  { name: "/ICA/Logo-Box.webp", short: "ICA", link: "https://indonesiancheer.org" },
 ];
 
 export default function CheerOrganizationsSection() {

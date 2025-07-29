@@ -20,7 +20,7 @@ export default function AdminLayout({
 
   useEffect(() => {
     if (!loading && (!user || profile?.role !== "admin")) {
-      console.log("🔒 Access denied: not logged in or not admin")
+      // console.log("🔒 Access denied: not logged in or not admin")
       router.push("/")
     }
   }, [user, profile, loading, router])

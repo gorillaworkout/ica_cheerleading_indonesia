@@ -25,7 +25,7 @@ const supabaseAdmin = createClient(
 // ✅ NEW: Function to send email with MailerSend template
 async function sendResetEmailWithMailerSend(email: string, resetUrl: string): Promise<boolean> {
   try {
-    console.log('🔄 Sending password reset via MailerSend template')
+    // console.log('🔄 Sending password reset via MailerSend template')
     
     // Get user name from email or database lookup
     let userName = email.split('@')[0] // Fallback
@@ -80,13 +80,13 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    console.log('🔄 Processing password reset for:', email)
+    // console.log('🔄 Processing password reset for:', email)
 
     // Create reset URL
     const resetUrl = redirectTo || `${request.nextUrl.origin}/reset-password`
     
     // ✅ Try MailerSend first
-    console.log('📧 Attempting MailerSend template...')
+    // console.log('📧 Attempting MailerSend template...')
     const mailerSendSuccess = await sendResetEmailWithMailerSend(email, resetUrl)
     
     if (mailerSendSuccess) {
@@ -99,7 +99,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Fallback: Supabase built-in method
-    console.log('🔄 MailerSend failed, trying Supabase fallback...')
+    // console.log('🔄 MailerSend failed, trying Supabase fallback...')
     const { error: supabaseError } = await supabaseAdmin.auth.resetPasswordForEmail(email, {
       redirectTo: resetUrl
     })

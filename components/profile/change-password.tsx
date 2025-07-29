@@ -36,7 +36,6 @@ const handleChangePassword = async () => {
   setMessage("")
 
   const { error } = await supabase.auth.updateUser({ password })
-  console.log("update user done")
   if (error) {
     setMessage(error.message)
     

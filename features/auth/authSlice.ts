@@ -32,7 +32,7 @@ export const fetchSessionAndProfile = createAsyncThunk("auth/fetchSessionAndProf
     // ✅ CRITICAL FIX: Don't call signOut() automatically
     // This was interfering with password reset recovery tokens
     // Let the app handle signOut explicitly when needed
-    console.log('📝 No session found in fetchSessionAndProfile - returning null without signOut')
+    // console.log('📝 No session found in fetchSessionAndProfile - returning null without signOut')
     return { session: null, user: null, profile: null };
   }
 
@@ -46,7 +46,7 @@ export const fetchSessionAndProfile = createAsyncThunk("auth/fetchSessionAndProf
 
     profile = data;
   }
-  console.log(profile, 'profile fetchSessionAndProfile')
+  // console.log(profile, 'profile fetchSessionAndProfile')
   return { session, user: session?.user ?? null, profile };
 });
 
@@ -390,12 +390,12 @@ const authSlice = createSlice({
   // ✅ Tambahkan ini untuk fetchSessionAndProfile
   builder
     .addCase(fetchSessionAndProfile.pending, (state) => {
-      console.log('fetch session and profile loading jadi true')
+      // console.log('fetch session and profile loading jadi true')
       state.loading = true;
       state.error = null;
     })
     .addCase(fetchSessionAndProfile.fulfilled, (state, action) => {
-      console.log('fetchSessionAndProfile fulfiled loading jadi false')
+      // console.log('fetchSessionAndProfile fulfiled loading jadi false')
       state.session = action.payload.session;
       state.user = action.payload.user;
       state.profile = action.payload.profile; // ✅ ini dia

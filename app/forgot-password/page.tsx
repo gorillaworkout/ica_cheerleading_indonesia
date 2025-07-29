@@ -25,7 +25,7 @@ export default function ForgotPasswordPage() {
   }
 
   const handleRateLimit = (error: any) => {
-    console.log("⏰ Rate limit detected:", error)
+    // console.log("⏰ Rate limit detected:", error)
     setIsRateLimited(true)
     setCooldownTime(60) // 1 minute cooldown
 
@@ -55,7 +55,7 @@ export default function ForgotPasswordPage() {
 
   async function handleSendResetEmail() {
     if (!email) {
-      console.log("🚫 Email required, showing toast...")
+      // console.log("🚫 Email required, showing toast...")
       toast({
         title: "❌ Email Required",
         description: "Silakan masukkan email terlebih dahulu.",
@@ -67,16 +67,16 @@ export default function ForgotPasswordPage() {
     setLoading(true)
     
     try {
-      console.log("🚀 Starting reset password system...")
+      // console.log("🚀 Starting reset password system...")
       
       // Tier 1: Supabase with redirect URL + MailerSend SMTP
-      console.log("📧 Tier 1: Trying Supabase template with MailerSend SMTP...")
+      // console.log("📧 Tier 1: Trying Supabase template with MailerSend SMTP...")
       const { error: error1 } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: `${window.location.origin}/reset-password`,
       })
 
       if (!error1) {
-        console.log("✅ Tier 1: Supabase template + MailerSend SMTP succeeded!")
+        // console.log("✅ Tier 1: Supabase template + MailerSend SMTP succeeded!")
         toast({
           title: "✅ Email Berhasil Dikirim",
           description: "Link reset password telah dikirim menggunakan template Supabase via MailerSend SMTP. Silakan cek inbox dan folder spam.",
@@ -87,19 +87,19 @@ export default function ForgotPasswordPage() {
 
       // Check for rate limiting
       if (isRateLimitError(error1)) {
-        console.log("⏰ Tier 1: Rate limited")
+        // console.log("⏰ Tier 1: Rate limited")
         handleRateLimit(error1)
         return
       }
 
-      console.log("❌ Tier 1 failed:", error1.message)
+      // console.log("❌ Tier 1 failed:", error1.message)
 
       // Tier 2: Supabase without redirect URL
-      console.log("📧 Tier 2: Trying Supabase without redirect...")
+      // console.log("📧 Tier 2: Trying Supabase without redirect...")
       const { error: error2 } = await supabase.auth.resetPasswordForEmail(email)
 
       if (!error2) {
-        console.log("✅ Tier 2: Supabase without redirect succeeded!")
+        // console.log("✅ Tier 2: Supabase without redirect succeeded!")
         toast({
           title: "✅ Email Berhasil Dikirim",
           description: "Link reset password telah dikirim ke email Anda. Link akan expired dalam 1 jam.",
@@ -110,19 +110,19 @@ export default function ForgotPasswordPage() {
 
       // Check for rate limiting
       if (isRateLimitError(error2)) {
-        console.log("⏰ Tier 2: Rate limited")
+        // console.log("⏰ Tier 2: Rate limited")
         handleRateLimit(error2)
         return
       }
 
-      console.log("❌ Tier 2 failed:", error2.message)
+      // console.log("❌ Tier 2 failed:", error2.message)
     
       // Tier 3: Supabase without redirect URL
-      console.log("📧 Tier 3: Trying without redirect URL...")
+      // console.log("📧 Tier 3: Trying without redirect URL...")
       const { error: error3 } = await supabase.auth.resetPasswordForEmail(email)
 
       if (!error3) {
-        console.log("✅ Tier 3: Supabase without redirect succeeded!")
+        // console.log("✅ Tier 3: Supabase without redirect succeeded!")
         toast({
           title: "✅ Email Berhasil Dikirim",
           description: "Link reset password telah dikirim ke email Anda. Silakan cek inbox dan folder spam. Link akan expired dalam 1 jam.",
@@ -133,19 +133,19 @@ export default function ForgotPasswordPage() {
 
       // Check for rate limiting
       if (isRateLimitError(error3)) {
-        console.log("⏰ Tier 3: Rate limited")
+        // console.log("⏰ Tier 3: Rate limited")
         handleRateLimit(error3)
         return
       }
 
-      console.log("❌ Tier 3 failed:", error3.message)
+      // console.log("❌ Tier 3 failed:", error3.message)
     
       // Tier 4: Supabase with minimal config
-      console.log("📧 Tier 4: Trying minimal Supabase config...")
+      // console.log("📧 Tier 4: Trying minimal Supabase config...")
       const { error: error4 } = await supabase.auth.resetPasswordForEmail(email, {})
 
       if (!error4) {
-        console.log("✅ Tier 4: Supabase minimal succeeded!")
+        // console.log("✅ Tier 4: Supabase minimal succeeded!")
         toast({
           title: "✅ Email Berhasil Dikirim",
           description: "Link reset password telah dikirim ke email Anda. Silakan cek inbox dan folder spam. Link akan expired dalam 1 jam.",
@@ -156,15 +156,15 @@ export default function ForgotPasswordPage() {
 
       // Check for rate limiting
       if (isRateLimitError(error4)) {
-        console.log("⏰ Tier 4: Rate limited")
+        // console.log("⏰ Tier 4: Rate limited")
         handleRateLimit(error4)
         return
       }
 
-      console.log("❌ Tier 4 failed:", error4.message)
+      // console.log("❌ Tier 4 failed:", error4.message)
     
       // All tiers failed with non-rate-limit errors
-      console.log("❌ All tiers failed with non-rate-limit errors")
+      // console.log("❌ All tiers failed with non-rate-limit errors")
       toast({
         title: "❌ Gagal Mengirim Email",
         description: `Semua sistem gagal. Error terakhir: ${error3.message}. Silakan coba lagi nanti atau hubungi admin.`,
@@ -180,7 +180,7 @@ export default function ForgotPasswordPage() {
       })
     } finally {
       // ✅ Pastikan loading selalu direset
-      console.log("🔄 Resetting loading state...")
+      // console.log("🔄 Resetting loading state...")
       setLoading(false)
     }
   }
