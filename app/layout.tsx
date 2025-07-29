@@ -18,6 +18,9 @@ const inter = Inter({
   variable: "--font-inter"
 })
 
+// Preload hero image untuk LCP optimization
+const heroImagePreloadLink = `<link rel="preload" as="image" href="/ica-hero.webp" fetchpriority="high" type="image/webp">`
+
 export const metadata: Metadata = generateSEOMetadata({
   title: "ICA - Indonesian Cheer Association",
   description: "Platform resmi Indonesian Cheer Association untuk kompetisi cheerleading, edukasi, dan komunitas. Bergabunglah dengan komunitas cheerleading terbesar di Indonesia.",
@@ -45,7 +48,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {/* PWA Manifest */}
         <link rel="manifest" href="/manifest.json" />
         <meta name="theme-color" content="#e11d48" />
-        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="apple-mobile-web-app-title" content="ICA" />
         
@@ -71,9 +74,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           }}
         />
         
-        {/* Performance hints */}
+        {/* Performance hints - Critical untuk LCP optimization */}
         <link rel="dns-prefetch" href="//indonesiancheer.org" />
-        <link rel="preload" href="/ica-hero.webp" as="image" fetchPriority="high" />
+        <link rel="preconnect" href="https://indonesiancheer.org" />
+        
+        {/* Resource hints untuk font optimization */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         
         {/* Default SEO Meta Tags - will be overridden by page-specific ones */}
         <link rel="alternate" hrefLang="id" href="https://indonesiancheer.org" />

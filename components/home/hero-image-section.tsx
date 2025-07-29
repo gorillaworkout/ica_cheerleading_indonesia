@@ -1,11 +1,58 @@
 "use client"
 
-import { useState, useEffect, useRef, useMemo } from "react"
-import Image from "next/image"
-import { Button } from "@/components/ui/button"
-import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react"
-import Link from "next/link"
+import { useState, useEffect, useMemo } from "react"
 import { getPublicImageUrlSync } from "@/utils/getPublicImageUrl"
+import { OptimizedHeroImage } from "./optimized-hero-image"
+import { Button } from "@/components/ui/button"
+import Link from "next/link"
+
+interface Slide {
+  src: string
+  alt: string
+  title?: string
+  subtitle?: string
+}
+
+interface HeroImageSectionProps {
+  heroSlides?: Slide[]
+  showTextAndButtons?: boolean
+}
+
+// Inline HeroOverlayContent untuk avoid import issues
+const HeroOverlayContent: React.FC<{ title: string; subtitle: string }> = ({ title, subtitle }) => (
+  <>
+    <div className="absolute inset-0 bg-black/40 backdrop-blur-[1px]" />
+    <div className="absolute inset-0 flex items-center justify-center p-4">
+      <div className="text-center text-white max-w-4xl w-full">
+        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-4 leading-tight">
+          {title}
+        </h1>
+        <p className="text-lg sm:text-xl lg:text-2xl mb-8 leading-relaxed opacity-90">
+          {subtitle}
+        </p>
+        <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center">
+          <Link href="/championships" className="w-full sm:w-auto">
+            <Button 
+              size="lg" 
+              className="w-full sm:w-auto bg-red-600 hover:bg-red-700 transition-all duration-300 transform hover:scale-105"
+            >
+              View Championships
+            </Button>
+          </Link>
+          <Link href="/about" className="w-full sm:w-auto">
+            <Button
+              size="lg"
+              variant="outline"
+              className="w-full sm:w-auto text-white border-white hover:bg-white hover:text-gray-900 bg-transparent transition-all duration-300"
+            >
+              Learn More
+            </Button>
+          </Link>
+        </div>
+      </div>
+    </div>
+  </>
+)
 
 interface Slide {
   src: string
@@ -25,43 +72,51 @@ export function HeroImageSection({
 }: HeroImageSectionProps) {
   const [currentSlide, setCurrentSlide] = useState(0)
   
+  // Optimize slide formatting dengan memoization yang lebih baik
   const formattedSlides = useMemo(() => {
-    return heroSlides.map((slide, index) => {
+    if (heroSlides.length === 0) return []
+    
+    return heroSlides.map((slide) => {
       if (typeof slide === "string") {
         return { 
           src: slide, 
-          alt: "",
+          alt: "ICA Indonesia Cheerleading Competition Hero Image",
           title: "Excellence in Motion",
           subtitle: "Join the premier cheerleading competitions worldwide"
         }
       }
       return {
         ...slide,
+        alt: slide.alt || "ICA Indonesia Cheerleading Competition Image",
         title: slide.title || "Excellence in Motion",
         subtitle: slide.subtitle || "Join the premier cheerleading competitions worldwide"
       }
     });
-  }, [heroSlides]);
+  }, [heroSlides])
 
+  // Optimize auto-slide timer
   useEffect(() => {
-    if (formattedSlides.length <= 1) return; // Don't auto-slide if only one or no slides
+    if (formattedSlides.length <= 1) return
     
     const timer = setInterval(() => {
-      setCurrentSlide((prev) => {
-        const next = (prev + 1) % formattedSlides.length;
-        return next;
-      })
+      setCurrentSlide((prev) => (prev + 1) % formattedSlides.length)
     }, 5000)
+    
     return () => clearInterval(timer)
   }, [formattedSlides.length])
 
+  // Preload next image untuk smooth transition
   useEffect(() => {
-    if (formattedSlides.length > 0 && formattedSlides[currentSlide]?.src) {
-      const imageSrc = formattedSlides[currentSlide].src.startsWith("https://")
-        ? formattedSlides[currentSlide].src
-        : formattedSlides[currentSlide].src.startsWith("/") 
-          ? formattedSlides[currentSlide].src 
-          : getPublicImageUrlSync(formattedSlides[currentSlide].src) || "/placeholder.svg";
+    if (formattedSlides.length > 1) {
+      const nextSlideIndex = (currentSlide + 1) % formattedSlides.length
+      const nextImage = new window.Image()
+      const nextSrc = formattedSlides[nextSlideIndex]?.src
+      
+      if (nextSrc) {
+        nextImage.src = nextSrc.startsWith("https://") || nextSrc.startsWith("/") 
+          ? nextSrc 
+          : getPublicImageUrlSync(nextSrc) || "/placeholder.svg"
+      }
     }
   }, [currentSlide, formattedSlides])
 
@@ -75,91 +130,83 @@ export function HeroImageSection({
 
   return (
     <section className="relative w-full h-full overflow-hidden bg-gray-100">
-      {formattedSlides.map((image, index) => (
-        <div
-          key={index}
-          className={`absolute inset-0 transition-opacity duration-1000 ${index === currentSlide ? "opacity-100 z-10" : "opacity-0 z-0"}`}
-          style={{ willChange: index === currentSlide ? 'auto' : 'opacity' }}
-        >
-          <Image
-            src={
-              image.src.startsWith("https://") 
-                ? image.src 
-                : image.src.startsWith("/") 
-                  ? image.src 
-                  : getPublicImageUrlSync(image.src) || "/placeholder.svg"
-            }
-            alt={image.alt || "Image description not available"}
-            fill
-            className="object-cover w-full h-full"
-            priority={index === 0}
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 100vw"
-            quality={85}
-            placeholder="blur"
-            blurDataURL="data:image/webp;base64,UklGRnoAAABXRUJQVlA4WAoAAAAQAAAADwAABwAAQUxQSDIAAAARL0AmbZurmr57yyIiqE8oiG0bejIYEQTgqiDA9vqnsUSI6H+oAERp2HZ65qP/VIAWAFZQOCBCAAAA8AEAnQEqEAAIAAVAfCWkAALp8sF8rgRgAP7o9FDvMCkMde9PK7euH5M1m6VWoDXf2FkP3BqV0ZYbO6NA/VFIAAAA"
-            style={{
-              objectFit: 'cover',
-              objectPosition: 'center'
-            }}
-            loading={index === 0 ? 'eager' : 'lazy'}
-            fetchPriority={index === 0 ? 'high' : 'low'}
-          />
+      {formattedSlides.map((image, index) => {
+        const isCurrentSlide = index === currentSlide
+        const isFirstSlide = index === 0
+        
+        // Generate optimized image src
+        const imageSrc = image.src.startsWith("https://") || image.src.startsWith("/") 
+          ? image.src 
+          : getPublicImageUrlSync(image.src) || "/placeholder.svg"
 
-          {showTextAndButtons && index === currentSlide && (
-            <>
-              <div className="absolute inset-0 bg-black bg-opacity-40" />
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="text-center text-white max-w-4xl px-4">
-                  <h1 className="text-5xl md:text-6xl font-bold mb-4">{image.title}</h1>
-                  <p className="text-xl md:text-2xl mb-8">{image.subtitle}</p>
-                  <div className="space-x-4">
-                    <Link href="/championships">
-                      <Button size="lg" className="bg-red-600 hover:bg-red-700">
-                        View Championships
-                      </Button>
-                    </Link>
-                    <Link href="/about">
-                      <Button
-                        size="lg"
-                        variant="outline"
-                        className="text-white border-white hover:bg-white hover:text-gray-900 bg-transparent"
-                      >
-                        Learn More
-                      </Button>
-                    </Link>
+        return (
+          <div
+            key={`slide-${index}-${image.src}`}
+            className={`absolute inset-0 transition-opacity duration-700 ${
+              isCurrentSlide ? "opacity-100 z-10" : "opacity-0 z-0"
+            }`}
+            style={{ 
+              willChange: isCurrentSlide ? 'auto' : 'opacity',
+              transform: 'translateZ(0)' // Hardware acceleration
+            }}
+          >
+            <OptimizedHeroImage
+              src={imageSrc}
+              alt={image.alt || "ICA Indonesia Cheerleading Competition"}
+              priority={isFirstSlide}
+              className="transition-transform duration-700 ease-in-out hover:scale-105"
+            />
+
+            {showTextAndButtons && isCurrentSlide && (
+              <>
+                <div className="absolute inset-0 bg-black bg-opacity-40" />
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="text-center text-white max-w-4xl px-4">
+                    <h1 className="text-5xl md:text-6xl font-bold mb-4">
+                      {image.title || "Excellence in Motion"}
+                    </h1>
+                    <p className="text-xl md:text-2xl mb-8">
+                      {image.subtitle || "Join the premier cheerleading competitions worldwide"}
+                    </p>
+                    <div className="space-x-4">
+                      <Link href="/championships">
+                        <Button size="lg" className="bg-red-600 hover:bg-red-700">
+                          View Championships
+                        </Button>
+                      </Link>
+                      <Link href="/about">
+                        <Button
+                          size="lg"
+                          variant="outline"
+                          className="text-white border-white hover:bg-white hover:text-gray-900 bg-transparent"
+                        >
+                          Learn More
+                        </Button>
+                      </Link>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </>
-          )}
+              </>
+            )}
+          </div>
+        )
+      })}
+
+      {/* Slide Indicators - Simplified untuk performance */}
+      {formattedSlides.length > 1 && (
+        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2 z-20">
+          {formattedSlides.map((_, index) => (
+            <button
+              key={`indicator-${index}`}
+              onClick={() => setCurrentSlide(index)}
+              className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                index === currentSlide ? "bg-white" : "bg-white bg-opacity-50"
+              }`}
+              aria-label={`Go to slide ${index + 1}`}
+            />
+          ))}
         </div>
-      ))}
-
-      {/* Navigation Arrows */}
-      {/* <button
-        onClick={prevSlide}
-        className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-20 hover:bg-opacity-30 rounded-full p-2 transition-all z-20"
-      >
-        <ChevronLeft className="h-6 w-6 text-white" />
-      </button>
-      <button
-        onClick={nextSlide}
-        className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-20 hover:bg-opacity-30 rounded-full p-2 transition-all z-20"
-      >
-        <ChevronRight className="h-6 w-6 text-white" />
-      </button> */}
-
-      {/* Slide Indicators */}
-      <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2 z-20">
-        {formattedSlides.map((_, index) => (
-          <button
-            key={index}
-            onClick={() => setCurrentSlide(index)}
-            className={`w-3 h-3 rounded-full transition-all ${index === currentSlide ? "bg-white" : "bg-white bg-opacity-50"}`}
-            aria-label={`Go to slide ${index + 1}`}
-          />
-        ))}
-      </div>
+      )}
     </section>
   )
 }
