@@ -23,7 +23,6 @@ export const fetchProvinces = createAsyncThunk(
   'provinces/fetchProvinces',
   async (_, { rejectWithValue }) => {
     try {
-      console.log('🗺️ Fetching provinces from Supabase...')
       
       const { data, error } = await supabase
         .from('provinces')
@@ -35,7 +34,6 @@ export const fetchProvinces = createAsyncThunk(
         return rejectWithValue(error.message)
       }
 
-      console.log('✅ Provinces fetched successfully:', data?.length, 'provinces')
       return data || []
     } catch (error) {
       console.error('❌ Unexpected error fetching provinces:', error)

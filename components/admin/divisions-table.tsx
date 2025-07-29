@@ -48,7 +48,7 @@ const handleAddDivision = async (newDivision: NewDivision): Promise<void> => {
             console.error("Error adding division:", error);
             return;
         }
-        console.log("Division added successfully");
+
         toast({
             title: "Add Successful",
             description: "The division has been added successfully.",
@@ -69,7 +69,7 @@ const handleSaveEdit = async (updatedDivision: UpdatedDivision): Promise<void> =
             console.error("Error updating division:", error);
             return;
         }
-        console.log("Division updated successfully");
+
         toast({
             title: "Edit Successful",
             description: "The division has been updated successfully.",
@@ -88,7 +88,7 @@ const handleSaveEdit = async (updatedDivision: UpdatedDivision): Promise<void> =
         console.error("Error deleting division:", error);
         return;
       }
-      console.log("Division deleted successfully");
+
       toast({
         title: "Delete Successful",
         description: "The division has been deleted successfully.",

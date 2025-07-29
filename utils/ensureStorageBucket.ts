@@ -19,7 +19,7 @@ export async function ensureUploadsBucket(): Promise<boolean> {
       
       // If bucket doesn't exist, the error might be about bucket not found
       if (error.message?.includes('Bucket not found') || error.message?.includes('not found')) {
-        console.log('Uploads bucket does not exist. Please create it in Supabase dashboard.')
+        // console.log('Uploads bucket does not exist. Please create it in Supabase dashboard.')
         return false
       }
       
@@ -27,10 +27,10 @@ export async function ensureUploadsBucket(): Promise<boolean> {
       return false
     }
 
-    console.log('Uploads bucket is accessible')
+    // console.log('Uploads bucket is accessible')
     return true
   } catch (error: any) {
-    console.error('Unexpected error checking uploads bucket:', error)
+    // console.error('Unexpected error checking uploads bucket:', error)
     return false
   }
 }
@@ -53,10 +53,10 @@ export async function ensureIDCardsFolder(): Promise<boolean> {
       return false
     }
 
-    console.log('ID cards folder is accessible')
+    // console.log('ID cards folder is accessible')
     return true
   } catch (error: any) {
-    console.error('Unexpected error checking id-cards folder:', error)
+    // console.error('Unexpected error checking id-cards folder:', error)
     return false
   }
 }

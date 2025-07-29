@@ -18,12 +18,12 @@ export class MailerSendService {
     resetUrl: string
   ): Promise<boolean> {
     try {
-      console.log('🔐 Sending password reset via MailerSend template:', {
-        email,
-        templateId: 'vywj2lpzp8kg7oqz',
-        resetUrl,
-        apiKeyExists: !!process.env.MAILERSEND_API_TOKEN
-      })
+      // console.log('🔐 Sending password reset via MailerSend template:', {
+      //   email,
+      //   templateId: 'vywj2lpzp8kg7oqz',
+      //   resetUrl,
+      //   apiKeyExists: !!process.env.MAILERSEND_API_TOKEN
+      // })
 
       if (!process.env.MAILERSEND_API_TOKEN) {
         console.error('❌ MAILERSEND_API_TOKEN not found in environment')
@@ -54,7 +54,7 @@ export class MailerSendService {
 
       const result = await mailerSend.email.send(emailParams)
       
-      console.log('✅ Password reset email sent successfully:', result)
+      // console.log('✅ Password reset email sent successfully:', result)
       return true
 
     } catch (error) {
@@ -73,12 +73,12 @@ export class MailerSendService {
     confirmationUrl: string
   ): Promise<boolean> {
     try {
-      console.log('📧 Sending email verification via MailerSend template:', {
-        email,
-        templateId: '351ndgwqpjdgzqx8',
-        confirmationUrl,
-        apiKeyExists: !!process.env.MAILERSEND_API_TOKEN
-      })
+      // console.log('📧 Sending email verification via MailerSend template:', {
+      //   email,
+      //   templateId: '351ndgwqpjdgzqx8',
+      //   confirmationUrl,
+      //   apiKeyExists: !!process.env.MAILERSEND_API_TOKEN
+      // })
 
       if (!process.env.MAILERSEND_API_TOKEN) {
         console.error('❌ MAILERSEND_API_TOKEN not found in environment')
@@ -109,11 +109,11 @@ export class MailerSendService {
 
       const result = await mailerSend.email.send(emailParams)
       
-      console.log('✅ Email verification sent successfully:', result)
+      // console.log('✅ Email verification sent successfully:', result)
       return true
 
     } catch (error) {
-      console.error('❌ Failed to send email verification:', error)
+      // console.error('❌ Failed to send email verification:', error)
       return false
     }
   }
@@ -123,9 +123,9 @@ export class MailerSendService {
    */
   static async testConnection(): Promise<boolean> {
     try {
-      console.log('🧪 Testing MailerSend connection...')
-      console.log('API Token exists:', !!process.env.MAILERSEND_API_TOKEN)
-      console.log('From email:', process.env.MAILERSEND_FROM_EMAIL || 'noreply@ica-indonesia.org')
+      // console.log('🧪 Testing MailerSend connection...')
+      // console.log('API Token exists:', !!process.env.MAILERSEND_API_TOKEN)
+      // console.log('From email:', process.env.MAILERSEND_FROM_EMAIL || 'noreply@ica-indonesia.org')
       
       return !!process.env.MAILERSEND_API_TOKEN
     } catch (error) {

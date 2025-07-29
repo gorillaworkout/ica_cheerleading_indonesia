@@ -154,7 +154,7 @@ export function UsersTable() {
 
   const handleDelete = async (id: string) => {
     try {
-      console.log("Deleting user with ID:", id);
+
       
       const { error } = await supabase.from("profiles").delete().eq("id", id);
       if (error) {
@@ -189,7 +189,7 @@ export function UsersTable() {
     setApproving(userId);
     
     try {
-      console.log("Approving user with ID:", userId);
+
       
       const { error } = await supabase
         .from("profiles")
@@ -232,7 +232,7 @@ export function UsersTable() {
     setApproving(userId);
     
     try {
-      console.log("Approving edit request for user ID:", userId);
+
       
       const { error } = await supabase
         .from("profiles")
@@ -274,7 +274,7 @@ export function UsersTable() {
 
   const rejectEditRequest = async (userId: string) => {
     try {
-      console.log("Rejecting edit request for user ID:", userId);
+
       
       const { error } = await supabase
         .from("profiles")

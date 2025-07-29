@@ -130,13 +130,13 @@ export const signUpWithEmailThunk = createAsyncThunk(
     const userId = data.user?.id;
     if (!userId) return rejectWithValue("User ID not found");
 
-    console.log('User created successfully with ID:', userId);
+
 
     let id_photo_url: string | null = null;
     let profile_photo_url:string | null = null
     
     if (id_photo_file) {
-      console.log('📤 Uploading ID photo for user:', userId);
+
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from("uploads")
         .upload(`id-photos/${userId}-${Date.now()}`, id_photo_file);
@@ -146,11 +146,11 @@ export const signUpWithEmailThunk = createAsyncThunk(
         return rejectWithValue(`Failed to upload ID photo: ${uploadError.message}`);
       }
       id_photo_url = uploadData?.path ?? null;
-      console.log('✅ ID photo uploaded:', id_photo_url);
+
     }
 
      if (profile_photo_file) {
-      console.log('📤 Uploading profile photo for user:', userId);
+
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from("uploads")
         .upload(`profile-photos/${userId}-${Date.now()}`, profile_photo_file);
@@ -160,7 +160,7 @@ export const signUpWithEmailThunk = createAsyncThunk(
         return rejectWithValue(`Failed to upload profile photo: ${uploadError.message}`);
       }
       profile_photo_url = uploadData?.path ?? null;
-      console.log('✅ Profile photo uploaded:', profile_photo_url);
+
     }
 
     const now = new Date().toISOString();
@@ -232,15 +232,15 @@ export const signUpWithEmailThunk = createAsyncThunk(
       }
     }
 
-    console.log('Profile created successfully for user:', userId);
-    console.log('Profile data:', profileData);
-    console.log('User role:', role);
-    console.log('Role type:', typeof role);
-    console.log('Role === "coach":', role === 'coach');
+
+
+
+
+
 
     // If role is coach, create coach profile
     if (role === 'coach') {
-      console.log('✅ Entering coach creation block for user:', userId);
+
       
       const coachData = {
         // id akan auto-generated oleh database (gen_random_uuid())
@@ -270,7 +270,7 @@ export const signUpWithEmailThunk = createAsyncThunk(
         
       };
       
-      console.log('🔍 Coach data to insert:', JSON.stringify(coachData, null, 2));
+
       
       const { data: coachInsertData, error: coachError } = await supabase.from("coaches").insert(coachData).select();
 
@@ -282,18 +282,18 @@ export const signUpWithEmailThunk = createAsyncThunk(
         return rejectWithValue(`Profile created but failed to create coach profile: ${coachError.message}`);
       }
       
-      console.log('✅ Coach profile created successfully for user:', userId);
-      console.log('🎯 Coach insert result:', coachInsertData);
+
+
     } else {
-      console.log('❌ User role is not coach, skipping coach profile creation. Role:', role);
+
     }
 
 
 
     // Sign out user after successful registration (don't auto login)
-    console.log('🔐 Signing out user after all operations completed');
+
     await supabase.auth.signOut();
-    console.log('🚪 User signed out after successful registration');
+
 
     // Return null session to indicate user needs to login manually
     return { 
@@ -364,7 +364,7 @@ const authSlice = createSlice({
       state.loading = false;
       state.error = null;
       // You can show success message if needed
-      console.log('Registration completed successfully - user needs to login manually');
+
     })
     .addCase(signUpWithEmailThunk.rejected, (state, action) => {
       state.session = null;

@@ -289,7 +289,7 @@ export class AutoIDCardGenerator {
 
   // Main function to generate and save ID card
   static async generateAndSaveIDCard(userId: string): Promise<boolean> {
-    console.log('🚀 AutoIDCardGenerator.generateAndSaveIDCard called for user:', userId);
+
     try {
       // Check authentication status
       const { data: { user }, error: authError } = await supabase.auth.getUser()
@@ -297,7 +297,7 @@ export class AutoIDCardGenerator {
         console.error('❌ User not authenticated for ID card generation:', { authError, userId })
         return false
       }
-      console.log('✅ User authenticated:', { userId: user.id, email: user.email });
+
 
       console.log('Starting ID card generation for authenticated user:', {
         userId,
@@ -360,7 +360,7 @@ export class AutoIDCardGenerator {
         })
         return false
       }
-      console.log('✅ All required profile data present for ID card generation');
+
 
       // Check if member_code exists
       if (!profile.member_code) {

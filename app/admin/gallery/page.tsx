@@ -76,7 +76,7 @@ const handleDelete = async (fileName: string) => {
     console.error("Delete error", error);
     toast({ title: "Error", description: error.message });
   } else {
-    console.log("Deleted:", fullPath);
+
     setImages((prev) => prev.filter((img) => img.name !== fileName));
   }
   setDeleting(null);

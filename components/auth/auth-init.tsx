@@ -21,7 +21,7 @@ export function AuthInit() {
 
   useEffect(() => {
     // Debug environment on app start
-    console.log('🚀 AuthInit starting...');
+
     debugEnvironment();
     debugSupabaseConnection();
     
@@ -37,19 +37,11 @@ export function AuthInit() {
       const isResetPage = pathname === '/reset-password'
       const hasRecoveryToken = hash.includes('access_token=') && hash.includes('type=recovery')
       
-      console.log('🔍 Recovery flow check:', {
-        pathname,
-        isResetPage,
-        hasRecoveryToken,
-        hash: hash ? 'Present' : 'Empty'
-      })
-      
       return isResetPage && hasRecoveryToken
     }
     
     // ✅ Skip auth initialization if we're in recovery flow
     if (isRecoveryFlow()) {
-      console.log('⏭️ Skipping AuthInit for recovery flow - let reset page handle it')
       
       // Only fetch public data that doesn't require auth
       dispatch(fetchPublicImages())
@@ -75,12 +67,10 @@ export function AuthInit() {
       (event, session) => {
         // ✅ Skip auth state changes during recovery flow
         if (isRecoveryFlow()) {
-          console.log('⏭️ Skipping auth state change during recovery flow')
           return
         }
         
         if (event === "SIGNED_IN" && session?.user) {
-          console.log("SIGNED IN 22 auth-init")
           dispatch(setAuthState({ session, user: session.user }))
           dispatch(fetchSessionAndProfile())
           dispatch(fetchPublicImages())

@@ -242,13 +242,6 @@ export function LoginForm() {
 
     try {
       // Debug Supabase configuration
-      console.log('🔧 Supabase config check:', {
-        url: process.env.NEXT_PUBLIC_SUPABASE_URL ? 'Present' : 'Missing',
-        key: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ? 'Present' : 'Missing',
-        emailToResend: emailForResend
-      })
-      
-      console.log('🔄 Attempting to resend verification email to:', emailForResend)
       
       const { error } = await supabase.auth.resend({
         type: "signup",
@@ -258,13 +251,10 @@ export function LoginForm() {
         }
       })
 
-      console.log('📧 Resend result:', { error })
 
       if (error) {
-        console.error('❌ Resend email error:', error)
         
         // Try fallback method 1: signup trigger
-        console.log('🔄 Trying fallback method 1: signup trigger...')
         try {
           const { error: signupError } = await supabase.auth.signUp({
             email: emailForResend,
@@ -275,7 +265,6 @@ export function LoginForm() {
           })
           
           if (!signupError || signupError.message?.includes('already registered')) {
-            console.log('✅ Fallback method 1 successful')
             const successMsg = "Verification email has been resent successfully."
             setSuccess(successMsg)
             
@@ -294,7 +283,6 @@ export function LoginForm() {
         }
 
         // Try fallback method 2: custom API endpoint
-        console.log('🔄 Trying fallback method 2: custom API...')
         try {
           const response = await fetch('/api/auth/resend-verification', {
             method: 'POST',
@@ -307,7 +295,6 @@ export function LoginForm() {
           const result = await response.json()
           
           if (response.ok) {
-            console.log('✅ Fallback method 2 successful:', result)
             
             if (result.already_verified) {
               const successMsg = "Email already verified. You can login directly."

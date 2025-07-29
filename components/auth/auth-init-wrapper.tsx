@@ -20,14 +20,7 @@ export function AuthInitWrapper({ children }: { children: React.ReactNode }) {
     const hash = window.location.hash
     const isResetPage = pathname === '/reset-password'
     const hasRecoveryToken = hash.includes('access_token=') && hash.includes('type=recovery')
-    
-    console.log('🔍 AuthInitWrapper recovery check:', {
-      pathname,
-      isResetPage,
-      hasRecoveryToken,
-      hash: hash ? 'Present' : 'Empty'
-    })
-    
+
     setIsRecoveryFlow(isResetPage && hasRecoveryToken)
   }, [pathname])
 
@@ -38,7 +31,6 @@ export function AuthInitWrapper({ children }: { children: React.ReactNode }) {
 
   // Skip loading screen for recovery flow
   if (isRecoveryFlow) {
-    console.log('🔓 AuthInitWrapper: Allowing immediate render for recovery flow')
     return (
       <>
         <AuthInit />

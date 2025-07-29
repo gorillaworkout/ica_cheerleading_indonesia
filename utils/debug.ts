@@ -7,7 +7,7 @@ export function debugEnvironment() {
     NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY?.substring(0, 20) + '...', // Only show first 20 chars for security
   };
   
-  console.log('🔧 Environment Debug:', env);
+
   
   // Check if required env vars are present
   const missingVars = [];
@@ -17,7 +17,7 @@ export function debugEnvironment() {
   if (missingVars.length > 0) {
     console.error('❌ Missing environment variables:', missingVars);
   } else {
-    console.log('✅ All required environment variables are present');
+
   }
   
   return env;
@@ -34,11 +34,11 @@ export function debugSupabaseConnection() {
     
     // Basic URL validation
     const url = new URL(supabaseUrl);
-    console.log('🔗 Supabase URL validation:', {
-      protocol: url.protocol,
-      hostname: url.hostname,
-      isValid: url.hostname.includes('supabase')
-    });
+    // console.log('🔗 Supabase URL validation:', {
+    //   protocol: url.protocol,
+    //   hostname: url.hostname,
+    //   isValid: url.hostname.includes('supabase')
+    // });
     
     return true;
   } catch (error) {

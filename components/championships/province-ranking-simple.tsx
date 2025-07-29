@@ -105,7 +105,7 @@ export default function ProvinceRankingSimple() {
       setError(null);
       
       try {
-        console.log("🔍 Fetching results from Supabase...");
+
         
         // Fetch results with more detailed logging
         const { data: resultsData, error: resultsError } = await supabase
@@ -162,9 +162,9 @@ export default function ProvinceRankingSimple() {
         // Combine Redux mapping with fallback
         const combinedMapping = { ...fallbackMapping, ...provinceMap };
 
-        console.log("🗺️ Province mapping from Redux:", provinceMap);
-        console.log("🔧 Combined mapping:", combinedMapping);
-        console.log("🔢 Available provinces in Redux:", provinces.length);
+
+
+
 
         // If no provinces loaded from Redux yet, wait
         if (provinces.length === 0) {
@@ -185,7 +185,7 @@ export default function ProvinceRankingSimple() {
           uniqueProvinceCodesInResults: [...new Set(resultsData?.map((r: any) => r.province))].slice(0, 10)
         });
 
-        console.log("🔍 Sample result province codes:", resultsData?.slice(0, 5).map((r: any) => r.province));
+
 
         // Enrich results with province names from Redux
         const enrichedResults = resultsData?.map((result: any) => {
@@ -199,10 +199,10 @@ export default function ProvinceRankingSimple() {
           };
         }) || [];
 
-        console.log("✨ Enriched results sample:", enrichedResults.slice(0, 3));
-        console.log("🗺️ Combined mapping keys:", Object.keys(combinedMapping));
-        console.log("🔍 Unique province codes in results:", [...new Set(resultsData?.map((r: any) => r.province))]);
-        console.log("🏷️ Unique province NAMES in enriched results:", [...new Set(enrichedResults?.map((r: any) => r.province))]);
+
+
+
+
 
         // Group by division safely
         const groupedResults = enrichedResults.reduce((acc: DivisionResult[], result: any) => {
@@ -220,17 +220,17 @@ export default function ProvinceRankingSimple() {
           return acc;
         }, []);
 
-        console.log("📊 Grouped results:", groupedResults.map((d: DivisionResult) => ({ division: d.division, count: d.results.length })));
+
 
         const calculatedRanking = getProvincePoints(groupedResults);
         
-        console.log("🏆 Calculated ranking:", calculatedRanking);
+
 
         if (calculatedRanking.length > 0) {
           setProvinceData(calculatedRanking);
-          console.log("✅ Successfully loaded Supabase data");
+
         } else {
-          console.log("⚠️ No ranking data calculated");
+
           setError("No ranking data could be calculated");
         }
       } catch (err) {

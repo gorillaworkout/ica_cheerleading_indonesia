@@ -68,7 +68,7 @@ export function AddDivisionForm() {
         skill_level: "",
       });
     } catch (error) {
-      console.log(error, "error");
+
       toast({
         title: "Error",
         description: "Failed to add division. Please try again.",

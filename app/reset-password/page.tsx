@@ -21,14 +21,14 @@ export default function ResetPasswordPage() {
     const resetEmail = searchParams.get('email')
 
     useEffect(() => {
-        console.log("🚀 RESET PASSWORD PAGE MOUNTED")
-        console.log("📍 Current URL:", window.location.href)
-        console.log("📋 Hash:", window.location.hash)
-        console.log("🔍 Search params:", window.location.search)
+        // console.log("🚀 RESET PASSWORD PAGE MOUNTED")
+        // console.log("📍 Current URL:", window.location.href)
+        // console.log("📋 Hash:", window.location.hash)
+        // console.log("🔍 Search params:", window.location.search)
         
         // Check if user is on wrong page
         if (window.location.pathname.includes('forgot-password')) {
-            console.log("⚠️ User is on forgot-password page but has reset token")
+            // console.log("⚠️ User is on forgot-password page but has reset token")
             toast({
                 title: "Wrong Page Detected",
                 description: "Anda sedang di halaman yang salah. Klik tombol di bawah untuk ke halaman reset password yang benar.",
@@ -49,20 +49,20 @@ export default function ResetPasswordPage() {
         }
         
         const checkResetMethod = async () => {
-            console.log("🔍 Checking reset method...")
-            console.log("Custom token:", customToken ? "Present" : "Not found")
-            console.log("Email:", resetEmail ? "Present" : "Not found")
-            console.log("Current URL:", window.location.href)
+            // console.log("🔍 Checking reset method...")
+            // console.log("Custom token:", customToken ? "Present" : "Not found")
+            // console.log("Email:", resetEmail ? "Present" : "Not found")
+            // console.log("Current URL:", window.location.href)
             
             // Check URL hash for Supabase recovery tokens
             const urlHash = window.location.hash
             const hasSupabaseRecoveryToken = urlHash.includes('access_token=') && urlHash.includes('type=recovery')
-            console.log("Supabase recovery hash:", hasSupabaseRecoveryToken ? "Present" : "Not found")
-            console.log("📋 Full hash content:", urlHash)
+            // console.log("Supabase recovery hash:", hasSupabaseRecoveryToken ? "Present" : "Not found")
+            // console.log("📋 Full hash content:", urlHash)
             
             // Method 1: Custom reset (has token and email in search params)
             if (customToken && resetEmail) {
-                console.log("✅ Using custom reset method")
+                // console.log("✅ Using custom reset method")
                 setResetMethod('custom')
                 setIsSessionReady(true)
                 return
@@ -70,23 +70,23 @@ export default function ResetPasswordPage() {
             
             // Method 2: Supabase recovery (has hash params) - MANUAL PARSING
             if (hasSupabaseRecoveryToken) {
-                console.log("✅ Detected Supabase recovery token in hash")
-                console.log("� URL Hash content:", urlHash)
+                // console.log("✅ Detected Supabase recovery token in hash")
+                // console.log("� URL Hash content:", urlHash)
                 
                 try {
                     // Parse hash parameters manually
-                    console.log("🔧 Starting manual hash parsing...")
+                    // console.log("🔧 Starting manual hash parsing...")
                     const hashParams = new URLSearchParams(urlHash.substring(1))
                     const accessToken = hashParams.get('access_token')
                     const refreshToken = hashParams.get('refresh_token')
                     
-                    console.log("🔑 Access token found:", !!accessToken)
-                    console.log("� Access token length:", accessToken?.length)
-                    console.log("�🔄 Refresh token found:", !!refreshToken)
-                    console.log("🔄 Refresh token length:", refreshToken?.length)
+                    // console.log("🔑 Access token found:", !!accessToken)
+                    // console.log("� Access token length:", accessToken?.length)
+                    // console.log("�🔄 Refresh token found:", !!refreshToken)
+                    // console.log("🔄 Refresh token length:", refreshToken?.length)
                     
                     if (accessToken && refreshToken) {
-                        console.log("🔧 Manually setting Supabase session...")
+                        // console.log("🔧 Manually setting Supabase session...")
                         
                         // Set session manually
                         const { data, error } = await supabase.auth.setSession({
@@ -94,21 +94,14 @@ export default function ResetPasswordPage() {
                             refresh_token: refreshToken
                         })
                         
-                        console.log("📊 Manual session result:", {
-                            hasSession: !!data.session,
-                            hasUser: !!data.session?.user,
-                            userEmail: data.session?.user?.email,
-                            error: error
-                        })
-                        
                         if (data.session && !error) {
-                            console.log("✅ Manual session creation successful")
-                            console.log("👤 User email:", data.session.user?.email)
+                            // console.log("✅ Manual session creation successful")
+                            // console.log("👤 User email:", data.session.user?.email)
                             setResetMethod('supabase')
                             setIsSessionReady(true)
                             
                             // Clean up URL hash to prevent reload issues
-                            console.log("🧹 Cleaning up URL hash...")
+                            // console.log("🧹 Cleaning up URL hash...")
                             window.history.replaceState({}, document.title, window.location.pathname)
                             return
                         } else {
@@ -123,19 +116,19 @@ export default function ResetPasswordPage() {
                 }
                 
                 // Fallback: wait for Supabase auto-processing
-                console.log("🔄 Falling back to auto-processing...")
+                // console.log("🔄 Falling back to auto-processing...")
                 setTimeout(async () => {
-                    console.log("⏰ Checking session after delay...")
+                    // console.log("⏰ Checking session after delay...")
                     const { data, error } = await supabase.auth.getSession()
-                    console.log("📊 Session data:", data)
-                    console.log("❌ Session error:", error)
+                    // console.log("📊 Session data:", data)
+                    // console.log("❌ Session error:", error)
                     
                     if (data.session) {
-                        console.log("✅ Supabase auto-processing successful")
+                        // console.log("✅ Supabase auto-processing successful")
                         setResetMethod('supabase')
                         setIsSessionReady(true)
                     } else {
-                        console.log("❌ All recovery methods failed")
+                        // console.log("❌ All recovery methods failed")
                         toast({ 
                             title: "Reset Token Expired", 
                             description: "Link reset password sudah expired atau tidak valid. Silakan request ulang di halaman lupa password.",
@@ -154,14 +147,11 @@ export default function ResetPasswordPage() {
             }
             
             // Method 3: Check existing Supabase session
-            console.log("🔍 Checking existing Supabase session...")
             const { data } = await supabase.auth.getSession()
             if (data.session) {
-                console.log("✅ Using existing Supabase session")
                 setResetMethod('supabase')
                 setIsSessionReady(true)
             } else {
-                console.log("❌ No valid session or token found")
                 toast({ 
                     title: "Session Invalid", 
                     description: "Tidak ada session reset password yang valid. Silakan request ulang.",
@@ -190,7 +180,6 @@ export default function ResetPasswordPage() {
         
         if (resetMethod === 'custom') {
             // Handle custom reset
-            console.log("🔄 Processing custom password reset...")
             try {
                 const response = await fetch('/api/auth/update-password', {
                     method: 'POST',
@@ -224,7 +213,6 @@ export default function ResetPasswordPage() {
             }
         } else {
             // Handle Supabase reset
-            console.log("🔄 Processing Supabase password reset...")
             const { error } = await supabase.auth.updateUser({ password })
 
             if (error) {

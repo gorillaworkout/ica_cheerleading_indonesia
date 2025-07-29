@@ -16,7 +16,7 @@ export const fetchJudges = createAsyncThunk(
   'judges/fetchJudges',
   async (_, { rejectWithValue }) => {
     try {
-      console.log('🔄 Fetching judges...')
+      // console.log('🔄 Fetching judges...')
       const { data, error } = await supabase
         .from('judges')
         .select('*')
@@ -28,7 +28,7 @@ export const fetchJudges = createAsyncThunk(
         throw error
       }
 
-      console.log('✅ Judges fetched successfully:', data?.length || 0)
+      // console.log('✅ Judges fetched successfully:', data?.length || 0)
       return data as Judge[]
     } catch (error: any) {
       console.error('❌ Failed to fetch judges:', error)
@@ -41,7 +41,6 @@ export const fetchAllJudges = createAsyncThunk(
   'judges/fetchAllJudges',
   async (_, { rejectWithValue }) => {
     try {
-      console.log('🔄 Fetching all judges (including inactive)...')
       const { data, error } = await supabase
         .from('judges')
         .select('*')
@@ -52,7 +51,6 @@ export const fetchAllJudges = createAsyncThunk(
         throw error
       }
 
-      console.log('✅ All judges fetched successfully:', data?.length || 0)
       return data as Judge[]
     } catch (error: any) {
       console.error('❌ Failed to fetch all judges:', error)
@@ -65,7 +63,6 @@ export const fetchJudgeById = createAsyncThunk(
   'judges/fetchJudgeById',
   async (id: string, { rejectWithValue }) => {
     try {
-      console.log('🔄 Fetching judge by ID:', id)
       const { data, error } = await supabase
         .from('judges')
         .select('*')
@@ -77,7 +74,6 @@ export const fetchJudgeById = createAsyncThunk(
         throw error
       }
 
-      console.log('✅ Judge fetched successfully:', data?.name)
       return data as Judge
     } catch (error: any) {
       console.error('❌ Failed to fetch judge:', error)
@@ -90,7 +86,6 @@ export const createJudge = createAsyncThunk(
   'judges/createJudge',
   async (judgeData: CreateJudgeRequest, { rejectWithValue }) => {
     try {
-      console.log('🔄 Creating new judge:', judgeData.name)
       
       // Get current user
       const { data: { user } } = await supabase.auth.getUser()
@@ -115,7 +110,6 @@ export const createJudge = createAsyncThunk(
         throw error
       }
 
-      console.log('✅ Judge created successfully:', data?.name)
       return data as Judge
     } catch (error: any) {
       console.error('❌ Failed to create judge:', error)
@@ -128,7 +122,6 @@ export const updateJudge = createAsyncThunk(
   'judges/updateJudge',
   async ({ id, ...updateData }: UpdateJudgeRequest, { rejectWithValue }) => {
     try {
-      console.log('🔄 Updating judge:', id)
       
       // Get current user
       const { data: { user } } = await supabase.auth.getUser()
@@ -153,7 +146,6 @@ export const updateJudge = createAsyncThunk(
         throw error
       }
 
-      console.log('✅ Judge updated successfully:', data?.name)
       return data as Judge
     } catch (error: any) {
       console.error('❌ Failed to update judge:', error)
@@ -166,7 +158,6 @@ export const deleteJudge = createAsyncThunk(
   'judges/deleteJudge',
   async (id: string, { rejectWithValue }) => {
     try {
-      console.log('🔄 Deleting judge:', id)
       
       const { error } = await supabase
         .from('judges')
@@ -177,8 +168,6 @@ export const deleteJudge = createAsyncThunk(
         console.error('❌ Error deleting judge:', error)
         throw error
       }
-
-      console.log('✅ Judge deleted successfully')
       return id
     } catch (error: any) {
       console.error('❌ Failed to delete judge:', error)
