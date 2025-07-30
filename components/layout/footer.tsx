@@ -26,7 +26,7 @@ export function Footer() {
                 <div className="absolute -inset-1 bg-gradient-to-r from-red-400 to-white rounded-full opacity-75 group-hover:opacity-100 blur transition duration-300"></div>
                 <div className="relative">
                   <Image 
-                    src="/ica-rounded.png" 
+                    src="/ica-rounded.webp" 
                     alt="ICA Logo" 
                     width={60} 
                     height={60}

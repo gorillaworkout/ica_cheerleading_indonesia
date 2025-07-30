@@ -55,7 +55,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {/* Icons - Progressive Web App */}
         <link rel="icon" href="/ica-text.png" sizes="any" style={{ width: 'auto' , height:'auto' }} />
         <link rel="icon" href="/ica-text.png" type="image/png"  style={{ width: 'auto' , height:'auto' }} />
-        <link rel="apple-touch-icon" href="/ica-rounded.png" />
+        <link rel="apple-touch-icon" href="/ica-rounded.webp" />
         <link rel="shortcut icon" href="/ica-text.png"  style={{ width: 'auto' , height:'auto' }} />
         
         {/* Structured Data - Organization */}
