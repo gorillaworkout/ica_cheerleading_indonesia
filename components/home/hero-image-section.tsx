@@ -16,6 +16,7 @@ interface Slide {
 interface HeroImageSectionProps {
   heroSlides?: Slide[]
   showTextAndButtons?: boolean
+  onImageLoad?: () => void
 }
 
 // Inline HeroOverlayContent untuk avoid import issues
@@ -69,6 +70,7 @@ interface HeroImageSectionProps {
 export function HeroImageSection({
   heroSlides = [],
   showTextAndButtons = true,
+  onImageLoad,
 }: HeroImageSectionProps) {
   const [currentSlide, setCurrentSlide] = useState(0)
   
@@ -155,6 +157,7 @@ export function HeroImageSection({
               alt={image.alt || "ICA Indonesia Cheerleading Competition"}
               priority={isFirstSlide}
               className="transition-transform duration-700 ease-in-out hover:scale-105"
+              onLoad={isFirstSlide && onImageLoad ? onImageLoad : undefined}
             />
 
             {showTextAndButtons && isCurrentSlide && (

@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { HeroSection } from "@/components/home/hero-section"
 import { IntroSection } from "@/components/home/intro-section"
 import { NewsSection } from "@/components/home/news-section"
@@ -14,6 +14,7 @@ import { generateSEOMetadata, generateJSONLD, breadcrumbSchema } from "@/lib/seo
 import { useToast } from "@/hooks/use-toast"
 import { useSEO } from "@/hooks/use-seo"
 import { HeroImageSection } from "@/components/home/hero-image-section"
+import InitialLoader from "@/components/ui/initial-loader"
 // Metadata moved to layout.tsx since this is now a client component
 
 const breadcrumbs = breadcrumbSchema([
@@ -22,6 +23,10 @@ const breadcrumbs = breadcrumbSchema([
 
 export default function HomePage() {
   const { toast } = useToast()
+  const [isReady, setIsReady] = useState(false)
+  const heroSlides = [
+    { src: "/ica-hero.webp", alt: "ICA Cheerleading Indonesia Hero Image" }
+  ]
 
   // Set SEO for homepage
   useSEO({
@@ -98,11 +103,16 @@ export default function HomePage() {
       localStorage.removeItem("justLoggedOut")
     }
   }, [toast])
-  const heroSlides = [
-    { src: "/ica-hero.webp", alt: "ICA Cheerleading Indonesia Hero Image" }
-  ]
+
+  // Fungsi untuk handle image load
+  const handleHeroImageLoad = () => {
+    setIsReady(true)
+  }
+
   return (
     <div className="min-h-screen bg-white">
+      {/* Loader Splash */}
+      {!isReady && <InitialLoader />}
       {/* Structured Data - Breadcrumbs */}
       <script
         type="application/ld+json"
@@ -110,12 +120,10 @@ export default function HomePage() {
           __html: generateJSONLD(breadcrumbs)
         }}
       />
-      
       <Header />
       <main>
         <div className="w-full h-screen">
-          {/* <HeroSection showTextAndButtons={false} /> */}
-          <HeroImageSection heroSlides={heroSlides} showTextAndButtons={false} />
+          <HeroImageSection heroSlides={heroSlides} showTextAndButtons={false} onImageLoad={handleHeroImageLoad} />
         </div>
         <ScrollAnimation delay={0.1} direction="up">
           <div id="introSection">
