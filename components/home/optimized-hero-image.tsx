@@ -31,7 +31,7 @@ export function OptimizedHeroImage({
         src={src}
         alt={alt}
         fill
-        className={`object-cover w-full h-full transition-opacity duration-300 ${
+        className={`object-cover h-[70vh] w-auto mx-auto transition-opacity duration-300 ${
           isLoaded ? 'opacity-100' : 'opacity-0'
         } ${className}`}
         priority={priority}

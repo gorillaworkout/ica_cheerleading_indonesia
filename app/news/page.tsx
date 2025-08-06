@@ -63,8 +63,8 @@ export default function NewsPage() {
                     {newsList && [...newsList]
                         .sort((a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime())
                         .map((article: any) => (
-                        <Card key={article.id} className="overflow-hidden hover:shadow-lg transition-shadow bg-white">
-                            <div className="relative h-48">
+                        <Card key={article.id} className="relative overflow-hidden rounded-3xl shadow-lg border border-gray-100 bg-gradient-to-br from-white via-gray-50 to-gray-100 h-full flex flex-col justify-between group transition-transform duration-300 hover:-translate-y-1 hover:shadow-2xl">
+                            <div className="relative h-48 w-full">
                                 <Image
                                     src={article.images && article.images[0] 
                                         ? (article.images[0].startsWith("https://")
@@ -75,28 +75,38 @@ export default function NewsPage() {
                                         : "/placeholder.svg"}
                                     alt={article.title}
                                     fill
-                                    className="object-cover"
+                                    className="object-cover rounded-t-3xl group-hover:scale-105 transition-transform duration-500"
                                 />
-                                <span className="absolute top-4 left-4 bg-red-600 text-white px-2 py-1 rounded text-xs font-semibold">
-                                    {article.category}
-                                </span>
-                            </div>
-                            <CardHeader>
-                                <div className="flex items-center text-sm text-gray-500 mb-2">
-                                    <Calendar className="h-4 w-4 mr-1" />
-                                    {formatDate(article.date)}
+                                <div className="absolute top-4 left-4 flex gap-2 items-center">
+                                    <span className="bg-gradient-to-r from-red-600 to-pink-500 text-white px-3 py-1 rounded-full text-xs font-semibold shadow">
+                                        {article.category}
+                                    </span>
+                                    <span className="bg-white/80 text-gray-700 px-2 py-1 rounded text-xs font-medium flex items-center gap-1 shadow">
+                                        <Calendar className="h-4 w-4 mr-1" />
+                                        {formatDate(article.date)}
+                                    </span>
                                 </div>
-                                <CardTitle className="text-xl line-clamp-2" dangerouslySetInnerHTML={{ __html: article.title }}></CardTitle>
+                            </div>
+                            <CardHeader className="px-6 pt-6 pb-2">
+                                <CardTitle className="text-xl font-bold text-gray-900 line-clamp-2 mb-2 group-hover:text-red-600 transition-colors duration-300" dangerouslySetInnerHTML={{ __html: article.title }}></CardTitle>
                             </CardHeader>
-                            <CardContent>
-                                <p className="text-gray-400 mb-4 line-clamp-3" dangerouslySetInnerHTML={{ __html: article.content }}></p>
+                            <CardContent className="px-6 pb-20 pt-0 flex-1">
+                                <p className="text-gray-500 mb-4 line-clamp-3 text-base leading-relaxed">
+                                    <span dangerouslySetInnerHTML={{ __html: article.content }} />
+                                </p>
+                            </CardContent>
+                            <div className="absolute left-0 right-0 bottom-0 px-6 pb-6">
                                 <Link href={`/news/${article.slug}`}>
-                                    <Button variant="outline" className="w-full group bg-transparent" aria-label={`Read full article: ${article.title}`}>
-                                        Read Full Article
-                                        <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                                    <Button 
+                                        variant="outline" 
+                                        className="w-full bg-gradient-to-r from-red-600 via-pink-500 to-red-500 text-white font-bold py-3 rounded-xl shadow-lg border-0 group-hover:from-pink-500 group-hover:to-red-600 transition-all duration-300 flex items-center justify-center gap-2 text-base tracking-wide hover:scale-105 hover:shadow-xl"
+                                        aria-label={`Read full article: ${article.title}`}
+                                    >
+                                        <span>Read Full Article</span>
+                                        <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform duration-300" />
                                     </Button>
                                 </Link>
-                            </CardContent>
+                            </div>
                         </Card>
                     ))}
                 </div>

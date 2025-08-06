@@ -1,26 +1,14 @@
 "use client";
 
-import { useEffect } from "react";
-import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
-import { fetchPublicImages } from "@/features/publicImages/publicImagesSlice";
 import { ScrollAnimation } from "@/components/ui/scroll-animation-safe";
 
-
 const logos = [
-  { name: "/icu-logo.webp", short: "ICU", link: "https://cheerunion.org" },
-  { name: "/acu-logo.webp", short: "ACU", link: "https://cheerunion.org" },
-  { name: "/ICA/Logo-Box.webp", short: "ICA", link: "https://indonesiancheer.org" },
+  { src: "/icu-logo.webp", short: "ICU", link: "https://cheerunion.org" },
+  { src: "/acu-logo.webp", short: "ACU", link: "https://cheerunion.org" },
+  { src: "/ICA-Logo-Box.webp", short: "ICA", link: "https://indonesiancheer.org" },
 ];
 
 export default function CheerOrganizationsSection() {
-  const dispatch = useAppDispatch()
-
-  const { images } = useAppSelector((state) => state.publicImages)
-  useEffect(() => {
-    if (images.length === 0) {
-      dispatch(fetchPublicImages())
-    }
-  }, [dispatch, images.length])
   return (
     <section className="py-12 bg-gray-50">
       <div className="container mx-auto px-4">
@@ -31,35 +19,29 @@ export default function CheerOrganizationsSection() {
         </ScrollAnimation>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {logos.map((logo, index) => {
-            const matchedImg = images.find((img) => img.name === logo.name)
-            return (
-              <ScrollAnimation key={logo.name} delay={0.2 + (index * 0.1)} direction="up">
-                <div 
-                  className="bg-white rounded-2xl p-6 flex flex-col items-center justify-center border shadow-md hover:shadow-xl transition-all cursor-pointer transform hover:scale-105"
-                  onClick={() => window.open(logo.link, '_blank')}
-                  role="button"
-                  tabIndex={0}
-                  aria-label={`Visit ${logo.name} organization website`}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      e.preventDefault();
-                      window.open(logo.link, '_blank');
-                    }
-                  }}
-                >
-                  {matchedImg && (
-                    <img
-                      src={matchedImg.url}
-                      alt={logo.name}
-                      className="w-36 h-36 md:w-48 md:h-48 object-contain mb-4"
-                    />
-                  )}
-                  {/* <p className="text-sm text-gray-600 font-medium">{logo.short}</p> */}
-                </div>
-              </ScrollAnimation>
-            )
-          })}
+          {logos.map((logo, index) => (
+            <ScrollAnimation key={logo.src} delay={0.2 + (index * 0.1)} direction="up">
+              <div 
+                className="bg-white rounded-2xl p-6 flex flex-col items-center justify-center border shadow-md hover:shadow-xl transition-all cursor-pointer transform hover:scale-105"
+                onClick={() => window.open(logo.link, '_blank')}
+                role="button"
+                tabIndex={0}
+                aria-label={`Visit ${logo.short} organization website`}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    window.open(logo.link, '_blank');
+                  }
+                }}
+              >
+                <img
+                  src={logo.src}
+                  alt={logo.short + " logo"}
+                  className="w-36 h-36 md:w-48 md:h-48 object-contain mb-4"
+                />
+              </div>
+            </ScrollAnimation>
+          ))}
         </div>
       </div>
     </section>
