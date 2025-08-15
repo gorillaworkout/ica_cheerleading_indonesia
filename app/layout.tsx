@@ -41,22 +41,91 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="id" suppressHydrationWarning>
       <head>
-        {/* Preconnect untuk performance */}
+        {/* Ultra-aggressive preload untuk LCP optimization */}
+        <link
+          rel="preload"
+          href="/ica-hero.webp"
+          as="image"
+          type="image/webp"
+          fetchPriority="high"
+          crossOrigin="anonymous"
+        />
+        
+        {/* Preload fonts */}
+        <link
+          rel="preload"
+          href="/righteous-Regular.ttf"
+          as="font"
+          type="font/ttf"
+          crossOrigin="anonymous"
+        />
+        
+        {/* DNS prefetch untuk external resources */}
+        <link rel="dns-prefetch" href="//fonts.googleapis.com" />
+        <link rel="dns-prefetch" href="//fonts.gstatic.com" />
+        
+        {/* Resource hints */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
         
-        {/* PWA Manifest */}
-        <link rel="manifest" href="/manifest.json" />
-        <meta name="theme-color" content="#e11d48" />
-        <meta name="mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-        <meta name="apple-mobile-web-app-title" content="ICA" />
+        {/* Critical CSS inline untuk hero - bypass semua external CSS dan React */}
+        <style dangerouslySetInnerHTML={{
+          __html: `
+            .hero-bypass-all {
+              position: absolute !important;
+              top: 0 !important;
+              left: 0 !important;
+              width: 100% !important;
+              height: 100% !important;
+              object-fit: cover !important;
+              z-index: 1 !important;
+              display: block !important;
+              visibility: visible !important;
+              opacity: 1 !important;
+              will-change: auto !important;
+              backface-visibility: visible !important;
+              transform: translateZ(0) !important;
+              contain: layout style paint !important;
+              isolation: isolate !important;
+            }
+            
+            .hero-immediate-paint {
+              paint-order: stroke fill markers !important;
+              vector-effect: non-scaling-stroke !important;
+            }
+            
+            /* Force immediate paint tanpa delay */
+            .hero-force-paint {
+              contain: layout style paint !important;
+              isolation: isolate !important;
+              will-change: auto !important;
+              backface-visibility: visible !important;
+              transform: translateZ(0) !important;
+            }
+            
+            /* Bypass semua CSS conflicts */
+            .hero-no-conflicts {
+              all: unset !important;
+              position: absolute !important;
+              top: 0 !important;
+              left: 0 !important;
+              width: 100% !important;
+              height: 100% !important;
+              object-fit: cover !important;
+              z-index: 1 !important;
+            }
+          `
+        }} />
         
-        {/* Icons - Progressive Web App */}
-        <link rel="icon" href="/ica-text.png" sizes="any" style={{ width: 'auto' , height:'auto' }} />
-        <link rel="icon" href="/ica-text.png" type="image/png"  style={{ width: 'auto' , height:'auto' }} />
-        <link rel="apple-touch-icon" href="/ica-rounded.webp" />
-        <link rel="shortcut icon" href="/ica-text.png"  style={{ width: 'auto' , height:'auto' }} />
+        {/* Default SEO Meta Tags - will be overridden by page-specific ones */}
+        <link rel="alternate" hrefLang="id" href="https://indonesiancheer.org" />
+        <link rel="alternate" hrefLang="x-default" href="https://indonesiancheer.org" />
+        
+        <meta name="format-detection" content="telephone=no" />
+        
+        {/* Security */}
+        <meta httpEquiv="X-Content-Type-Options" content="nosniff" />
+        <meta httpEquiv="X-XSS-Protection" content="1; mode=block" />
         
         {/* Structured Data - Organization */}
         <script
@@ -77,20 +146,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {/* Performance hints - Critical untuk LCP optimization */}
         <link rel="dns-prefetch" href="//indonesiancheer.org" />
         <link rel="preconnect" href="https://indonesiancheer.org" />
-        
-        {/* Resource hints untuk font optimization */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" crossOrigin="anonymous" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        
-        {/* Default SEO Meta Tags - will be overridden by page-specific ones */}
-        <link rel="alternate" hrefLang="id" href="https://indonesiancheer.org" />
-        <link rel="alternate" hrefLang="x-default" href="https://indonesiancheer.org" />
-        
-        <meta name="format-detection" content="telephone=no" />
-        
-        {/* Security */}
-        <meta httpEquiv="X-Content-Type-Options" content="nosniff" />
-        <meta httpEquiv="X-XSS-Protection" content="1; mode=block" />
       </head>
       <body className={`${inter.className} ${inter.variable}`}>
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>

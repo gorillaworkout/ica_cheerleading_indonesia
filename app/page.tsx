@@ -15,6 +15,8 @@ import { useToast } from "@/hooks/use-toast"
 import { useSEO } from "@/hooks/use-seo"
 import { HeroImageSection } from "@/components/home/hero-image-section"
 import InitialLoader from "@/components/ui/initial-loader"
+import HeroLCP from "@/components/home/hero-lcp"
+
 // Metadata moved to layout.tsx since this is now a client component
 
 const breadcrumbs = breadcrumbSchema([
@@ -104,7 +106,16 @@ export default function HomePage() {
     }
   }, [toast])
 
-  // Fungsi untuk handle image load
+  // Auto-hide loader after 25ms untuk bypass React rendering delay
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsReady(true)
+    }, 25)
+
+    return () => clearTimeout(timer)
+  }, [])
+
+  // Fungsi untuk handle image load dari HeroLCP
   const handleHeroImageLoad = () => {
     setIsReady(true)
   }
@@ -113,6 +124,7 @@ export default function HomePage() {
     <div className="min-h-screen bg-white">
       {/* Loader Splash */}
       {!isReady && <InitialLoader />}
+      
       {/* Structured Data - Breadcrumbs */}
       <script
         type="application/ld+json"
@@ -120,29 +132,42 @@ export default function HomePage() {
           __html: generateJSONLD(breadcrumbs)
         }}
       />
+      
       <Header />
+      
       <main>
         <div className="w-full h-screen">
-          <HeroImageSection heroSlides={heroSlides} showTextAndButtons={false} onImageLoad={handleHeroImageLoad} />
+          {/* HeroLCP - Super Optimized untuk LCP yang cepat */}
+          <HeroLCP
+            title="ICA Cheerleading Indonesia"
+            subtitle="Welcome to the official cheerleading community"
+            onImageLoad={handleHeroImageLoad}
+          />
         </div>
+        
         <ScrollAnimation delay={0.1} direction="up">
           <div id="introSection">
             <IntroSection />
           </div>
         </ScrollAnimation>
+        
         <ScrollAnimation delay={0.1} direction="up">
           <NewsSection />
         </ScrollAnimation>
+        
         <ScrollAnimation delay={0.1} direction="right">
           <TeamLogoSlider />  
         </ScrollAnimation>
+        
         <ScrollAnimation delay={0.1} direction="right">
           <CheerOrganizationsSection/>
         </ScrollAnimation>
+        
         <ScrollAnimation delay={0.1} direction="right">
           <ChampionshipSection/>
         </ScrollAnimation>
       </main>
+      
       <Footer />
     </div>
   )
