@@ -31,9 +31,11 @@ import {
   Download,
   RefreshCw
 } from "lucide-react"
+import { LevelIndicator } from "@/utils/levelIndicator"
 import { Judge } from "@/types/judges"
 import Image from "next/image"
 import { generateStorageUrl } from "@/utils/getPublicImageUrl"
+import { useToast } from "@/hooks/use-toast"
 
 interface JudgesTableProps {
   onEdit: (judge: Judge) => void
@@ -44,23 +46,45 @@ export function JudgesTable({ onEdit, onAdd }: JudgesTableProps) {
   const dispatch = useAppDispatch()
   const judges = useAppSelector(selectJudges)
   const loading = useAppSelector(selectJudgesLoading)
+  const { toast } = useToast()
   
   const [searchTerm, setSearchTerm] = useState("")
   const [filterStatus, setFilterStatus] = useState<"all" | "active" | "inactive">("all")
   const [filterLevel, setFilterLevel] = useState<string>("all")
+  const [deleteConfirm, setDeleteConfirm] = useState<Judge | null>(null)
 
   useEffect(() => {
     dispatch(fetchAllJudges())
   }, [dispatch])
 
-  const handleDelete = async (judge: Judge) => {
-    if (window.confirm(`Are you sure you want to delete judge "${judge.name}"?`)) {
-      try {
-        await dispatch(deleteJudge(judge.id)).unwrap()
-      } catch (error) {
-        console.error("Error deleting judge:", error)
-      }
+  const handleDelete = (judge: Judge) => {
+    setDeleteConfirm(judge)
+  }
+
+  const confirmDelete = async () => {
+    if (!deleteConfirm) return
+    
+    try {
+      await dispatch(deleteJudge(deleteConfirm.id)).unwrap()
+      toast({
+        title: "Berhasil",
+        description: `Judge "${deleteConfirm.name}" berhasil dihapus.`,
+        variant: "default",
+      })
+    } catch (error) {
+      console.error("Error deleting judge:", error)
+      toast({
+        title: "Gagal",
+        description: `Gagal menghapus judge "${deleteConfirm.name}".`,
+        variant: "destructive",
+      })
     }
+    
+    setDeleteConfirm(null)
+  }
+
+  const cancelDelete = () => {
+    setDeleteConfirm(null)
   }
 
   const handleRefresh = () => {
@@ -78,13 +102,21 @@ export function JudgesTable({ onEdit, onAdd }: JudgesTableProps) {
                          !judge.is_active
     
     const matchesLevel = filterLevel === "all" ? true :
-                        judge.certification_level === filterLevel
+                        (() => {
+                          if (filterLevel === "L1") return judge.certification_level.includes("Level 1")
+                          if (filterLevel === "L2") return judge.certification_level.includes("Level 2")
+                          if (filterLevel === "L3") return judge.certification_level.includes("Level 3")
+                          if (filterLevel === "L4") return judge.certification_level.includes("Level 4")
+                          if (filterLevel === "INT") return judge.certification_level.includes("International")
+                          return false
+                        })()
 
     return matchesSearch && matchesStatus && matchesLevel
   })
 
   return (
-    <Card>
+    <>
+      <Card>
       <CardHeader>
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <CardTitle className="flex items-center space-x-2">
@@ -139,11 +171,11 @@ export function JudgesTable({ onEdit, onAdd }: JudgesTableProps) {
             className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
           >
             <option value="all">All Levels</option>
-            <option value="Level 1">Level 1</option>
-            <option value="Level 2">Level 2</option>
-            <option value="Level 3">Level 3</option>
-            <option value="Level 4">Level 4</option>
-            <option value="International">International</option>
+            <option value="L1">L1</option>
+            <option value="L2">L2</option>
+            <option value="L3">L3</option>
+            <option value="L4">L4</option>
+            <option value="INT">INT</option>
           </select>
         </div>
       </CardHeader>
@@ -180,7 +212,7 @@ export function JudgesTable({ onEdit, onAdd }: JudgesTableProps) {
                   <TableHead>Name</TableHead>
                   <TableHead>Title</TableHead>
                   <TableHead>Specialization</TableHead>
-                  <TableHead>Level</TableHead>
+                  {/* <TableHead>Level</TableHead> */}
                   <TableHead>Experience</TableHead>
                   <TableHead>Competitions</TableHead>
                   <TableHead>Status</TableHead>
@@ -214,43 +246,21 @@ export function JudgesTable({ onEdit, onAdd }: JudgesTableProps) {
                     <TableCell>
                       <span className="text-sm">{judge.specialization}</span>
                     </TableCell>
-                    <TableCell>
-                      <div className={`inline-flex items-center space-x-1 px-2 py-1 rounded-full text-xs font-medium ${
-                        judge.certification_level === 'International' 
-                          ? 'bg-purple-100 text-purple-800 border border-purple-200'
-                          : judge.certification_level === 'Level 4'
-                          ? 'bg-red-100 text-red-800 border border-red-200'
-                          : judge.certification_level === 'Level 3'
-                          ? 'bg-orange-100 text-orange-800 border border-orange-200'
-                          : judge.certification_level === 'Level 2'
-                          ? 'bg-emerald-100 text-emerald-800 border border-emerald-200'
-                          : 'bg-slate-100 text-slate-800 border border-slate-200'
-                      }`}>
-                        {judge.certification_level === 'International' ? (
-                          <>
-                            <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                            </svg>
-                            <span>INT</span>
-                          </>
-                        ) : (
-                          <>
-                            <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                              <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/>
-                            </svg>
-                            <span>{judge.certification_level.replace('Level ', 'L')}</span>
-                          </>
-                        )}
-                      </div>
-                    </TableCell>
+                    {/* <TableCell>
+                      <LevelIndicator 
+                        certificationLevel={judge.certification_level}
+                        variant="badge"
+                        size="sm"
+                      />
+                    </TableCell> */}
                     <TableCell>
                       <span className="text-sm">{judge.experience}</span>
                     </TableCell>
-                                          <TableCell>
+                    <TableCell>
                         <div className="text-center">
                           <span className="font-medium text-red-600">{judge.competitions_judged}</span>
                         </div>
-                      </TableCell>
+                    </TableCell>
                     <TableCell>
                       <Badge variant={judge.is_active ? "default" : "secondary"}>
                         {judge.is_active ? "Active" : "Inactive"}
@@ -300,5 +310,42 @@ export function JudgesTable({ onEdit, onAdd }: JudgesTableProps) {
         )}
       </CardContent>
     </Card>
+
+    {/* Delete Confirmation Dialog */}
+    {deleteConfirm && (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+          <div className="flex items-center space-x-3 mb-4">
+            <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
+              <Trash2 className="w-5 h-5 text-red-600" />
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900">Konfirmasi Hapus</h3>
+              <p className="text-sm text-gray-500">Tindakan ini tidak dapat dibatalkan</p>
+            </div>
+          </div>
+          
+          <p className="text-gray-700 mb-6">
+            Apakah Anda yakin ingin menghapus judge <strong>"{deleteConfirm?.name}"</strong>?
+          </p>
+          
+          <div className="flex space-x-3 justify-end">
+            <Button
+              variant="outline"
+              onClick={cancelDelete}
+            >
+              Batal
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={confirmDelete}
+            >
+              Hapus Judge
+            </Button>
+          </div>
+        </div>
+      </div>
+    )}
+    </>
   )
 } 

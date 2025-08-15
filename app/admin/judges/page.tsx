@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { JudgesTable } from "@/components/admin/judges-table"
 import { AddJudgeForm } from "@/components/admin/add-judge-form"
 import { Button } from "@/components/ui/button"
@@ -8,10 +8,23 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Scale, ArrowLeft, Users, Award, Trophy } from "lucide-react"
 import { Judge } from "@/types/judges"
 import Link from "next/link"
+import { useAppSelector, useAppDispatch } from "@/lib/redux/hooks"
+import { selectJudges, selectFeaturedJudges, selectActiveJudges, fetchAllJudges } from "@/features/judges/judgesSlice"
 
 export default function AdminJudgesPage() {
   const [showForm, setShowForm] = useState(false)
   const [editingJudge, setEditingJudge] = useState<Judge | null>(null)
+  const dispatch = useAppDispatch()
+
+  // Get judges data from Redux store
+  const allJudges = useAppSelector(selectJudges)
+  const featuredJudges = useAppSelector(selectFeaturedJudges)
+  const activeJudges = useAppSelector(selectActiveJudges)
+
+  // Fetch judges data when component mounts
+  useEffect(() => {
+    dispatch(fetchAllJudges())
+  }, [dispatch])
 
   const handleAddJudge = () => {
     setEditingJudge(null)
@@ -40,12 +53,17 @@ export default function AdminJudgesPage() {
         <div className="mb-8">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
-              <Link href="/admin">
-                <Button variant="outline" size="sm">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setEditingJudge(null);
+                    setShowForm(false);
+                  }}
+                >
                   <ArrowLeft className="h-4 w-4 mr-2" />
                   Back to Admin
                 </Button>
-              </Link>
               <div>
                 <h1 className="text-3xl font-bold text-gray-900">
                   {editingJudge ? "Edit Judge" : "Add New Judge"}
@@ -74,12 +92,6 @@ export default function AdminJudgesPage() {
       <div className="mb-8">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
-            <Link href="/admin">
-              <Button variant="outline" size="sm">
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                Back to Admin
-              </Button>
-            </Link>
             <div>
               <h1 className="text-3xl font-bold text-gray-900">Judges Management</h1>
               <p className="text-gray-600 mt-1">Manage certified judges and their credentials</p>
@@ -96,7 +108,7 @@ export default function AdminJudgesPage() {
             <Scale className="h-4 w-4 text-red-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-red-600">-</div>
+            <div className="text-2xl font-bold text-red-600">{allJudges.length}</div>
             <p className="text-xs text-gray-600">Certified judges</p>
           </CardContent>
         </Card>
@@ -107,7 +119,7 @@ export default function AdminJudgesPage() {
             <Users className="h-4 w-4 text-red-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-red-600">-</div>
+            <div className="text-2xl font-bold text-red-600">{activeJudges.length}</div>
             <p className="text-xs text-gray-600">Currently active</p>
           </CardContent>
         </Card>
@@ -118,7 +130,7 @@ export default function AdminJudgesPage() {
             <Award className="h-4 w-4 text-red-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-red-600">-</div>
+            <div className="text-2xl font-bold text-red-600">{featuredJudges.length}</div>
             <p className="text-xs text-gray-600">Featured profiles</p>
           </CardContent>
         </Card>

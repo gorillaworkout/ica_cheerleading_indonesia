@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Scale, Users, Award, Gavel, Medal, ShieldCheck } from "lucide-react"
+import { LevelIndicator } from "@/utils/levelIndicator"
 import Image from "next/image"
 import { useAppSelector, useAppDispatch } from "@/lib/redux/hooks"
 import { selectJudges, selectJudgesLoading, fetchJudges } from "@/features/judges/judgesSlice"
@@ -200,33 +201,11 @@ export default function Judges() {
                         </div>
                         
                         {/* Enhanced Certification Level Indicator */}
-                        <div className={`absolute -bottom-2 -right-2 flex items-center space-x-1 px-3 py-1.5 rounded-full text-xs font-semibold shadow-lg border-2 border-white transform hover:scale-105 transition-all duration-200 ${
-                          judge.certification_level === 'International' 
-                            ? 'bg-gradient-to-r from-purple-500 via-purple-600 to-purple-700 text-white'
-                            : judge.certification_level === 'Level 4'
-                            ? 'bg-gradient-to-r from-red-500 via-red-600 to-red-700 text-white'
-                            : judge.certification_level === 'Level 3'
-                            ? 'bg-gradient-to-r from-orange-500 via-orange-600 to-orange-700 text-white'
-                            : judge.certification_level === 'Level 2'
-                            ? 'bg-emerald-500 via-emerald-600 to-emerald-700 text-white'
-                            : 'bg-slate-500 via-slate-600 to-slate-700 text-white'
-                        }`}>
-                          {judge.certification_level === 'International' ? (
-                            <>
-                              <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                              </svg>
-                              <span>INT</span>
-                            </>
-                          ) : (
-                            <>
-                              <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                                <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/>
-                              </svg>
-                              <span>{judge.certification_level.replace('Level ', 'L')}</span>
-                            </>
-                          )}
-                        </div>
+                        <LevelIndicator 
+                          certificationLevel={judge.certification_level}
+                          variant="overlay"
+                          size="md"
+                        />
                       </div>
                       
                       <CardTitle className="text-xl text-gray-900 mb-2 group-hover:text-red-600 transition-colors duration-200">{judge.name}</CardTitle>
@@ -234,20 +213,11 @@ export default function Judges() {
                       <p className="text-gray-500 text-xs mb-3">{getProvinceName(judge.location)}</p>
                       
                       {/* Clean Certification Level Badge */}
-                      <div className={`inline-flex justify-center items-center space-x-1 px-3 py-1 rounded-full text-xs font-medium ${
-                        judge.certification_level === 'International' 
-                          ? 'bg-purple-100 text-purple-800 border border-purple-200'
-                          : judge.certification_level === 'Level 4'
-                          ? 'bg-red-100 text-red-800 border border-red-200'
-                          : judge.certification_level === 'Level 3'
-                          ? 'bg-orange-100 text-orange-800 border border-orange-200'
-                          : judge.certification_level === 'Level 2'
-                          ? 'bg-emerald-100 text-emerald-800 border border-emerald-200'
-                          : 'bg-slate-100 text-slate-800 border border-slate-200'
-                      }`}>
-                        <Scale className="w-3 h-3" />
-                        <span>{judge.certification_level}</span>
-                      </div>
+                      <LevelIndicator 
+                        certificationLevel={judge.certification_level}
+                        variant="badge"
+                        size="sm"
+                      />
                     </CardHeader>
                     
                     <CardContent className="space-y-4 pt-2">

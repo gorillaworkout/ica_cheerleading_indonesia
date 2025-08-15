@@ -1,16 +1,21 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks"
 import { createJudge, updateJudge, selectJudgesLoading } from "@/features/judges/judgesSlice"
+import { fetchLicenseCourses, selectAllLicenseCourses } from "@/features/license-courses/licenseCoursesSlice"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { X, Plus, Scale, Save, Loader2 } from "lucide-react"
+import { X, Plus, Scale, Save, Loader2, Upload, Camera, Trash2 } from "lucide-react"
 import { Judge } from "@/types/judges"
+import { LicenseCourse } from "@/types/license-courses"
+import { uploadJudgeProfileImage, deleteJudgeProfileImage, validateImageFile } from "@/utils/uploadImage"
+import { generateStorageUrl } from "@/utils/getPublicImageUrl"
+import Image from "next/image"
 
 interface AddJudgeFormProps {
   judge?: Judge | null
@@ -21,6 +26,7 @@ interface AddJudgeFormProps {
 export function AddJudgeForm({ judge, onSuccess, onCancel }: AddJudgeFormProps) {
   const dispatch = useAppDispatch()
   const loading = useAppSelector(selectJudgesLoading)
+  const licenseCourses = useAppSelector(selectAllLicenseCourses)
 
   const [formData, setFormData] = useState({
     name: judge?.name || "",
@@ -34,7 +40,6 @@ export function AddJudgeForm({ judge, onSuccess, onCancel }: AddJudgeFormProps) 
     philosophy: judge?.philosophy || "",
     competitions_judged: judge?.competitions_judged || 0,
     years_experience: judge?.years_experience || 0,
-    certification_level: judge?.certification_level || "Level 1",
     is_active: judge?.is_active ?? true,
     is_featured: judge?.is_featured ?? false,
     sort_order: judge?.sort_order || 0,
@@ -46,6 +51,22 @@ export function AddJudgeForm({ judge, onSuccess, onCancel }: AddJudgeFormProps) 
   const [newCertification, setNewCertification] = useState("")
   const [newAchievement, setNewAchievement] = useState("")
   const [newSpecialty, setNewSpecialty] = useState("")
+
+  // Image upload state
+  const [selectedImage, setSelectedImage] = useState<File | null>(null)
+  const [imagePreview, setImagePreview] = useState<string | null>(
+    judge?.image_url ? generateStorageUrl(judge.image_url) : null
+  )
+  const [imageUploading, setImageUploading] = useState(false)
+  const [imageError, setImageError] = useState<string | null>(null)
+
+  // Fetch license courses on component mount
+  useEffect(() => {
+    dispatch(fetchLicenseCourses(false)) // Fetch all courses including inactive ones
+  }, [dispatch])
+
+  // Filter ICA courses only
+  // const icaCourses = licenseCourses.filter(course => course.organization === 'ICA')
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target
@@ -61,6 +82,34 @@ export function AddJudgeForm({ judge, onSuccess, onCancel }: AddJudgeFormProps) 
       ...prev,
       [name]: checked
     }))
+  }
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    // Validate file
+    const validation = validateImageFile(file)
+    if (!validation.valid) {
+      setImageError(validation.error ?? 'File tidak valid')
+      return
+    }
+
+    setImageError(null)
+    setSelectedImage(file)
+
+    // Create preview
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      setImagePreview(e.target?.result as string)
+    }
+    reader.readAsDataURL(file)
+  }
+
+  const removeImage = () => {
+    setSelectedImage(null)
+    setImagePreview(null)
+    setImageError(null)
   }
 
   const addCertification = () => {
@@ -99,14 +148,42 @@ export function AddJudgeForm({ judge, onSuccess, onCancel }: AddJudgeFormProps) 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    const judgeData = {
-      ...formData,
-      certifications,
-      achievements,
-      specialties,
-    }
-
     try {
+      let imageUrl = judge?.image_url || ""
+
+      // Handle image upload if new image is selected
+      if (selectedImage) {
+        setImageUploading(true)
+        
+        // Generate temporary ID for new judge
+        const tempId = judge?.id || `temp-${Date.now()}`
+        
+        const uploadResult = await uploadJudgeProfileImage(selectedImage, tempId)
+        
+        if (!uploadResult.success) {
+          setImageError(uploadResult.error ?? 'Upload gambar gagal')
+          setImageUploading(false)
+          return
+        }
+
+        // Delete old image if updating
+        if (judge?.image_url) {
+          await deleteJudgeProfileImage(judge.image_url)
+        }
+
+        imageUrl = uploadResult.path || ""
+        setImageUploading(false)
+      }
+
+      const judgeData = {
+        ...formData,
+        image_url: imageUrl,
+        certification_level: certifications.length > 0 ? certifications[0] : "",
+        certifications,
+        achievements,
+        specialties,
+      }
+
       if (judge) {
         await dispatch(updateJudge({ id: judge.id, ...judgeData })).unwrap()
       } else {
@@ -128,6 +205,85 @@ export function AddJudgeForm({ judge, onSuccess, onCancel }: AddJudgeFormProps) 
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Profile Photo Upload */}
+          <div className="space-y-4">
+            <Label>Foto Profil</Label>
+            <div className="flex items-center space-x-6">
+              {/* Current Image Preview */}
+              <div className="relative">
+                <div className="w-24 h-24 rounded-full overflow-hidden bg-gray-100 border-2 border-gray-200">
+                  {imagePreview ? (
+                    <Image
+                      src={imagePreview}
+                      alt="Profile preview"
+                      width={96}
+                      height={96}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center">
+                      <Camera className="h-8 w-8 text-gray-400" />
+                    </div>
+                  )}
+                </div>
+                
+                {/* Remove button for existing image */}
+                {judge?.image_url && !selectedImage && (
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    size="sm"
+                    className="absolute -top-2 -right-2 w-6 h-6 rounded-full p-0"
+                    onClick={removeImage}
+                  >
+                    <X className="h-3 w-3" />
+                  </Button>
+                )}
+              </div>
+
+              {/* Upload Controls */}
+              <div className="flex-1 space-y-3">
+                <div className="flex items-center space-x-3">
+                  <Input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    className="flex-1"
+                    disabled={imageUploading}
+                  />
+                  {selectedImage && (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={removeImage}
+                      disabled={imageUploading}
+                    >
+                      <Trash2 className="h-4 w-4 mr-2" />
+                      Hapus
+                    </Button>
+                  )}
+                </div>
+                
+                {/* File info and validation */}
+                {selectedImage && (
+                  <div className="text-sm text-gray-600">
+                    <p>File: {selectedImage.name}</p>
+                    <p>Ukuran: {(selectedImage.size / 1024 / 1024).toFixed(2)} MB</p>
+                  </div>
+                )}
+                
+                {imageError && (
+                  <p className="text-sm text-red-600">{imageError}</p>
+                )}
+                
+                <p className="text-xs text-gray-500">
+                  Format: JPG, PNG, GIF. Maksimal 2MB.
+                </p>
+              </div>
+            </div>
+          </div>
+
           {/* Basic Information */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
@@ -213,22 +369,7 @@ export function AddJudgeForm({ judge, onSuccess, onCancel }: AddJudgeFormProps) 
               />
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="certification_level">Certification Level</Label>
-              <select
-                id="certification_level"
-                name="certification_level"
-                value={formData.certification_level}
-                onChange={handleInputChange}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
-              >
-                <option value="Level 1">Level 1</option>
-                <option value="Level 2">Level 2</option>
-                <option value="Level 3">Level 3</option>
-                <option value="Level 4">Level 4</option>
-                <option value="International">International</option>
-              </select>
-            </div>
+
 
             <div className="space-y-2">
               <Label htmlFor="competitions_judged">Competitions Judged</Label>
@@ -297,17 +438,29 @@ export function AddJudgeForm({ judge, onSuccess, onCancel }: AddJudgeFormProps) 
             />
           </div>
 
-          {/* Certifications */}
+          {/* Certifications - Now using dropdown with ICA courses */}
           <div className="space-y-3">
-            <Label>Certifications</Label>
+            <Label>Certifications (ICA Courses)</Label>
             <div className="flex space-x-2">
-              <Input
+              <select
                 value={newCertification}
                 onChange={(e) => setNewCertification(e.target.value)}
-                placeholder="Add certification"
-                onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addCertification())}
-              />
-              <Button type="button" onClick={addCertification} size="sm">
+                className="flex-1 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
+                disabled={licenseCourses.length === 0}
+              >
+                <option value="">Pilih course ICA...</option>
+                {licenseCourses.map((course) => (
+                  <option key={course.id} value={course.course_name}>
+                    {course.course_name} {course.level ? `- ${course.level}` : ''}
+                  </option>
+                ))}
+              </select>
+              <Button 
+                type="button" 
+                onClick={addCertification} 
+                size="sm"
+                disabled={!newCertification.trim() || licenseCourses.length === 0}
+              >
                 <Plus className="h-4 w-4" />
               </Button>
             </div>
@@ -322,6 +475,9 @@ export function AddJudgeForm({ judge, onSuccess, onCancel }: AddJudgeFormProps) 
                 </Badge>
               ))}
             </div>
+            {licenseCourses.length === 0 && (
+              <p className="text-sm text-gray-500">Loading ICA courses...</p>
+            )}
           </div>
 
           {/* Achievements */}
@@ -412,8 +568,12 @@ export function AddJudgeForm({ judge, onSuccess, onCancel }: AddJudgeFormProps) 
                 Cancel
               </Button>
             )}
-            <Button type="submit" disabled={loading} className="bg-red-600 hover:bg-red-700">
-              {loading ? (
+            <Button 
+              type="submit" 
+              disabled={loading || imageUploading} 
+              className="bg-red-600 hover:bg-red-700"
+            >
+              {loading || imageUploading ? (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               ) : (
                 <Save className="mr-2 h-4 w-4" />
