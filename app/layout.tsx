@@ -1,41 +1,91 @@
 // app/layout.tsx
-import type React from "react"
-import type { Metadata } from "next"
-import { Inter } from "next/font/google"
-import "./globals.css"
-import { ThemeProvider } from "@/components/theme-provider"
-import { ReduxProvider } from "@/components/providers/redux-provider"
-import { AuthInitWrapper } from "@/components/auth/auth-init-wrapper"
-import { Toaster } from "@/components/ui/toaster"
-import { Analytics } from "@/components/analytics/analytics"
-import { generateSEOMetadata, generateJSONLD, organizationSchema, websiteSchema } from "@/lib/seo"
-// import { DebugPanel } from "@/components/dev/debug-panel"
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
+import "./globals.css";
+import { ThemeProvider } from "@/components/theme-provider";
+import { ReduxProvider } from "@/components/providers/redux-provider";
+import { AuthInitWrapper } from "@/components/auth/auth-init-wrapper";
+import { Toaster } from "@/components/ui/toaster";
 
 const inter = Inter({ 
   subsets: ["latin"],
-  display: "swap",
-  preload: true,
-  variable: "--font-inter"
-})
+  display: 'swap', // Optimize font loading
+  preload: true
+});
 
 // Preload hero image untuk LCP optimization
 const heroImagePreloadLink = `<link rel="preload" as="image" href="/ica-hero.webp" fetchpriority="high" type="image/webp">`
 
-export const metadata: Metadata = generateSEOMetadata({
+export const metadata: Metadata = {
   title: "ICA - Indonesian Cheer Association",
   description: "Platform resmi Indonesian Cheer Association untuk kompetisi cheerleading, edukasi, dan komunitas. Bergabunglah dengan komunitas cheerleading terbesar di Indonesia.",
-  keywords: [
-    "cheerleading indonesia",
-    "kompetisi cheerleading", 
-    "ICA indonesia",
-    "olahraga cheerleading",
-    "komunitas cheerleading",
-    "pelatihan cheerleading",
-    "turnamen cheerleading nasional"
-  ],
-  canonicalUrl: "https://indonesiancheer.org/",
-  type: "website"
-})
+  keywords: ["cheerleading", "indonesia", "kompetisi", "edukasi", "komunitas"],
+  authors: [{ name: "Indonesian Cheer Association" }],
+  creator: "Indonesian Cheer Association",
+  publisher: "Indonesian Cheer Association",
+  robots: "index, follow",
+  openGraph: {
+    type: "website",
+    locale: "id_ID",
+    url: "https://indonesiancheer.org",
+    title: "ICA - Indonesian Cheer Association",
+    description: "Platform resmi Indonesian Cheer Association untuk kompetisi cheerleading, edukasi, dan komunitas.",
+    siteName: "Indonesian Cheer Association",
+    images: [
+      {
+        url: "https://indonesiancheer.org/ica-rounded.webp",
+        width: 1200,
+        height: 630,
+        alt: "ICA - Indonesian Cheer Association",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "ICA - Indonesian Cheer Association",
+    description: "Platform resmi Indonesian Cheer Association untuk kompetisi cheerleading, edukasi, dan komunitas.",
+    images: ["https://indonesiancheer.org/ica-rounded.webp"],
+  },
+  manifest: "/manifest.json",
+  icons: {
+    icon: "/ica-rounded.webp",
+    apple: "/ica-rounded.webp",
+  },
+  alternates: {
+    canonical: "https://indonesiancheer.org/",
+  },
+  category: "sports",
+  classification: "cheerleading",
+  referrer: "origin-when-cross-origin",
+  formatDetection: {
+    telephone: false,
+    email: false,
+    address: false,
+  },
+  verification: {
+    google: "your-google-verification-code",
+    yandex: "your-yandex-verification-code",
+    yahoo: "your-yahoo-verification-code",
+  },
+  other: {
+    "msapplication-TileColor": "#e11d48",
+    "msapplication-config": "/browserconfig.xml",
+    "mobile-web-app-capable": "yes",
+    "apple-mobile-web-app-status-bar-style": "default",
+    "apple-mobile-web-app-title": "ICA",
+  },
+  metadataBase: new URL("https://indonesiancheer.org")
+}
+
+// Viewport export untuk Next.js 15
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  themeColor: '#e11d48',
+  colorScheme: 'light dark'
+}
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -67,6 +117,25 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {/* Resource hints */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+        
+        {/* Defer Google Tag Manager untuk mengurangi JavaScript bundle */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              // Defer GTM loading
+              window.addEventListener('load', function() {
+                setTimeout(function() {
+                  // Load GTM after page is fully loaded
+                  (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+                  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+                  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+                  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+                  })(window,document,'script','dataLayer','G-XDF3J1V626');
+                }, 2000); // Delay 2 seconds
+              });
+            `
+          }}
+        />
         
         {/* Critical CSS inline untuk hero - bypass semua external CSS dan React */}
         <style dangerouslySetInnerHTML={{
@@ -131,7 +200,20 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: generateJSONLD(organizationSchema)
+            __html: `
+              {
+                "@context": "https://schema.org",
+                "@type": "Organization",
+                "name": "Indonesian Cheer Association",
+                "url": "https://indonesiancheer.org",
+                "logo": "https://indonesiancheer.org/logo.png",
+                "sameAs": [
+                  "https://www.facebook.com/indonesiancheer",
+                  "https://www.instagram.com/indonesiancheer",
+                  "https://twitter.com/indonesiancheer"
+                ]
+              }
+            `
           }}
         />
         
@@ -139,7 +221,18 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: generateJSONLD(websiteSchema)
+            __html: `
+              {
+                "@context": "https://schema.org",
+                "@type": "WebSite",
+                "url": "https://indonesiancheer.org",
+                "potentialAction": {
+                  "@type": "SearchAction",
+                  "target": "https://indonesiancheer.org?q={search_term_string}",
+                  "query-input": "required name=search_term_string"
+                }
+              }
+            `
           }}
         />
         
@@ -147,14 +240,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="dns-prefetch" href="//indonesiancheer.org" />
         <link rel="preconnect" href="https://indonesiancheer.org" />
       </head>
-      <body className={`${inter.className} ${inter.variable}`}>
+      <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
           <ReduxProvider>
             <AuthInitWrapper>
-              <Analytics googleAnalyticsId={process.env.NEXT_PUBLIC_GA_ID} />
               {children}
               <Toaster />
-              {/* <DebugPanel /> */}
             </AuthInitWrapper>
           </ReduxProvider>
         </ThemeProvider>

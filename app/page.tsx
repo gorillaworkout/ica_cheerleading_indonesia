@@ -1,21 +1,22 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, Suspense, lazy } from "react"
 import { HeroSection } from "@/components/home/hero-section"
-import { IntroSection } from "@/components/home/intro-section"
-import { NewsSection } from "@/components/home/news-section"
 import { Header } from "@/components/layout/header"
 import { Footer } from "@/components/layout/footer"
-import { TeamLogoSlider } from "@/components/home/team-logo-section"
-import { ChampionshipSection } from "@/components/home/championship-section"
-import CheerOrganizationsSection from "@/components/home/cheer-organization-section"
-import { ScrollAnimation } from "@/components/ui/scroll-animation-safe"
 import { generateSEOMetadata, generateJSONLD, breadcrumbSchema } from "@/lib/seo"
 import { useToast } from "@/hooks/use-toast"
 import { useSEO } from "@/hooks/use-seo"
-import { HeroImageSection } from "@/components/home/hero-image-section"
 import InitialLoader from "@/components/ui/initial-loader"
 import HeroLCP from "@/components/home/hero-lcp"
+
+// Dynamic imports untuk components yang tidak critical
+const IntroSection = lazy(() => import("@/components/home/intro-section").then(module => ({ default: module.IntroSection })))
+const NewsSection = lazy(() => import("@/components/home/news-section").then(module => ({ default: module.NewsSection })))
+const TeamLogoSlider = lazy(() => import("@/components/home/team-logo-section").then(module => ({ default: module.TeamLogoSlider })))
+const ChampionshipSection = lazy(() => import("@/components/home/championship-section").then(module => ({ default: module.ChampionshipSection })))
+const CheerOrganizationsSection = lazy(() => import("@/components/home/cheer-organization-section").then(module => ({ default: module.default })))
+const ScrollAnimation = lazy(() => import("@/components/ui/scroll-animation-safe").then(module => ({ default: module.ScrollAnimation })))
 
 // Metadata moved to layout.tsx since this is now a client component
 
@@ -145,27 +146,38 @@ export default function HomePage() {
           />
         </div>
         
-        <ScrollAnimation delay={0.1} direction="up">
-          <div id="introSection">
-            <IntroSection />
-          </div>
-        </ScrollAnimation>
+        {/* Lazy loaded sections dengan Suspense */}
+        <Suspense fallback={<div className="h-32 bg-gray-100 animate-pulse" />}>
+          <ScrollAnimation delay={0.1} direction="up">
+            <div id="introSection">
+              <IntroSection />
+            </div>
+          </ScrollAnimation>
+        </Suspense>
         
-        <ScrollAnimation delay={0.1} direction="up">
-          <NewsSection />
-        </ScrollAnimation>
+        <Suspense fallback={<div className="h-32 bg-gray-100 animate-pulse" />}>
+          <ScrollAnimation delay={0.1} direction="up">
+            <NewsSection />
+          </ScrollAnimation>
+        </Suspense>
         
-        <ScrollAnimation delay={0.1} direction="right">
-          <TeamLogoSlider />  
-        </ScrollAnimation>
+        <Suspense fallback={<div className="h-32 bg-gray-100 animate-pulse" />}>
+          <ScrollAnimation delay={0.1} direction="right">
+            <TeamLogoSlider />  
+          </ScrollAnimation>
+        </Suspense>
         
-        <ScrollAnimation delay={0.1} direction="right">
-          <CheerOrganizationsSection/>
-        </ScrollAnimation>
+        <Suspense fallback={<div className="h-32 bg-gray-100 animate-pulse" />}>
+          <ScrollAnimation delay={0.1} direction="right">
+            <CheerOrganizationsSection/>
+          </ScrollAnimation>
+        </Suspense>
         
-        <ScrollAnimation delay={0.1} direction="right">
-          <ChampionshipSection/>
-        </ScrollAnimation>
+        <Suspense fallback={<div className="h-32 bg-gray-100 animate-pulse" />}>
+          <ScrollAnimation delay={0.1} direction="right">
+            <ChampionshipSection/>
+          </ScrollAnimation>
+        </Suspense>
       </main>
       
       <Footer />
