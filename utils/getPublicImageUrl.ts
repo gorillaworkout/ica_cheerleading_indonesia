@@ -7,6 +7,11 @@ export async function getPublicImageUrl(path: string | null | undefined): Promis
   }
 
   try {
+    // If path is already a full URL, return it directly
+    if (path.startsWith('http://') || path.startsWith('https://')) {
+      return path
+    }
+
     // If path already contains folder structure, use it directly
     if (path.includes('/')) {
       const { data } = supabase.storage.from("uploads").getPublicUrl(path)
@@ -56,6 +61,11 @@ export function getPublicImageUrlSync(path: string | null | undefined): string |
   }
 
   try {
+    // If path is already a full URL, return it directly
+    if (path.startsWith('http://') || path.startsWith('https://')) {
+      return path
+    }
+
     // If path already contains folder structure, use it directly
     if (path.includes('/')) {
       const { data } = supabase.storage.from("uploads").getPublicUrl(path)
@@ -97,6 +107,11 @@ export function generateStorageUrl(path: string | null | undefined): string {
   }
 
   try {
+    // If path is already a full URL, return it directly
+    if (path.startsWith('http://') || path.startsWith('https://')) {
+      return path
+    }
+
     // If path already contains folder structure, use it directly
     const fullPath = path.includes('/') ? path : `profile-photos/${path}`
     const { data } = supabase.storage.from("uploads").getPublicUrl(fullPath)
