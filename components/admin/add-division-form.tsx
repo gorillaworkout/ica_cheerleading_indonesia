@@ -10,8 +10,11 @@ import { Plus } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { DivisionDetailsProps } from "@/types/types";
 import { v4 as uuidv4 } from "uuid";
+import { useAppDispatch } from "@/lib/redux/hooks";
+import { fetchDivisions } from "@/features/divisions/divisionsSlice";
 
 export function AddDivisionForm() {
+  const dispatch = useAppDispatch();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState<DivisionDetailsProps>({
@@ -67,6 +70,7 @@ export function AddDivisionForm() {
         age_group: "",
         skill_level: "",
       });
+      dispatch(fetchDivisions()); // Refetch data after adding
     } catch (error) {
 
       toast({
@@ -111,7 +115,7 @@ export function AddDivisionForm() {
               required
             />
           </div>
-          <div className="space-y-2">
+          {/* <div className="space-y-2">
             <Label htmlFor="skill_level">Skill Level *</Label>
             <Input
               id="skill_level"
@@ -121,7 +125,24 @@ export function AddDivisionForm() {
               placeholder="e.g., Elite"
               required
             />
-          </div>
+          </div> */}
+          <div className="space-y-2">
+              <label className="text-sm font-semibold text-gray-700">Skill Level</label>
+              <select
+                value={formData?.skill_level || ""}
+                onChange={(e) =>
+                  formData && setFormData({ ...formData, skill_level: e.target.value })
+                }
+                className="w-full px-4 py-3 bg-gray-50/50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all duration-300"
+              >
+                <option value="">Select skill level...</option>
+                <option value="Novice">Novice</option>
+                <option value="Intermediate">Intermediate</option>
+                <option value="Advanced">Advanced</option>
+                <option value="Elite">Elite</option>
+                <option value="Premier">Premier</option>
+              </select>
+            </div>
         </CardContent>
       </Card>
 

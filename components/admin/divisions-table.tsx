@@ -10,7 +10,6 @@ import { toast } from "@/hooks/use-toast";
 import { Modal } from "@/components/ui/modal";
 import { Division } from "@/types/types";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 
 interface NewDivision {
     name: string;
@@ -135,10 +134,6 @@ const handleSaveEdit = async (updatedDivision: UpdatedDivision): Promise<void> =
           <h2 className="text-3xl font-bold text-gray-900">Divisions Management</h2>
           <p className="text-gray-600 mt-1">Manage and monitor all competition divisions</p>
         </div>
-        <Button className="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
-          <Plus className="w-4 h-4 mr-2" />
-          Add Division
-        </Button>
       </div>
 
       {/* Search and Filter Section */}
@@ -288,6 +283,7 @@ const handleSaveEdit = async (updatedDivision: UpdatedDivision): Promise<void> =
                 <option value="Intermediate">Intermediate</option>
                 <option value="Advanced">Advanced</option>
                 <option value="Elite">Elite</option>
+                <option value="Premier">Premier</option>
               </select>
             </div>
 
