@@ -99,10 +99,6 @@ export function ProvinceTable() {
   const extendedProvinces = provinces.map(province => ({
     ...province,
     logo: (province as any).logo || null,
-    total_gold: (province as any).total_gold || 0,
-    total_silver: (province as any).total_silver || 0,
-    total_bronze: (province as any).total_bronze || 0,
-    total_points: (province as any).total_points || 0,
   }));
 
   // Filter and search logic - simplified
@@ -110,7 +106,7 @@ export function ProvinceTable() {
     ?.filter((province) => {
       return province.name.toLowerCase().includes(searchTerm.toLowerCase());
     })
-    .sort((a, b) => a.name.localeCompare(b.name)) || [];
+    .sort((a, b) => parseInt(a.id_province) - parseInt(b.id_province)) || [];
 
   if (loading) return <FullScreenLoader />;
   if (error) return <p>Error: {error}</p>;
@@ -123,10 +119,6 @@ export function ProvinceTable() {
           <h2 className="text-3xl font-bold text-gray-900">Provinces Management</h2>
           <p className="text-gray-600 mt-1">Manage and monitor all participating provinces</p>
         </div>
-        <Button className="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
-          <Plus className="w-4 h-4 mr-2" />
-          Add Province
-        </Button>
       </div>
 
       {/* Search and Filter Section */}
@@ -165,17 +157,6 @@ export function ProvinceTable() {
               <tr key={province.id_province} className="text-center hover:bg-gray-50">
                 <td className="p-2 border">{index + 1}</td>
                 <td className="p-2 border font-medium">{province.name}</td>
-                {/* <td className="p-2 border">
-                  {province.logo ? (
-                    <img
-                      src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/uploads/${province.logo}`}
-                      alt={`${province.name} logo`}
-                      className="h-8 w-8 object-contain mx-auto rounded"
-                    />
-                  ) : (
-                    <span className="text-gray-400 text-xs">No Logo</span>
-                  )}
-                </td> */}
                 <td className="p-2 border">
                   <div className="flex justify-center space-x-2">
                     <button
@@ -236,7 +217,7 @@ export function ProvinceTable() {
               />
             </div>
 
-            <div className="space-y-2">
+            {/* <div className="space-y-2">
               <label className="text-sm font-semibold text-gray-700">Province Logo</label>
               <div className="relative">
                 <input
@@ -254,7 +235,7 @@ export function ProvinceTable() {
                   Supported formats: JPG, PNG, WebP. Maximum size: 5MB
                 </p>
               </div>
-            </div>
+            </div> */}
           </div>
         </Modal>
       )}

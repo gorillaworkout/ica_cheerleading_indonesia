@@ -5,8 +5,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/hooks/use-toast";
+import { useAppDispatch } from "@/lib/redux/hooks";
+import { fetchProvinces } from "@/features/provinces/provincesSlice";
 
 export default function AddProvinceForm() {
+  const dispatch = useAppDispatch()
   const [formData, setFormData] = useState({
     name: "",
   });
@@ -47,7 +50,7 @@ export default function AddProvinceForm() {
     }
 
     toast({ title: "Success", description: "Province added successfully." });
-
+    dispatch(fetchProvinces())
     setFormData({
       name: "",
     });
