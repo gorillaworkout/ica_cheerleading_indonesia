@@ -12,13 +12,13 @@
   "categories": ["sports", "education", "social"],
   "icons": [
     {
-      "src": "/ica-rounded.webp",
+      "src": "/ICA-Logo-Box.webp",
       "sizes": "192x192",
       "type": "image/webp",
       "purpose": "any maskable"
     },
     {
-      "src": "/ica-rounded.webp",
+      "src": "/ICA-Logo-Box.webp",
       "sizes": "512x512",
       "type": "image/webp",
       "purpose": "any maskable"
@@ -32,7 +32,7 @@
       "url": "/championships",
       "icons": [
         {
-          "src": "/ica-rounded.webp",
+          "src": "/ICA-Logo-Box.webp",
           "sizes": "96x96"
         }
       ]
@@ -44,7 +44,7 @@
       "url": "/news",
       "icons": [
         {
-          "src": "/ica-rounded.webp",
+          "src": "/ICA-Logo-Box.webp",
           "sizes": "96x96"
         }
       ]

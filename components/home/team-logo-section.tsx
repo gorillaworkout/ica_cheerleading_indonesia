@@ -102,7 +102,7 @@ export function TeamLogoSlider() {
             {tripleImages.map((logo: any, index: number) => (
               <div 
                 key={`${logo?.name}-${index}`} 
-                className="inline-block w-[160px] h-[160px] flex-shrink-0 cursor-pointer"
+                className="inline-block w-[120px] h-[120px] flex-shrink-0 cursor-pointer"
                 onMouseEnter={() => setHoveredIndex(index)}
                 onMouseLeave={() => setHoveredIndex(null)}
               >
@@ -116,13 +116,15 @@ export function TeamLogoSlider() {
                       <Image
                         src={logo.url}
                         alt={logo.name}
-                        width={120}
-                        height={120}
+                        width={80}
+                        height={80}
                         className={`object-contain transition-all duration-300 ${
                           hoveredIndex === index 
                             ? 'brightness-110 contrast-110' 
                             : 'opacity-85 hover:opacity-100'
                         }`}
+                        quality={75}
+                        sizes="80px"
                       />
                     </div>
                   </div>

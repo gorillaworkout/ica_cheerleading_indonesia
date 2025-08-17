@@ -1,6 +1,7 @@
 "use client";
 
 import { ScrollAnimation } from "@/components/ui/scroll-animation-safe";
+import Image from "next/image";
 
 const logos = [
   { src: "/icu-logo.webp", short: "ICU", link: "https://cheerunion.org" },
@@ -34,10 +35,14 @@ export default function CheerOrganizationsSection() {
                   }
                 }}
               >
-                <img
+                <Image
                   src={logo.src}
                   alt={logo.short + " logo"}
-                  className="w-36 h-36 md:w-48 md:h-48 object-contain mb-4"
+                  width={144}
+                  height={144}
+                  className="w-32 h-32 md:w-36 md:h-36 object-contain mb-4"
+                  quality={75}
+                  sizes="(max-width: 768px) 128px, 144px"
                 />
               </div>
             </ScrollAnimation>

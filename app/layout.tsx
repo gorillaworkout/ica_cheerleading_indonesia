@@ -33,9 +33,9 @@ export const metadata: Metadata = {
     siteName: "Indonesian Cheer Association",
     images: [
       {
-        url: "https://indonesiancheer.org/ica-rounded.webp",
-        width: 1200,
-        height: 630,
+        url: "https://indonesiancheer.org/ICA-Logo-Box.webp",
+        width: 600,
+        height: 315,
         alt: "ICA - Indonesian Cheer Association",
       },
     ],
@@ -44,12 +44,12 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "ICA - Indonesian Cheer Association",
     description: "Platform resmi Indonesian Cheer Association untuk kompetisi cheerleading, edukasi, dan komunitas.",
-    images: ["https://indonesiancheer.org/ica-rounded.webp"],
+    images: ["https://indonesiancheer.org/ICA-Logo-Box.webp"],
   },
   manifest: "/manifest.json",
   icons: {
-    icon: "/ica-rounded.webp",
-    apple: "/ica-rounded.webp",
+    icon: "/ICA-Logo-Box.webp",
+    apple: "/ICA-Logo-Box.webp",
   },
   alternates: {
     canonical: "https://indonesiancheer.org/",

@@ -11,7 +11,7 @@ const nextConfig = {
   // Source maps for debugging
   productionBrowserSourceMaps: true,
   
-  // Image optimization dengan prioritas untuk LCP
+  // Image optimization dengan prioritas untuk LCP dan payload reduction
   images: {
     remotePatterns: [
       {
@@ -45,14 +45,14 @@ const nextConfig = {
         hostname: 'images.unsplash.com',
       },
     ],
-    formats: ['image/avif', 'image/webp'], // AVIF first untuk better compression
-    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048],
-    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+    formats: ['image/webp'], // Hanya WebP untuk mengurangi payload
+    deviceSizes: [640, 750, 828, 1080, 1200], // Kurangi device sizes
+    imageSizes: [16, 32, 48, 64, 96, 128, 256], // Kurangi image sizes
     minimumCacheTTL: 60 * 60 * 24 * 30, // 30 days untuk better caching
     dangerouslyAllowSVG: true,
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
     loader: 'default',
-    unoptimized: false,
+    unoptimized: false
   },
   
   // Compression and caching

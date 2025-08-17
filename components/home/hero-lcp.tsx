@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import Image from "next/image";
 
 interface HeroLCPProps {
   title?: string;
@@ -28,25 +29,18 @@ export default function HeroLCP({ title, subtitle, onImageLoad }: HeroLCPProps) 
         overflow: 'hidden'
       }}
     >
-      {/* Hero Image - Static HTML dengan inline styles */}
-      <img
+      {/* Hero Image - Optimized dengan Next.js Image */}
+      <Image
         src="/ica-hero.webp"
         alt="ICA Cheerleading Indonesia Hero Image"
+        fill
+        priority
+        quality={75}
+        sizes="100vw"
         style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          width: '100%',
-          height: '100%',
           objectFit: 'cover',
           zIndex: 1,
-          display: 'block',
-          visibility: 'visible',
-          opacity: 1
         }}
-        loading="eager"
-        decoding="sync"
-        fetchPriority="high"
         onLoad={() => {
           // Force callback tanpa React state
           if (onImageLoad) onImageLoad();
