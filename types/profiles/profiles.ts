@@ -20,4 +20,5 @@ export interface Profile {
   member_code: string | null;
   is_edit_allowed: boolean;
   is_request_edit:boolean;
+  is_deleted: boolean;
 }
