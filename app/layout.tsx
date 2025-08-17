@@ -81,8 +81,8 @@ export const metadata: Metadata = {
 export const viewport = {
   width: 'device-width',
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
+  maximumScale: 5,
+  userScalable: true,
   themeColor: '#e11d48',
   colorScheme: 'light dark'
 }
@@ -91,24 +91,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="id" suppressHydrationWarning>
       <head>
-        {/* Ultra-aggressive preload untuk LCP optimization */}
+        {/* Preload hero image untuk LCP optimization */}
         <link
           rel="preload"
           href="/ica-hero.webp"
           as="image"
           type="image/webp"
           fetchPriority="high"
-          crossOrigin="anonymous"
         />
         
-        {/* Preload fonts */}
-        <link
-          rel="preload"
-          href="/righteous-Regular.ttf"
-          as="font"
-          type="font/ttf"
-          crossOrigin="anonymous"
-        />
+        {/* Preload fonts - hanya untuk halaman yang membutuhkan */}
+        {/* Font righteous-Regular.ttf hanya digunakan di halaman admin ID card */}
         
         {/* DNS prefetch untuk external resources */}
         <link rel="dns-prefetch" href="//fonts.googleapis.com" />

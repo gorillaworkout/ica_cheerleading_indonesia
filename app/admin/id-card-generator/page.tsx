@@ -12,6 +12,7 @@ import { Download, CreditCard, Upload, User, Calendar, MapPin, Shield } from 'lu
 import Image from 'next/image'
 import { supabase } from '@/lib/supabase'
 import { generateStorageUrl } from '@/utils/getPublicImageUrl'
+import PreloadResources from '@/components/ui/preload-resources'
 
 interface IDCardData {
   memberID: string
@@ -31,7 +32,7 @@ export default function IdCardGeneratorPage() {
   const [templateImage, setTemplateImage] = useState<HTMLImageElement | null>(null)
   const [isGenerating, setIsGenerating] = useState(false)
   const [generatedCardUrl, setGeneratedCardUrl] = useState<string | null>(null)
-  
+
   const [idCardData, setIdCardData] = useState<IDCardData>({
     memberID: '',
     name: '',
@@ -62,17 +63,17 @@ export default function IdCardGeneratorPage() {
   // Format date to Indonesian format (day - month name - year)
   const formatRegistrationDate = (dateString: string) => {
     if (!dateString) return ''
-    
+
     const date = new Date(dateString)
     const monthNames = [
       'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
       'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
     ]
-    
+
     const day = date.getDate()
     const month = monthNames[date.getMonth()]
     const year = date.getFullYear()
-    
+
     // return `${day}, ${month} - ${year}`
     return `${month}, ${day} ${year}`
   }
@@ -80,17 +81,17 @@ export default function IdCardGeneratorPage() {
   // Format birth date to Indonesian format (month name - day - year)
   const formatBirthDate = (dateString: string) => {
     if (!dateString) return ''
-    
+
     const date = new Date(dateString)
     const monthNames = [
       'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
       'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
     ]
-    
+
     const day = date.getDate()
     const month = monthNames[date.getMonth()]
     const year = date.getFullYear()
-    
+
     return `${month}, ${day}  ${year}`
   }
 
@@ -137,7 +138,7 @@ export default function IdCardGeneratorPage() {
         ctx.fillStyle = '#ffffff'
         ctx.font = 'bold 24px Arial'
         ctx.fillText('ID CARD FOR MEMBER ICA', 400, 60)
-        
+
         canvas.toBlob((blob) => {
           if (blob) {
             const url = URL.createObjectURL(blob)
@@ -178,23 +179,23 @@ export default function IdCardGeneratorPage() {
       try {
         const photoImg = new window.Image()
         photoImg.crossOrigin = 'anonymous'
-        
+
         await new Promise((resolve, reject) => {
           photoImg.onload = resolve
           photoImg.onerror = reject
-          
+
           // Generate proper URL for the photo
           if (idCardData.photo.includes('http')) {
             photoImg.src = idCardData.photo
           } else {
-            const imagePath = idCardData.photo.includes('/') 
-              ? idCardData.photo 
+            const imagePath = idCardData.photo.includes('/')
+              ? idCardData.photo
               : `profile-photos/${idCardData.photo}`
-            
+
             const { data: urlData } = supabase.storage
               .from("uploads")
               .getPublicUrl(imagePath)
-            
+
             photoImg.src = urlData?.publicUrl || '/placeholder.svg'
           }
         })
@@ -205,7 +206,7 @@ export default function IdCardGeneratorPage() {
         const photoWidth = 310 // Updated size
         const photoHeight = 325 // Updated size
         const photoRadius = 20 // Rounded corners
-        
+
         ctx.save()
         ctx.beginPath()
         // Create rounded rectangle path
@@ -214,7 +215,7 @@ export default function IdCardGeneratorPage() {
         const y = photoY
         const width = photoWidth
         const height = photoHeight
-        
+
         ctx.moveTo(x + radius, y)
         ctx.lineTo(x + width - radius, y)
         ctx.quadraticCurveTo(x + width, y, x + width, y + radius)
@@ -225,7 +226,7 @@ export default function IdCardGeneratorPage() {
         ctx.lineTo(x, y + radius)
         ctx.quadraticCurveTo(x, y, x + radius, y)
         ctx.closePath()
-        
+
         ctx.clip()
         ctx.drawImage(photoImg, photoX, photoY, photoWidth, photoHeight)
         ctx.restore()
@@ -324,11 +325,11 @@ export default function IdCardGeneratorPage() {
 
     } catch (error) {
       console.error('Error generating ID card:', error)
-              toast({
-          title: "Generation Failed",
-          description: "Failed to generate ID card. Please try again.",
-          variant: "destructive",
-        })
+      toast({
+        title: "Generation Failed",
+        description: "Failed to generate ID card. Please try again.",
+        variant: "destructive",
+      })
     } finally {
       setIsGenerating(false)
     }
@@ -358,167 +359,169 @@ export default function IdCardGeneratorPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-6xl mx-auto px-4">
-        {/* Header */}
-        <div className="mb-8">
-          <div className="flex items-center space-x-3 mb-4">
-            <div className="w-12 h-12 bg-red-600 rounded-lg flex items-center justify-center">
-              <CreditCard className="h-6 w-6 text-white" />
-            </div>
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">ID Card Generator</h1>
-              <p className="text-gray-600">Generate your official ICA membership ID card</p>
+    <PreloadResources font={true}>
+      <div className="min-h-screen bg-gray-50 py-8">
+        <div className="max-w-6xl mx-auto px-4">
+          {/* Header */}
+          <div className="mb-8">
+            <div className="flex items-center space-x-3 mb-4">
+              <div className="w-12 h-12 bg-red-600 rounded-lg flex items-center justify-center">
+                <CreditCard className="h-6 w-6 text-white" />
+              </div>
+              <div>
+                <h1 className="text-3xl font-bold text-gray-900">ID Card Generator</h1>
+                <p className="text-gray-600">Generate your official ICA membership ID card</p>
+              </div>
             </div>
           </div>
-        </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Data Form */}
-          <Card className="bg-white shadow-lg">
-            <CardHeader>
-              <CardTitle className="flex items-center space-x-2">
-                <User className="h-5 w-5 text-red-600" />
-                <span>Member Information</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="memberID">Member ID</Label>
-                  <Input
-                    id="memberID"
-                    value={idCardData.memberID}
-                    onChange={(e) => setIdCardData(prev => ({ ...prev, memberID: e.target.value }))}
-                    className="font-mono"
-                  />
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Data Form */}
+            <Card className="bg-white shadow-lg">
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <User className="h-5 w-5 text-red-600" />
+                  <span>Member Information</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="memberID">Member ID</Label>
+                    <Input
+                      id="memberID"
+                      value={idCardData.memberID}
+                      onChange={(e) => setIdCardData(prev => ({ ...prev, memberID: e.target.value }))}
+                      className="font-mono"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="name">Full Name</Label>
+                    <Input
+                      id="name"
+                      value={idCardData.name}
+                      onChange={(e) => setIdCardData(prev => ({ ...prev, name: e.target.value }))}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="birthDate">Birth Date</Label>
+                    <Input
+                      id="birthDate"
+                      type="date"
+                      value={idCardData.birthDate}
+                      onChange={(e) => setIdCardData(prev => ({ ...prev, birthDate: e.target.value }))}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="gender">Gender</Label>
+                    <select
+                      id="gender"
+                      value={idCardData.gender}
+                      onChange={(e) => setIdCardData(prev => ({ ...prev, gender: e.target.value }))}
+                      className="w-full px-3 py-2 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                    >
+                      <option value="">Select Gender</option>
+                      <option value="Male">Male</option>
+                      <option value="Female">Female</option>
+                    </select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="province">Province</Label>
+                    <Input
+                      id="province"
+                      value={idCardData.province}
+                      onChange={(e) => setIdCardData(prev => ({ ...prev, province: e.target.value }))}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="status">Status</Label>
+                    <select
+                      id="status"
+                      value={idCardData.status}
+                      onChange={(e) => setIdCardData(prev => ({ ...prev, status: e.target.value }))}
+                      className="w-full px-3 py-2 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                    >
+                      <option value="MEMBER">Member</option>
+                      <option value="COACH">Coach</option>
+                      <option value="JUDGE">Judge</option>
+                      <option value="ADMIN">Admin</option>
+                    </select>
+                  </div>
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="name">Full Name</Label>
-                  <Input
-                    id="name"
-                    value={idCardData.name}
-                    onChange={(e) => setIdCardData(prev => ({ ...prev, name: e.target.value }))}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="birthDate">Birth Date</Label>
-                  <Input
-                    id="birthDate"
-                    type="date"
-                    value={idCardData.birthDate}
-                    onChange={(e) => setIdCardData(prev => ({ ...prev, birthDate: e.target.value }))}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="gender">Gender</Label>
-                  <select
-                    id="gender"
-                    value={idCardData.gender}
-                    onChange={(e) => setIdCardData(prev => ({ ...prev, gender: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+
+                {/* Action Buttons */}
+                <div className="flex flex-col sm:flex-row gap-4 pt-6">
+                  <Button
+                    onClick={generateIDCard}
+                    disabled={isGenerating || !templateImage}
+                    className="flex-1 bg-red-600 hover:bg-red-700"
                   >
-                    <option value="">Select Gender</option>
-                    <option value="Male">Male</option>
-                    <option value="Female">Female</option>
-                  </select>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="province">Province</Label>
-                  <Input
-                    id="province"
-                    value={idCardData.province}
-                    onChange={(e) => setIdCardData(prev => ({ ...prev, province: e.target.value }))}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="status">Status</Label>
-                  <select
-                    id="status"
-                    value={idCardData.status}
-                    onChange={(e) => setIdCardData(prev => ({ ...prev, status: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                    {isGenerating ? (
+                      <>
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                        Generating...
+                      </>
+                    ) : (
+                      <>
+                        <CreditCard className="mr-2 h-4 w-4" />
+                        Generate ID Card
+                      </>
+                    )}
+                  </Button>
+                  <Button
+                    onClick={downloadIDCard}
+                    variant="outline"
+                    disabled={!generatedCardUrl}
+                    className="flex-1"
                   >
-                    <option value="MEMBER">Member</option>
-                    <option value="COACH">Coach</option>
-                    <option value="JUDGE">Judge</option>
-                    <option value="ADMIN">Admin</option>
-                  </select>
+                    <Download className="mr-2 h-4 w-4" />
+                    Download
+                  </Button>
                 </div>
-              </div>
+              </CardContent>
+            </Card>
 
-              {/* Action Buttons */}
-              <div className="flex flex-col sm:flex-row gap-4 pt-6">
-                <Button
-                  onClick={generateIDCard}
-                  disabled={isGenerating || !templateImage}
-                  className="flex-1 bg-red-600 hover:bg-red-700"
-                >
-                  {isGenerating ? (
-                    <>
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                      Generating...
-                    </>
-                  ) : (
-                    <>
-                      <CreditCard className="mr-2 h-4 w-4" />
-                      Generate ID Card
-                    </>
-                  )}
-                </Button>
-                <Button
-                  onClick={downloadIDCard}
-                  variant="outline"
-                  disabled={!generatedCardUrl}
-                  className="flex-1"
-                >
-                  <Download className="mr-2 h-4 w-4" />
-                  Download
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Preview */}
-          <Card className="bg-white shadow-lg">
-            <CardHeader>
-              <CardTitle className="flex items-center space-x-2">
-                <CreditCard className="h-5 w-5 text-red-600" />
-                <span>ID Card Preview</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="relative">
-                <canvas
-                  ref={canvasRef}
-                  className="w-full h-auto border border-gray-200 rounded-lg shadow-sm"
-                  style={{ maxWidth: '100%', height: 'auto' }}
-                />
-                {!templateImage && (
-                  <div className="absolute inset-0 flex items-center justify-center bg-gray-100 rounded-lg">
-                    <div className="text-center">
-                      <Upload className="h-12 w-12 text-gray-400 mx-auto mb-2" />
-                      <p className="text-gray-500">Loading template...</p>
+            {/* Preview */}
+            <Card className="bg-white shadow-lg">
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <CreditCard className="h-5 w-5 text-red-600" />
+                  <span>ID Card Preview</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="relative">
+                  <canvas
+                    ref={canvasRef}
+                    className="w-full h-auto border border-gray-200 rounded-lg shadow-sm"
+                    style={{ maxWidth: '100%', height: 'auto' }}
+                  />
+                  {!templateImage && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-gray-100 rounded-lg">
+                      <div className="text-center">
+                        <Upload className="h-12 w-12 text-gray-400 mx-auto mb-2" />
+                        <p className="text-gray-500">Loading template...</p>
+                      </div>
                     </div>
+                  )}
+                </div>
+
+                {generatedCardUrl && (
+                  <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-lg">
+                    <div className="flex items-center space-x-2">
+                      <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                      <p className="text-green-700 font-medium">ID Card generated successfully!</p>
+                    </div>
+                    <p className="text-green-600 text-sm mt-1">
+                      Your ID card has been saved to your profile.
+                    </p>
                   </div>
                 )}
-              </div>
-
-              {generatedCardUrl && (
-                <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-lg">
-                  <div className="flex items-center space-x-2">
-                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                    <p className="text-green-700 font-medium">ID Card generated successfully!</p>
-                  </div>
-                  <p className="text-green-600 text-sm mt-1">
-                    Your ID card has been saved to your profile.
-                  </p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          </div>
         </div>
-      </div>
-    </div>
+    </div >
+    </PreloadResources>
   )
 }

@@ -313,7 +313,7 @@ export function IDCardSection() {
 
             {/* Member Info */}
             <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-              <h4 className="font-medium text-gray-900 mb-3">Card Information</h4>
+              <h3 className="font-medium text-gray-900 mb-3">Card Information</h3>
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
                   <span className="text-gray-500">Member ID:</span>
@@ -392,7 +392,7 @@ export function IDCardSection() {
               
               {/* Requirements */}
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 max-w-md mx-auto">
-                <h4 className="font-medium text-blue-900 mb-2">Requirements for ID Card Generation:</h4>
+                <h3 className="font-medium text-blue-900 mb-2">Requirements for ID Card Generation:</h3>
                 <ul className="text-sm text-blue-700 space-y-1">
                   <li className="flex items-center space-x-2">
                     <div className={`w-2 h-2 rounded-full ${profile?.display_name ? 'bg-green-500' : 'bg-gray-300'}`}></div>

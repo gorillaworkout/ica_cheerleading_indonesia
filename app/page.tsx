@@ -9,6 +9,7 @@ import { useToast } from "@/hooks/use-toast"
 import { useSEO } from "@/hooks/use-seo"
 import InitialLoader from "@/components/ui/initial-loader"
 import HeroLCP from "@/components/home/hero-lcp"
+import PreloadResources from "@/components/ui/preload-resources"
 
 // Dynamic imports untuk components yang tidak critical
 const IntroSection = lazy(() => import("@/components/home/intro-section").then(module => ({ default: module.IntroSection })))
@@ -122,65 +123,67 @@ export default function HomePage() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* Loader Splash */}
-      {!isReady && <InitialLoader />}
-      
-      {/* Structured Data - Breadcrumbs */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: generateJSONLD(breadcrumbs)
-        }}
-      />
-      
-      <Header />
-      
-      <main>
-        <div className="w-full h-screen">
-          {/* HeroLCP - Super Optimized untuk LCP yang cepat */}
-          <HeroLCP
-            title="ICA Cheerleading Indonesia"
-            subtitle="Welcome to the official cheerleading community"
-            onImageLoad={handleHeroImageLoad}
-          />
-        </div>
+    <PreloadResources heroImage={true}>
+      <div className="min-h-screen bg-white">
+        {/* Loader Splash */}
+        {!isReady && <InitialLoader />}
         
-        {/* Lazy loaded sections dengan Suspense */}
-        <Suspense fallback={<div className="h-32 bg-gray-100 animate-pulse" />}>
-          <ScrollAnimation delay={0.1} direction="up">
-            <div id="introSection">
-              <IntroSection />
-            </div>
-          </ScrollAnimation>
-        </Suspense>
+        {/* Structured Data - Breadcrumbs */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: generateJSONLD(breadcrumbs)
+          }}
+        />
         
-        <Suspense fallback={<div className="h-32 bg-gray-100 animate-pulse" />}>
-          <ScrollAnimation delay={0.1} direction="up">
-            <NewsSection />
-          </ScrollAnimation>
-        </Suspense>
+        <Header />
         
-        <Suspense fallback={<div className="h-32 bg-gray-100 animate-pulse" />}>
-          <ScrollAnimation delay={0.1} direction="right">
-            <TeamLogoSlider />  
-          </ScrollAnimation>
-        </Suspense>
+        <main>
+          <div className="w-full h-screen">
+            {/* HeroLCP - Super Optimized untuk LCP yang cepat */}
+            <HeroLCP
+              title="ICA Cheerleading Indonesia"
+              subtitle="Welcome to the official cheerleading community"
+              onImageLoad={handleHeroImageLoad}
+            />
+          </div>
+          
+          {/* Lazy loaded sections dengan Suspense */}
+          <Suspense fallback={<div className="h-32 bg-gray-100 animate-pulse" />}>
+            <ScrollAnimation delay={0.1} direction="up">
+              <div id="introSection">
+                <IntroSection />
+              </div>
+            </ScrollAnimation>
+          </Suspense>
+          
+          <Suspense fallback={<div className="h-32 bg-gray-100 animate-pulse" />}>
+            <ScrollAnimation delay={0.1} direction="up">
+              <NewsSection />
+            </ScrollAnimation>
+          </Suspense>
+          
+          <Suspense fallback={<div className="h-32 bg-gray-100 animate-pulse" />}>
+            <ScrollAnimation delay={0.1} direction="right">
+              <TeamLogoSlider />  
+            </ScrollAnimation>
+          </Suspense>
+          
+          <Suspense fallback={<div className="h-32 bg-gray-100 animate-pulse" />}>
+            <ScrollAnimation delay={0.1} direction="right">
+              <CheerOrganizationsSection/>
+            </ScrollAnimation>
+          </Suspense>
+          
+          <Suspense fallback={<div className="h-32 bg-gray-100 animate-pulse" />}>
+            <ScrollAnimation delay={0.1} direction="right">
+              <ChampionshipSection/>
+            </ScrollAnimation>
+          </Suspense>
+        </main>
         
-        <Suspense fallback={<div className="h-32 bg-gray-100 animate-pulse" />}>
-          <ScrollAnimation delay={0.1} direction="right">
-            <CheerOrganizationsSection/>
-          </ScrollAnimation>
-        </Suspense>
-        
-        <Suspense fallback={<div className="h-32 bg-gray-100 animate-pulse" />}>
-          <ScrollAnimation delay={0.1} direction="right">
-            <ChampionshipSection/>
-          </ScrollAnimation>
-        </Suspense>
-      </main>
-      
-      <Footer />
-    </div>
+        <Footer />
+      </div>
+    </PreloadResources>
   )
 }

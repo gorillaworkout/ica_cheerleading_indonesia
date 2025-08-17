@@ -13,13 +13,13 @@ export default function manifest(): MetadataRoute.Manifest {
     categories: ["sports", "education", "lifestyle"],
     icons: [
       {
-        src: "/ica-rounded.jpg",
+        src: "/ica-rounded.webp",
         sizes: "192x192",
         type: "image/png",
         purpose: "maskable",
       },
       {
-        src: "/ica-rounded.jpg",
+        src: "/ica-rounded.webp",
         sizes: "512x512",
         type: "image/png",
         purpose: "any",
