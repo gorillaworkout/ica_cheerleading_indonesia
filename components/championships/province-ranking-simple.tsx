@@ -1,7 +1,8 @@
 "use client"
 
 import React, { useEffect, useState } from "react";
-import { Trophy, Medal } from "lucide-react";
+import { Trophy, Medal, Clock, Calendar, Info } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 
 // Safe Redux import
 let useAppSelector: any = null;
@@ -73,11 +74,15 @@ const getProvincePoints = (data: DivisionResult[]): ProvinceStats[] => {
   });
 };
 
-export default function ProvinceRankingSimple() {
+interface ProvinceRankingSimpleProps {
+  competitionId: string;
+}
+
+export default function ProvinceRankingSimple({ competitionId }: ProvinceRankingSimpleProps) {
   const [mounted, setMounted] = useState(false);
   const [provinceData, setProvinceData] = useState<ProvinceStats[]>([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [competitionInfo, setCompetitionInfo] = useState<any>(null);
   const [debugInfo, setDebugInfo] = useState<any>(null);
   
   // Get provinces from Redux store safely
@@ -89,39 +94,50 @@ export default function ProvinceRankingSimple() {
 
   useEffect(() => {
     if (!mounted || !supabase) {
-      setError("Supabase not available");
       setLoading(false);
       return;
     }
 
     if (!useAppSelector) {
-      setError("Redux not available");
       setLoading(false);
       return;
     }
 
     async function fetchSupabaseData() {
       setLoading(true);
-      setError(null);
       
       try {
+        // Fetch competition info first to check event status
+        const { data: competitionData, error: competitionError } = await supabase
+          .from("competitions")
+          .select("name, start_date, end_date, status")
+          .eq("id", competitionId)
+          .single();
 
+        if (competitionError) {
+          console.error("❌ Error fetching competition info:", competitionError);
+          setCompetitionInfo(null);
+        } else {
+          setCompetitionInfo(competitionData);
+        }
         
         // Fetch results with more detailed logging
         const { data: resultsData, error: resultsError } = await supabase
           .from("results")
           .select("division, placement, team, score, province")
+          .eq("competition_id", competitionId)
           .order("division", { ascending: true })
           .order("placement", { ascending: true });
+
         if (resultsError) {
           console.error("❌ Error fetching results:", resultsError);
-          setError(`Error fetching results: ${resultsError.message}`);
+          setLoading(false);
           return;
         }
 
         if (!resultsData || resultsData.length === 0) {
           console.warn("⚠️ No results data found in database");
-          setError("No competition results found in database");
+          setProvinceData([]);
           setLoading(false);
           return;
         }
@@ -155,30 +171,12 @@ export default function ProvinceRankingSimple() {
         // Combine Redux mapping with fallback
         const combinedMapping = { ...fallbackMapping, ...provinceMap };
 
-
-
-
-
         // If no provinces loaded from Redux yet, wait
         if (provinces.length === 0) {
           console.warn("⚠️ Provinces not loaded from Redux yet, retrying...");
           setTimeout(() => fetchSupabaseData(), 1000);
           return;
         }
-
-
-
-        // Enhanced debug info for UI display
-        setDebugInfo({
-          resultsCount: resultsData?.length || 0,
-          resultsError: resultsError?.message || null,
-          sampleResult: resultsData?.[0] || null,
-          provincesCount: provinces.length || 0,
-          provinceMapping: combinedMapping,
-          uniqueProvinceCodesInResults: [...new Set(resultsData?.map((r: any) => r.province))].slice(0, 10)
-        });
-
-
 
         // Enrich results with province names from Redux
         const enrichedResults = resultsData?.map((result: any) => {
@@ -191,11 +189,6 @@ export default function ProvinceRankingSimple() {
             province: mappedProvinceName || `Unknown Province (${result.province})`,
           };
         }) || [];
-
-
-
-
-
 
         // Group by division safely
         const groupedResults = enrichedResults.reduce((acc: DivisionResult[], result: any) => {
@@ -213,22 +206,16 @@ export default function ProvinceRankingSimple() {
           return acc;
         }, []);
 
-
-
         const calculatedRanking = getProvincePoints(groupedResults);
         
-
-
         if (calculatedRanking.length > 0) {
           setProvinceData(calculatedRanking);
-
         } else {
-
-          setError("No ranking data could be calculated");
+          setProvinceData([]);
         }
       } catch (err) {
         console.error("❌ Unexpected error:", err);
-        setError(`Unexpected error: ${err instanceof Error ? err.message : 'Unknown error'}`);
+        setProvinceData([]);
       } finally {
         setLoading(false);
       }
@@ -236,6 +223,57 @@ export default function ProvinceRankingSimple() {
 
     fetchSupabaseData();
   }, [mounted, provinces]);
+
+  // Helper function to determine competition status
+  const getCompetitionStatus = () => {
+    if (!competitionInfo) return 'unknown';
+    
+    const now = new Date();
+    const startDate = new Date(competitionInfo.start_date);
+    const endDate = new Date(competitionInfo.end_date);
+    
+    if (now < startDate) return 'upcoming';
+    if (now >= startDate && now <= endDate) return 'ongoing';
+    if (now > endDate) return 'completed';
+    
+    return 'unknown';
+  };
+
+  // Helper function to get status message
+  const getStatusMessage = () => {
+    const status = getCompetitionStatus();
+    
+    switch (status) {
+      case 'upcoming':
+        return {
+          icon: <Clock className="w-16 h-16 mx-auto mb-4 text-blue-400" />,
+          title: "Event Not Started Yet",
+          message: "Province ranking will be available after the competition concludes and results have been processed.",
+          color: "text-blue-600"
+        };
+      case 'ongoing':
+        return {
+          icon: <Calendar className="w-16 h-16 mx-auto mb-4 text-orange-400" />,
+          title: "Competition in Progress",
+          message: "Province ranking will be available after the competition concludes and results have been processed.",
+          color: "text-orange-600"
+        };
+      case 'completed':
+        return {
+          icon: <Info className="w-16 h-16 mx-auto mb-4 text-gray-400" />,
+          title: "Data Not Updated Yet",
+          message: "Competition has concluded. Admin team is currently processing and verifying results. Province ranking will be available soon.",
+          color: "text-gray-600"
+        };
+      default:
+        return {
+          icon: <Info className="w-16 h-16 mx-auto mb-4 text-gray-400" />,
+          title: "Competition Information",
+          message: "Province ranking will be available after the competition concludes and results have been processed.",
+          color: "text-gray-600"
+        };
+    }
+  };
 
   if (loading) {
     return (
@@ -248,34 +286,29 @@ export default function ProvinceRankingSimple() {
     );
   }
 
-  if (error) {
-    return (
-      <div className="container mx-auto py-8 px-4">
-        <div className="flex flex-col items-center justify-center min-h-[400px]">
-          <div className="text-red-500 text-center">
-            <Trophy className="w-16 h-16 mx-auto mb-4 text-red-400" />
-            <h2 className="text-xl font-bold mb-2">Error Loading Rankings</h2>
-            <p className="mb-4">{error}</p>
-            <button 
-              onClick={() => window.location.reload()} 
-              className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
-            >
-              Retry
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
+  // Show status message if no data available
   if (!provinceData || provinceData.length === 0) {
+    const statusInfo = getStatusMessage();
+    
     return (
-      <div className="container mx-auto py-8 px-4">
-        <div className="flex flex-col items-center justify-center min-h-[400px]">
-          <Trophy className="text-gray-400 w-16 h-16 mb-4" />
-          <h2 className="text-xl font-bold text-gray-600 mb-2">No Rankings Available</h2>
-          <p className="text-gray-500">Competition results will appear here after events are completed.</p>
-          <p className="text-gray-400 text-sm mt-2">Check back later for updated rankings!</p>
+      <div className="py-12 bg-gray-50">
+        <div className="container mx-auto px-4">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-center">Province Medal Ranking</CardTitle>
+            </CardHeader>
+            <CardContent className="text-center py-8">
+              <div className="flex flex-col items-center">
+                {statusInfo.icon}
+                <h2 className={`text-xl font-bold mb-4 ${statusInfo.color}`}>
+                  {statusInfo.title}
+                </h2>
+                <p className="text-gray-600 max-w-md">
+                  {statusInfo.message}
+                </p>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </div>
     );
@@ -295,15 +328,20 @@ export default function ProvinceRankingSimple() {
           <Trophy className="text-yellow-500 w-10 h-10" /> Province Medal Ranking
         </h1>
 
-        {/* Debug Info */}
-        {/* {debugInfo && (
-          <div className="mb-6 p-4 bg-gray-100 rounded-lg">
-            <h3 className="font-bold mb-2">Debug Information:</h3>
-            <pre className="text-xs overflow-auto max-h-40">
-              {JSON.stringify(debugInfo, null, 2)}
-            </pre>
+        {/* Competition Status Info */}
+        {competitionInfo && (
+          <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+            <div className="flex items-center gap-3">
+              <Calendar className="w-5 h-5 text-blue-600" />
+              <div>
+                <h3 className="font-semibold text-blue-800">{competitionInfo.name}</h3>
+                <p className="text-sm text-blue-600">
+                  {new Date(competitionInfo.start_date).toLocaleDateString('en-US')} - {new Date(competitionInfo.end_date).toLocaleDateString('en-US')}
+                </p>
+              </div>
+            </div>
           </div>
-        )} */}
+        )}
 
         <div className="space-y-6">
           {sortedData.map((provinceData, index) => {

@@ -11,10 +11,11 @@ import { Badge } from "../ui/badge"
 import { getPublicImageUrl } from "@/utils/getPublicImageUrl";
 import { getCardStyle } from "@/styles/cardStyles";
 import React, { useEffect, useState } from "react";
-
+import { useSelector } from "react-redux";
+import { RootState } from "@/lib/redux/store";
 export function ChampionshipSection() {
   const competitions = useAppSelector((state) => state.competitions.competitions);
-
+  const divisions = useSelector((state: RootState) => state.divisions.divisions);
   // Helper to fetch image URLs for competitions
   const [imageUrls, setImageUrls] = useState<{ [id: string]: string | null }>({});
 
@@ -151,7 +152,7 @@ export function ChampionshipSection() {
                       </div>
                       <div>
                         <p className="text-gray-400 text-sm">Divisions</p>
-                        <p className="text-white font-medium">33 Categories</p>
+                        <p className="text-white font-medium">{divisions.length.toLocaleString() || "0"} Categories</p>
                       </div>
                     </div>
                   </div>

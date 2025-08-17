@@ -34,7 +34,7 @@ interface CompetitionDetailsProps {
 
 export function CompetitionDetails({ competition }: CompetitionDetailsProps) {
   const { divisions } = useAppSelector((state) => state.divisions);
-
+  console.log(competition, 'competitions')
   return (
     <div className="py-12 bg-white">
       <div className="container mx-auto px-4">
@@ -84,7 +84,7 @@ export function CompetitionDetails({ competition }: CompetitionDetailsProps) {
                     <Clock className="h-5 w-5 text-red-600" />
                     <div>
                       <p className="font-medium">Registration Deadline</p>
-                      <p className="text-gray-600">{formatDate(competition.registrationDeadline)}</p>
+                      <p className="text-gray-600">{formatDate(competition.registration_deadline)}</p>
                     </div>
                   </div>
                   <div className="flex items-center space-x-3">
@@ -138,26 +138,27 @@ export function CompetitionDetails({ competition }: CompetitionDetailsProps) {
               <CardContent className="space-y-4">
                 <div className="text-center">
                   <Badge
-                    variant={competition.registrationOpen ? "default" : "secondary"}
+                    variant={competition.registration_open ? "default" : "secondary"}
                     className={`text-lg px-4 py-2 ${
-                      competition.registrationOpen ? "bg-green-600 hover:bg-green-700" : "bg-gray-600"
+                      competition.registration_open ? "bg-green-600 hover:bg-green-700" : "bg-gray-600"
                     }`}
                   >
-                    {competition.registrationOpen ? "Registration Open" : "Registration Closed"}
+                    {competition.registration_open ? "Registration Open" : "Registration Closed"}
                   </Badge>
                 </div>
 
-                {competition.registrationOpen && (
+                {competition.registration_open && (
                   <>
                     <div className="text-center text-sm text-gray-600">
                       <p>Registration closes on</p>
-                      <p className="font-medium">{formatDate(competition.registrationDeadline)}</p>
+                      <p className="font-medium">{formatDate(competition.registration_deadline)}</p>
                     </div>
-                    <Link href={`/championships/${competition.id}/register`}>
+                    {/* TODO: Register team kalo udah masuk ke update kedua sementara feature belum ada sekarang */}
+                    {/* <Link href={`/championships/${competition.id}/register`}>
                       <Button className="w-full bg-red-600 hover:bg-red-700" size="lg">
                         Register Your Team
                       </Button>
-                    </Link>
+                    </Link> */}
                   </>
                 )}
 

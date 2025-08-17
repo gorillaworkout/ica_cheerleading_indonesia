@@ -21,7 +21,7 @@ export default function AdminDashboard() {
   const [recentCompetitions, setRecentCompetitions] = useState<any[]>([]);
   const [topProvinces, setTopProvinces] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  
+  console.log(recentCompetitions, 'recent competition admin page')
   // Get data from Redux store
   const competitions = useSelector((state: RootState) => state.competitions.competitions);
   const provinces = useSelector((state: RootState) => state.provinces.provinces);
@@ -100,19 +100,70 @@ export default function AdminDashboard() {
           total_teams: 0
         });
       }
-
-      const provinceData = provinceMap.get(provinceName);
       
-      if (result.placement === 1) provinceData.gold_medals += 1;
-      else if (result.placement === 2) provinceData.silver_medals += 1;
-      else if (result.placement === 3) provinceData.bronze_medals += 1;
+      const province = provinceMap.get(provinceName);
+      if (result.placement === 1) province.gold_medals++;
+      else if (result.placement === 2) province.silver_medals++;
+      else if (result.placement === 3) province.bronze_medals++;
     });
 
     return Array.from(provinceMap.values()).sort((a, b) => {
+      const totalA = a.gold_medals + a.silver_medals + a.bronze_medals;
+      const totalB = b.gold_medals + b.silver_medals + b.bronze_medals;
+      if (totalB !== totalA) return totalB - totalA;
       if (b.gold_medals !== a.gold_medals) return b.gold_medals - a.gold_medals;
       if (b.silver_medals !== a.silver_medals) return b.silver_medals - a.silver_medals;
       return b.bronze_medals - a.bronze_medals;
     });
+  };
+
+  // Function to determine competition status based on available data
+  const getCompetitionStatus = (competition: any) => {
+    const now = new Date();
+    const competitionDate = new Date(competition.date);
+    const registrationDeadline = new Date(competition.registration_deadline);
+    
+    // Check if competition date has passed
+    if (now > competitionDate) {
+      return {
+        status: "Completed",
+        color: "bg-gray-50 text-gray-600 border-gray-200",
+        description: "Competition has ended"
+      };
+    }
+    
+    // Check if registration is open
+    if (competition.registration_open) {
+      // Check if registration deadline has passed
+      if (now > registrationDeadline) {
+        return {
+          status: "Registration Closed",
+          color: "bg-orange-50 text-orange-600 border-orange-200",
+          description: "Registration period ended"
+        };
+      } else {
+        return {
+          status: "Registration Open",
+          color: "bg-green-50 text-green-600 border-green-200",
+          description: "Accepting registrations"
+        };
+      }
+    } else {
+      // Registration is closed
+      if (now > registrationDeadline) {
+        return {
+          status: "Registration Closed",
+          color: "bg-orange-50 text-orange-600 border-orange-200",
+          description: "Registration period ended"
+        };
+      } else {
+        return {
+          status: "Registration Closed",
+          color: "bg-red-50 text-red-600 border-red-200",
+          description: "Registration not open yet"
+        };
+      }
+    }
   };
 
   const handleCardClick = (path: string) => {
@@ -385,13 +436,14 @@ export default function AdminDashboard() {
                             </div>
                           </div>
                           <div className="flex items-center gap-2">
-                            <span className={`px-2 py-1 text-xs font-medium rounded-full border ${
-                              comp.registrationOpen 
-                                ? 'bg-green-50 text-green-600 border-green-200' 
-                                : 'bg-gray-50 text-gray-600 border-gray-200'
-                            }`}>
-                              {comp.status}
-                            </span>
+                            {(() => {
+                              const statusInfo = getCompetitionStatus(comp);
+                              return (
+                                <span className={`px-2 py-1 text-xs font-medium rounded-full border ${statusInfo.color}`} title={statusInfo.description}>
+                                  {statusInfo.status}
+                                </span>
+                              );
+                            })()}
                             <button className="w-8 h-8 bg-gray-100 hover:bg-red-50 rounded-lg flex items-center justify-center transition-colors duration-200 border border-gray-200">
                               <Eye className="w-4 h-4 text-gray-600 hover:text-red-600" />
                             </button>

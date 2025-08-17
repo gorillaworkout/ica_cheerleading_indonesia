@@ -52,7 +52,7 @@ export default async function CompetitionPage({ params }: Props) {
           <HeroImageSection heroSlides={heroSlides} showTextAndButtons={false} />
         </div>
         <CompetitionDetails competition={competition} />
-        <ProvinceRankingSimple />
+        <ProvinceRankingSimple  competitionId={competition.id} />
         <CompetitionResults competitionId={competition.id} />
       </main>
       <Footer />
