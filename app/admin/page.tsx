@@ -21,7 +21,6 @@ export default function AdminDashboard() {
   const [recentCompetitions, setRecentCompetitions] = useState<any[]>([]);
   const [topProvinces, setTopProvinces] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  console.log(recentCompetitions, 'recent competition admin page')
   // Get data from Redux store
   const competitions = useSelector((state: RootState) => state.competitions.competitions);
   const provinces = useSelector((state: RootState) => state.provinces.provinces);
@@ -444,7 +443,12 @@ export default function AdminDashboard() {
                                 </span>
                               );
                             })()}
-                            <button className="w-8 h-8 bg-gray-100 hover:bg-red-50 rounded-lg flex items-center justify-center transition-colors duration-200 border border-gray-200">
+                            <button
+                              className="w-8 h-8 bg-gray-100 hover:bg-red-50 rounded-lg flex items-center justify-center transition-colors duration-200 border border-gray-200"
+                              onClick={() => handleCardClick(`/championships/${comp.slug}`)}
+                              aria-label="Lihat detail event"
+                              title="Lihat detail event"
+                            >
                               <Eye className="w-4 h-4 text-gray-600 hover:text-red-600" />
                             </button>
                           </div>

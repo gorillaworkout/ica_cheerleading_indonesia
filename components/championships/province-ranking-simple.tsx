@@ -75,7 +75,7 @@ const getProvincePoints = (data: DivisionResult[]): ProvinceStats[] => {
 };
 
 interface ProvinceRankingSimpleProps {
-  competitionId: string;
+  competitionId: string | number;
 }
 
 export default function ProvinceRankingSimple({ competitionId }: ProvinceRankingSimpleProps) {
@@ -110,7 +110,7 @@ export default function ProvinceRankingSimple({ competitionId }: ProvinceRanking
         // Fetch competition info first to check event status
         const { data: competitionData, error: competitionError } = await supabase
           .from("competitions")
-          .select("name, start_date, end_date, status")
+          .select("*")
           .eq("id", competitionId)
           .single();
 
@@ -229,12 +229,19 @@ export default function ProvinceRankingSimple({ competitionId }: ProvinceRanking
     if (!competitionInfo) return 'unknown';
     
     const now = new Date();
-    const startDate = new Date(competitionInfo.start_date);
-    const endDate = new Date(competitionInfo.end_date);
+    const startDate = competitionInfo.start_date
+      ? new Date(competitionInfo.start_date)
+      : competitionInfo.date
+      ? new Date(competitionInfo.date)
+      : null;
+    const endDate = competitionInfo.end_date
+      ? new Date(competitionInfo.end_date)
+      : startDate;
     
+    if (!startDate) return 'unknown';
     if (now < startDate) return 'upcoming';
-    if (now >= startDate && now <= endDate) return 'ongoing';
-    if (now > endDate) return 'completed';
+    if (endDate && now > endDate) return 'completed';
+    if (now >= startDate && (!endDate || now <= endDate)) return 'ongoing';
     
     return 'unknown';
   };
@@ -336,7 +343,17 @@ export default function ProvinceRankingSimple({ competitionId }: ProvinceRanking
               <div>
                 <h3 className="font-semibold text-blue-800">{competitionInfo.name}</h3>
                 <p className="text-sm text-blue-600">
-                  {new Date(competitionInfo.start_date).toLocaleDateString('en-US')} - {new Date(competitionInfo.end_date).toLocaleDateString('en-US')}
+                  {competitionInfo.start_date || competitionInfo.end_date ? (
+                    <>
+                      {competitionInfo.start_date ? new Date(competitionInfo.start_date).toLocaleDateString('en-US') : ''}
+                      {competitionInfo.start_date && competitionInfo.end_date ? ' - ' : ''}
+                      {competitionInfo.end_date ? new Date(competitionInfo.end_date).toLocaleDateString('en-US') : ''}
+                    </>
+                  ) : competitionInfo.date ? (
+                    new Date(competitionInfo.date).toLocaleDateString('en-US')
+                  ) : (
+                    'Date TBD'
+                  )}
                 </p>
               </div>
             </div>
