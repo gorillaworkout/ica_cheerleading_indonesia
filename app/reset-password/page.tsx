@@ -15,6 +15,7 @@ export default function ResetPasswordPage() {
     const searchParams = useSearchParams()
     const [isSessionReady, setIsSessionReady] = useState(false)
     const [resetMethod, setResetMethod] = useState<'supabase' | 'custom' | null>(null)
+    const [lastAccessToken, setLastAccessToken] = useState<string | null>(null)
     
     // For custom reset
     const customToken = searchParams.get('token')
@@ -79,6 +80,22 @@ export default function ResetPasswordPage() {
                     const hashParams = new URLSearchParams(urlHash.substring(1))
                     const accessToken = hashParams.get('access_token')
                     const refreshToken = hashParams.get('refresh_token')
+
+                    // One-time use guard (client-side): block if this token was used before
+                    try {
+                        if (accessToken) {
+                            const usedRaw = localStorage.getItem('usedRecoveryTokens')
+                            const usedList: string[] = usedRaw ? JSON.parse(usedRaw) : []
+                            if (Array.isArray(usedList) && usedList.includes(accessToken)) {
+                                toast({ 
+                                    title: "Link Sudah Digunakan", 
+                                    description: "Tautan reset ini sudah dipakai. Anda akan diarahkan ke beranda."
+                                })
+                                router.replace('/')
+                                return
+                            }
+                        }
+                    } catch {}
                     
                     // console.log("🔑 Access token found:", !!accessToken)
                     // console.log("� Access token length:", accessToken?.length)
@@ -99,6 +116,7 @@ export default function ResetPasswordPage() {
                             // console.log("👤 User email:", data.session.user?.email)
                             setResetMethod('supabase')
                             setIsSessionReady(true)
+                            setLastAccessToken(accessToken)
                             
                             // Clean up URL hash to prevent reload issues
                             // console.log("🧹 Cleaning up URL hash...")
@@ -130,41 +148,21 @@ export default function ResetPasswordPage() {
                     } else {
                         // console.log("❌ All recovery methods failed")
                         toast({ 
-                            title: "Reset Token Expired", 
-                            description: "Link reset password sudah expired atau tidak valid. Silakan request ulang di halaman lupa password.",
-                            action: (
-                                <button 
-                                    onClick={() => router.push("/forgot-password")}
-                                    className="bg-red-600 text-white px-3 py-1 rounded text-sm hover:bg-red-700"
-                                >
-                                    Lupa Password
-                                </button>
-                            )
+                            title: "Link Tidak Valid atau Kedaluwarsa", 
+                            description: "Silakan minta tautan baru. Mengarahkan ke beranda...",
                         })
+                        router.replace('/')
                     }
                 }, 2000) // Increase delay to 2 seconds
                 return
             }
             
-            // Method 3: Check existing Supabase session
-            const { data } = await supabase.auth.getSession()
-            if (data.session) {
-                setResetMethod('supabase')
-                setIsSessionReady(true)
-            } else {
-                toast({ 
-                    title: "Session Invalid", 
-                    description: "Tidak ada session reset password yang valid. Silakan request ulang.",
-                    action: (
-                        <button 
-                            onClick={() => router.push("/forgot-password")}
-                            className="bg-red-600 text-white px-3 py-1 rounded text-sm hover:bg-red-700"
-                        >
-                            Lupa Password
-                        </button>
-                    )
-                })
-            }
+            // Method 3: No valid recovery token -> redirect ke halaman lupa password
+            toast({ 
+                title: "Link Tidak Valid", 
+                description: "Silakan minta tautan baru. Mengarahkan ke beranda...",
+            })
+            router.replace('/')
         }
         
         checkResetMethod()
@@ -216,11 +214,26 @@ export default function ResetPasswordPage() {
             const { error } = await supabase.auth.updateUser({ password })
 
             if (error) {
-                toast({ title: "Error", description: error.message })
+                toast({ title: "Gagal", description: error.message })
             } else {
-                toast({ title: "Sukses", description: "Password berhasil diubah. Silakan login ulang." })
+                // Catat token sebagai sudah digunakan (client-side prevention)
+                try {
+                    if (lastAccessToken) {
+                        const usedRaw = localStorage.getItem('usedRecoveryTokens')
+                        const usedList: string[] = usedRaw ? JSON.parse(usedRaw) : []
+                        if (!usedList.includes(lastAccessToken)) {
+                            usedList.push(lastAccessToken)
+                            localStorage.setItem('usedRecoveryTokens', JSON.stringify(usedList))
+                        }
+                    }
+                } catch {}
+
+                toast({ title: "Berhasil", description: "Password berhasil diubah. Mengarahkan ke beranda..." })
+                // Invalidate recovery by sign out and strip any hash to prevent re-use UX
                 await supabase.auth.signOut()
-                router.push("/login")
+                // Bersihkan hash agar user tidak melihat form lagi saat back/refresh
+                window.history.replaceState({}, document.title, window.location.pathname)
+                router.replace("/")
             }
         }
 
