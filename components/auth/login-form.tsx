@@ -186,13 +186,13 @@ export function LoginForm() {
         })
       ).unwrap()
 
-      const successMsg = "Registration successful! Please check your email and click the activation link to activate your account."
+      const successMsg = "Pendaftaran berhasil! Silakan cek email Anda dan klik tautan aktivasi untuk mengaktifkan akun."
       setSuccess(successMsg)
       setEmailForResend(signUpData.email)
       
       toast({
-        title: "Registration Successful!",
-        description: "Please check your email and click the activation link to activate your account before logging in.",
+        title: "Pendaftaran Berhasil!",
+        description: "Silakan cek email dan klik tautan aktivasi untuk mengaktifkan akun sebelum login.",
         variant: "default",
       })
       
@@ -225,11 +225,43 @@ export function LoginForm() {
 
       
     } catch (err: any) {
-      const errorMsg = err?.message || "Failed to sign up"
+      const raw = err?.message || "Gagal mendaftar"
+      let errorMsg = raw
+      const lc = raw.toLowerCase()
+      if (lc.includes('already registered') || lc.includes('already exists') || lc.includes('exists') || lc.includes('sudah terdaftar')) {
+        // Cek status verifikasi terlebih dulu; hanya tampilkan Kirim Ulang jika belum terverifikasi
+        try {
+          const res = await fetch('/api/auth/check-email', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: signUpData.email })
+          })
+          const info = await res.json()
+          if (info.exists && !info.verified) {
+            errorMsg = "Email sudah terdaftar tapi belum diverifikasi. Silakan login atau klik 'Kirim Ulang Email'."
+            setEmailForResend(signUpData.email)
+          } else if (info.exists && info.verified) {
+            errorMsg = "Email sudah terdaftar dan sudah diverifikasi. Silakan login. Jika lupa password, gunakan menu 'Forgot your password?'."
+            setEmailForResend("")
+          } else {
+            errorMsg = "Email sudah terdaftar. Silakan login."
+          }
+        } catch {
+          errorMsg = "Email sudah terdaftar. Silakan login."
+        }
+      } else if (lc.includes('rate limit') || lc.includes('too many')) {
+        errorMsg = "Terlalu banyak percobaan. Coba lagi beberapa menit lagi."
+      } else if (lc.includes('invalid email')) {
+        errorMsg = "Format email tidak valid. Periksa kembali alamat email Anda."
+      } else if (lc.includes('password') && lc.includes('at least')) {
+        errorMsg = "Password terlalu lemah. Gunakan kombinasi huruf dan angka dengan panjang minimal yang disyaratkan."
+      } else if (lc.includes('profiles_email_key') || lc.includes('unique constraint') || lc.includes('duplicate key value')) {
+        errorMsg = "Email sudah digunakan pada profil. Silakan login atau gunakan email lain."
+      }
       setLocalError(errorMsg)
       
       toast({
-        title: "Registration Failed",
+        title: "Pendaftaran Gagal",
         description: errorMsg,
         variant: "destructive",
       })

@@ -117,6 +117,24 @@ export const signUpWithEmailThunk = createAsyncThunk(
     },
     { rejectWithValue }
   ) => {
+    // Pre-check: apakah email sudah ada dan/atau sudah terverifikasi
+    try {
+      const res = await fetch('/api/auth/check-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email })
+      })
+      if (res.ok) {
+        const info = await res.json()
+        if (info.exists && info.verified) {
+          return rejectWithValue('Email sudah terdaftar dan terverifikasi. Silakan login. Jika lupa password, gunakan menu Lupa Password.')
+        }
+        if (info.exists && !info.verified) {
+          return rejectWithValue('Email sudah terdaftar namun belum diverifikasi. Silakan cek email Anda atau klik Kirim Ulang Email.')
+        }
+      }
+    } catch {}
+
     // Enable email confirmation with redirect URL
     const { data, error } = await supabase.auth.signUp({ 
       email, 
@@ -125,7 +143,20 @@ export const signUpWithEmailThunk = createAsyncThunk(
         emailRedirectTo: `${window.location.origin}/auth/callback`
       }
     });
-    if (error) return rejectWithValue(error.message);
+    if (error) {
+      const rawMsg = (error.message || "").toLowerCase()
+      let friendly = "Terjadi kesalahan saat pendaftaran. Silakan coba lagi."
+      if (rawMsg.includes("already registered") || rawMsg.includes("already exists") || rawMsg.includes("exists")) {
+        friendly = "Email sudah terdaftar. Silakan login. Jika belum menerima email verifikasi, gunakan tombol 'Kirim Ulang Email'."
+      } else if (rawMsg.includes("rate limit") || rawMsg.includes("too many")) {
+        friendly = "Terlalu banyak percobaan dalam waktu singkat. Coba lagi beberapa menit lagi."
+      } else if (rawMsg.includes("invalid email")) {
+        friendly = "Format email tidak valid. Periksa kembali alamat email Anda."
+      } else if (rawMsg.includes("password") && rawMsg.includes("at least")) {
+        friendly = "Password terlalu lemah. Gunakan kombinasi huruf dan angka dengan panjang minimal yang disyaratkan."
+      }
+      return rejectWithValue(friendly);
+    }
 
     const userId = data.user?.id;
     if (!userId) return rejectWithValue("User ID not found");
@@ -173,8 +204,19 @@ export const signUpWithEmailThunk = createAsyncThunk(
       }
     }
     
-    // Try to insert profile with error handling for foreign key constraint
+    // Try to ensure profile exists for this userId
     let profileData: any = null;
+    // Cek apakah profile dengan id user sudah ada
+    const { data: existingById } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', userId)
+      .single()
+    if (existingById) {
+      profileData = existingById
+    }
+
+    if (!profileData) {
     const { data: initialProfileData, error: profileError } = await supabase.from("profiles").insert({
       id: userId, // profiles.id = auth.users.id (UUID)
       user_id: userId, // Keep this as text for compatibility
@@ -197,9 +239,10 @@ export const signUpWithEmailThunk = createAsyncThunk(
 
     if (profileError) {
       console.error('Profile creation error:', profileError);
+      const rawMsg = (profileError.message || "").toLowerCase()
       
       // If it's a foreign key constraint error, try alternative approach
-      if (profileError.message.includes('profiles_id_fkey')) {
+      if (rawMsg.includes('profiles_id_fkey')) {
         // Wait a bit for auth user to be fully committed
         await new Promise(resolve => setTimeout(resolve, 1000));
         
@@ -223,13 +266,29 @@ export const signUpWithEmailThunk = createAsyncThunk(
         }).select().single();
         
         if (retryError) {
-          return rejectWithValue(`Failed to create profile after retry: ${retryError.message}`);
+          const retryMsg = (retryError.message || "").toLowerCase()
+          if (retryMsg.includes('duplicate key value') || retryMsg.includes('unique constraint') || retryMsg.includes('profiles_email_key')) {
+            // Fetch existing profile by email and continue
+            const { data: existingProfile } = await supabase
+              .from('profiles')
+              .select('*')
+              .eq('email', email)
+              .single()
+            profileData = existingProfile
+          } else {
+            return rejectWithValue("Gagal membuat profil. Silakan coba lagi.");
+          }
+        } else {
+          // Update profileData with retry data
+          profileData = retryProfileData;
         }
-        // Update profileData with retry data
-        profileData = retryProfileData;
+      } else if (rawMsg.includes('duplicate key value') || rawMsg.includes('unique constraint') || rawMsg.includes('profiles_email_key')) {
+        // Email already exists: anggap akun lama. Jangan lanjut registrasi akun baru untuk email yang sama
+        return rejectWithValue('Email sudah terdaftar. Silakan login menggunakan email tersebut.')
       } else {
-        return rejectWithValue(`Failed to create profile: ${profileError.message}`);
+        return rejectWithValue("Gagal membuat profil. Silakan coba lagi.");
       }
+    }
     }
 
 
@@ -240,6 +299,11 @@ export const signUpWithEmailThunk = createAsyncThunk(
 
     // If role is coach, create coach profile
     if (role === 'coach') {
+      // Hindari membuat coach jika profile.id tidak sama dengan userId (inkonsistensi)
+      if (!profileData || profileData.id !== userId) {
+        // Jangan block registrasi; cukup lewati pembuatan coach
+        console.warn('Skip coach creation: profileData missing or mismatched with auth userId')
+      } else {
 
       
       const coachData = {
@@ -264,8 +328,7 @@ export const signUpWithEmailThunk = createAsyncThunk(
         is_active: true,
         is_featured: false,
         sort_order: 0,
-        created_by: userId,
-        updated_by: userId,
+        // Catatan: sengaja tidak mengisi created_by/updated_by untuk hindari FK error saat registrasi awal
         user_id: profileData?.id || userId  // Reference to profiles.id (UUID)
         
       };
@@ -275,11 +338,10 @@ export const signUpWithEmailThunk = createAsyncThunk(
       const { data: coachInsertData, error: coachError } = await supabase.from("coaches").insert(coachData).select();
 
       if (coachError) {
-        console.error('Failed to create coach profile:', coachError);
-        console.error('Coach error details:', JSON.stringify(coachError, null, 2));
-        // You might want to rollback the profile creation here
-        // For now, we'll continue but log the error
-        return rejectWithValue(`Profile created but failed to create coach profile: ${coachError.message}`);
+        console.warn('Coach auto-create skipped due to error (will not block registration):', coachError);
+        // Jangan gagalkan registrasi hanya karena coach gagal dibuat otomatis.
+        // Pengguna bisa lengkapi profil coach dari halaman profil nanti.
+      }
       }
       
 
