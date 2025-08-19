@@ -31,6 +31,18 @@ export function AuthInit() {
   useEffect(() => {
     if (!isClientMounted) return
 
+    // 🔒 Global recovery redirect: jika ada token recovery di hash namun bukan di halaman reset-password,
+    // paksa redirect ke /reset-password sambil mempertahankan hash (access_token & refresh_token)
+    try {
+      const hash = window.location.hash
+      const hasRecoveryToken = hash.includes('access_token=') && hash.includes('type=recovery')
+      const isOnResetPage = pathname === '/reset-password'
+      if (hasRecoveryToken && !isOnResetPage) {
+        window.location.replace(`/reset-password${hash}`)
+        return
+      }
+    } catch {}
+
     // ✅ CRITICAL FIX: Check for recovery token before doing anything
     const isRecoveryFlow = () => {
       const hash = window.location.hash

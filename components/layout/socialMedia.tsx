@@ -19,7 +19,7 @@ export const SocialMedia = () => {
   };
 
   return (
-    <div className="h-[50px] w-full bg-red-600 flex justify-center items-center">
+    <div className="h-[50px] w-full bg-red-600 flex justify-center items-center relative z-[60]">
       <div className="container mx-auto flex items-center justify-end gap-x-4">
         <div
           onClick={handleInstagramClick}

@@ -79,7 +79,7 @@ export default function ForgotPasswordPage() {
         // console.log("✅ Tier 1: Supabase template + MailerSend SMTP succeeded!")
         toast({
           title: "✅ Email Berhasil Dikirim",
-          description: "Link reset password telah dikirim menggunakan template Supabase via MailerSend SMTP. Silakan cek inbox dan folder spam.",
+          description: "Link reset password telah dikirim, Silakan cek inbox dan folder spam.",
           className: "border-green-500 bg-green-50"
         })
         return
@@ -96,7 +96,9 @@ export default function ForgotPasswordPage() {
 
       // Tier 2: Supabase without redirect URL
       // console.log("📧 Tier 2: Trying Supabase without redirect...")
-      const { error: error2 } = await supabase.auth.resetPasswordForEmail(email)
+      const { error: error2 } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      })
 
       if (!error2) {
         // console.log("✅ Tier 2: Supabase without redirect succeeded!")
@@ -119,7 +121,9 @@ export default function ForgotPasswordPage() {
     
       // Tier 3: Supabase without redirect URL
       // console.log("📧 Tier 3: Trying without redirect URL...")
-      const { error: error3 } = await supabase.auth.resetPasswordForEmail(email)
+      const { error: error3 } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      })
 
       if (!error3) {
         // console.log("✅ Tier 3: Supabase without redirect succeeded!")
@@ -142,7 +146,9 @@ export default function ForgotPasswordPage() {
     
       // Tier 4: Supabase with minimal config
       // console.log("📧 Tier 4: Trying minimal Supabase config...")
-      const { error: error4 } = await supabase.auth.resetPasswordForEmail(email, {})
+      const { error: error4 } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      })
 
       if (!error4) {
         // console.log("✅ Tier 4: Supabase minimal succeeded!")
@@ -186,113 +192,99 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className="min-h-screen relative overflow-hidden">
-      {/* ✨ Animated Background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,rgba(120,119,198,0.3),transparent_50%)]"></div>
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(255,119,198,0.3),transparent_50%)]"></div>
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_40%_80%,rgba(120,219,255,0.3),transparent_50%)]"></div>
-        
-        {/* Floating particles */}
-        <div className="absolute inset-0">
-          <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-cyan-400 rounded-full animate-pulse"></div>
-          <div className="absolute top-3/4 left-3/4 w-1 h-1 bg-purple-400 rounded-full animate-ping"></div>
-          <div className="absolute top-1/2 right-1/4 w-3 h-3 bg-pink-400 rounded-full animate-bounce"></div>
-          <div className="absolute bottom-1/4 left-1/2 w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
-        </div>
-      </div>
+    <div className="min-h-screen relative overflow-hidden flex flex-col">
+      {/* Background putih-merah */}
+      <div className="absolute inset-0 bg-gradient-to-br from-white via-red-50 to-red-100"></div>
 
       <Header />
       
-      <main className="relative flex-grow flex items-center justify-center px-4 py-16 min-h-screen">
+      <main className="relative flex-1 flex items-center justify-center px-4 py-16">
         <div className="w-full max-w-md">
-          {/* 🔥 Futuristic Card */}
+          {/* Card */}
           <div className="relative group">
-            {/* Glowing border effect */}
-            <div className="absolute -inset-0.5 bg-gradient-to-r from-cyan-500 via-purple-500 to-pink-500 rounded-2xl blur opacity-20 group-hover:opacity-40 transition duration-1000 group-hover:duration-200 animate-pulse"></div>
+            {/* Glow border merah */}
+            <div className="absolute -inset-0.5 bg-gradient-to-r from-red-500 via-red-400 to-red-600 rounded-2xl blur opacity-15 group-hover:opacity-30 transition duration-700"></div>
             
             {/* Main card */}
-            <div className="relative bg-slate-900/70 backdrop-blur-xl border border-slate-800/50 rounded-2xl p-8 shadow-2xl">
-              {/* 🎯 Header Section */}
+            <div className="relative bg-white/95 backdrop-blur-sm border border-red-100 rounded-2xl p-8 shadow-xl">
+              {/* Header Section */}
               <div className="text-center mb-8">
-                <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-cyan-500 to-purple-600 rounded-full mb-4 shadow-lg">
+                <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-red-600 to-red-500 rounded-full mb-4 shadow-lg">
                   <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
                   </svg>
                 </div>
-                <h1 className="text-3xl font-bold bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent mb-2">
+                <h1 className="text-3xl font-bold text-red-700 mb-2">
                   Reset Password
                 </h1>
-                <p className="text-slate-400 text-sm leading-relaxed">
+                <p className="text-gray-600 text-sm leading-relaxed">
                   Enter your email address and we'll send you a secure link to reset your password
                 </p>
               </div>
 
-              {/* 💫 Rate Limit Warning - Futuristic Style */}
+              {/* Rate Limit Warning */}
               {isRateLimited && (
                 <div className="mb-6 relative">
-                  <div className="absolute -inset-0.5 bg-gradient-to-r from-orange-500 to-red-500 rounded-xl blur opacity-20"></div>
-                  <div className="relative bg-orange-900/30 backdrop-blur-sm border border-orange-500/30 rounded-xl p-4">
+                  <div className="absolute -inset-0.5 bg-gradient-to-r from-orange-400 to-red-500 rounded-xl blur opacity-15"></div>
+                  <div className="relative bg-orange-50 border border-orange-200 rounded-xl p-4">
                     <div className="flex items-center justify-between mb-3">
                       <div className="flex items-center space-x-3">
                         <div className="flex-shrink-0">
-                          <div className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center">
-                            <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <div className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center text-white">
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
                           </div>
                         </div>
                         <div>
-                          <h3 className="text-orange-300 font-semibold text-sm">Rate Limit Active</h3>
-                          <p className="text-orange-400/80 text-xs">Please wait before trying again</p>
+                          <h3 className="text-orange-700 font-semibold text-sm">Rate Limit Active</h3>
+                          <p className="text-orange-600 text-xs">Please wait before trying again</p>
                         </div>
                       </div>
                       <div className="text-right">
-                        <div className="text-xl font-bold text-orange-300">{cooldownTime}s</div>
+                        <div className="text-xl font-bold text-orange-700">{cooldownTime}s</div>
                       </div>
                     </div>
                     
-                    {/* Animated progress bar */}
-                    <div className="relative h-2 bg-orange-900/50 rounded-full overflow-hidden">
-                      <div 
-                        className="absolute left-0 top-0 h-full bg-gradient-to-r from-orange-500 to-red-500 transition-all duration-1000 ease-out"
+                    {/* Progress bar */}
+                    <div className="relative h-2 bg-orange-100 rounded-full overflow-hidden">
+                      <div
+                        className="absolute left-0 top-0 h-full bg-gradient-to-r from-orange-400 to-red-500 transition-all duration-1000 ease-out"
                         style={{ width: `${((60 - cooldownTime) / 60) * 100}%` }}
                       ></div>
-                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-pulse"></div>
                     </div>
                   </div>
                 </div>
               )}
 
-              {/* 🚀 Email Input - Futuristic Style */}
+              {/* Email Input */}
               <div className="mb-6">
-                <label className="block text-slate-300 text-sm font-medium mb-2">Email Address</label>
+                <label className="block text-gray-700 text-sm font-medium mb-2">Email Address</label>
                 <div className="relative group">
-                  <div className="absolute -inset-0.5 bg-gradient-to-r from-cyan-500 to-purple-500 rounded-lg blur opacity-0 group-focus-within:opacity-20 transition duration-200"></div>
                   <input
                     type="email"
                     placeholder="Enter your email address"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="relative w-full bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-lg px-4 py-3 text-slate-100 placeholder-slate-400 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500/50 transition-all duration-200"
+                    className="relative w-full bg-white border border-gray-300 rounded-lg px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500/40 transition-all duration-200"
                     required
                   />
                   <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                    <svg className="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                     </svg>
                   </div>
                 </div>
               </div>
 
-              {/* 🎯 Submit Button - Ultra Futuristic */}
+              {/* Submit Button */}
               <button
                 onClick={handleSendResetEmail}
                 disabled={loading || !email || (isRateLimited && cooldownTime > 0)}
                 className="w-full relative group overflow-hidden rounded-lg p-0.5 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-[1.02] active:scale-[0.98]"
               >
-                <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 via-purple-500 to-pink-500 group-hover:from-cyan-400 group-hover:via-purple-400 group-hover:to-pink-400 transition-all duration-300"></div>
-                <div className="relative bg-slate-900 rounded-md px-6 py-3 transition-all duration-300 group-hover:bg-transparent">
+                <div className="absolute inset-0 bg-gradient-to-r from-red-600 via-red-500 to-red-700 group-hover:from-red-500 group-hover:via-red-400 group-hover:to-red-600 transition-all duration-300"></div>
+                <div className="relative bg-red-700 rounded-md px-6 py-3 transition-all duration-300 group-hover:bg-transparent">
                   <div className="flex items-center justify-center space-x-2">
                     {loading ? (
                       <>
@@ -321,11 +313,11 @@ export default function ForgotPasswordPage() {
                 </div>
               </button>
 
-              {/* 🔗 Back to Login */}
+              {/* Back to Login */}
               <div className="mt-6 text-center">
                 <a 
                   href="/login" 
-                  className="inline-flex items-center space-x-2 text-slate-400 hover:text-cyan-400 transition-colors duration-200 text-sm group"
+                  className="inline-flex items-center space-x-2 text-gray-500 hover:text-red-600 transition-colors duration-200 text-sm group"
                 >
                   <svg className="w-4 h-4 group-hover:-translate-x-1 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -334,15 +326,13 @@ export default function ForgotPasswordPage() {
                 </a>
               </div>
 
-              {/* ✨ Decorative Elements */}
-              <div className="absolute top-4 right-4 w-2 h-2 bg-cyan-400 rounded-full animate-ping"></div>
-              <div className="absolute bottom-4 left-4 w-1 h-1 bg-purple-400 rounded-full animate-pulse"></div>
+              {/* Decorative Elements (subtle) */}
             </div>
           </div>
 
-          {/* 💫 Additional Info */}
+          {/* Additional Info */}
           <div className="mt-6 text-center">
-            <p className="text-slate-400 text-xs">
+            <p className="text-gray-500 text-xs">
               🔒 We'll send you a secure link to reset your password
             </p>
           </div>
