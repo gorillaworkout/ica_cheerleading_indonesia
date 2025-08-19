@@ -23,7 +23,7 @@ export default function CheerOrganizationsSection() {
           {logos.map((logo, index) => (
             <ScrollAnimation key={logo.src} delay={0.2 + (index * 0.1)} direction="up">
               <div 
-                className="bg-white rounded-2xl p-6 flex flex-col items-center justify-center border shadow-md hover:shadow-xl transition-all cursor-pointer transform hover:scale-105"
+                className="bg-white rounded-2xl p-6 flex flex-col items-center justify-center border shadow-md hover:shadow-lg transition-all cursor-pointer overflow-hidden h-64 md:h-72"
                 onClick={() => window.open(logo.link, '_blank')}
                 role="button"
                 tabIndex={0}
@@ -38,11 +38,11 @@ export default function CheerOrganizationsSection() {
                 <Image
                   src={logo.src}
                   alt={logo.short + " logo"}
-                  width={144}
-                  height={144}
-                  className="w-32 h-32 md:w-36 md:h-36 object-contain mb-4"
+                  width={224}
+                  height={224}
+                  className="w-40 h-40 md:w-56 md:h-56 object-contain mb-0"
                   quality={75}
-                  sizes="(max-width: 768px) 128px, 144px"
+                  sizes="(max-width: 768px) 160px, 224px"
                 />
               </div>
             </ScrollAnimation>
