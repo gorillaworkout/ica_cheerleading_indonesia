@@ -76,57 +76,15 @@ export function CompetitionsTable() {
 
   const handleSaveEdit = async (updatedCompetition: Partial<Competition>): Promise<void> => {
     try {
-      let newImageUrl = updatedCompetition.image;
-
-      if (updatedCompetition.image instanceof File) {
-        const { data: uploadData, error: uploadError } = await supabase.storage
-          .from("uploads")
-          .upload(`competitions/${updatedCompetition.id}-${updatedCompetition.image.name}`, updatedCompetition.image);
-
-        if (uploadError) {
-          console.error("Error uploading image:", uploadError);
-          return;
-        }
-
-        newImageUrl = uploadData?.path;
-
-        // Delete old image if exists
-        const oldImageUrl = competitions.find((comp) => comp.id === updatedCompetition.id)?.image;
-        if (oldImageUrl && oldImageUrl !== newImageUrl) {
-          const { error: deleteError } = await supabase.storage
-            .from("uploads")
-            .remove([oldImageUrl]);
-
-          if (deleteError) {
-            console.error("Error deleting old image:", deleteError);
-          }
-        }
-      } else {
-        // Retain the old image if no new image is provided
-        newImageUrl = competitions.find((comp) => comp.id === updatedCompetition.id)?.image;
-      }
-
       const updatedSlug = updatedCompetition.name
         ? updatedCompetition.name.toLowerCase().replace(/\s+/g, "-")
-        : updatedCompetition.slug;
-
-      // Check and update registration_open based on the date and registration deadline
-      const today = new Date();
-      const eventDate = updatedCompetition.date ? new Date(updatedCompetition.date) : null;
-      const registrationDeadline = updatedCompetition.registration_deadline ? new Date(updatedCompetition.registration_deadline) : null;
-
-      let registrationOpen = false;
-      if (eventDate && registrationDeadline) {
-        registrationOpen = today <= registrationDeadline && today < eventDate;
-      }
+        : undefined;
 
       const { error } = await supabase
         .from("competitions")
         .update({
-          ...updatedCompetition,
-          image: newImageUrl,
-          slug: updatedSlug,
-          registration_open: registrationOpen,
+          name: updatedCompetition.name,
+          ...(updatedSlug ? { slug: updatedSlug } : {}),
         })
         .eq("id", updatedCompetition.id);
 
@@ -137,7 +95,7 @@ export function CompetitionsTable() {
 
       toast({
         title: "Edit Successful",
-        description: "The competition has been updated successfully.",
+        description: "Competition name updated.",
       });
       setEditCompetition(null);
       fetchcompetitions();
@@ -311,7 +269,7 @@ export function CompetitionsTable() {
         </div>
       )}
 
-      {/* Edit Competition Modal */}
+      {/* Edit Competition Modal (Name only) */}
       {editCompetition && (
         <Modal
           title="Edit Competition"
@@ -319,174 +277,17 @@ export function CompetitionsTable() {
           onSave={() => handleSaveEdit(editCompetition)}
         >
           <div className="">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <label className="text-sm font-semibold text-gray-700">Competition Name</label>
-                <input
-                  type="text"
-                  value={editCompetition?.name || ""}
-                  onChange={(e) =>
-                    setEditCompetition({ ...editCompetition, name: e.target.value })
-                  }
-                  className="w-full px-4 py-3 bg-gray-50/50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all duration-300"
-                  placeholder="Enter competition name..."
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <label className="text-sm font-semibold text-gray-700">Location</label>
-                <input
-                  type="text"
-                  value={editCompetition?.location || ""}
-                  onChange={(e) =>
-                    setEditCompetition({ ...editCompetition, location: e.target.value })
-                  }
-                  className="w-full px-4 py-3 bg-gray-50/50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all duration-300"
-                  placeholder="Enter location..."
-                />
-              </div>
-            </div>
-
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-700">Description</label>
-              <textarea
-                value={editCompetition?.description || ""}
+              <label className="text-sm font-semibold text-gray-700">Competition Name</label>
+              <input
+                type="text"
+                value={editCompetition?.name || ""}
                 onChange={(e) =>
-                  setEditCompetition({ ...editCompetition, description: e.target.value })
+                  setEditCompetition({ ...editCompetition, name: e.target.value })
                 }
-                rows={4}
-                className="w-full px-4 py-3 bg-gray-50/50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all duration-300 resize-none"
-                placeholder="Enter competition description..."
+                className="w-full px-4 py-3 bg-gray-50/50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all duration-300"
+                placeholder="Enter competition name..."
               />
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <label className="text-sm font-semibold text-gray-700">Event Date</label>
-                <input
-                  type="date"
-                  value={editCompetition?.date || ""}
-                  onChange={(e) => {
-                    const newDate = e.target.value;
-                    if (
-                      editCompetition?.registration_deadline &&
-                      new Date(newDate) < new Date(editCompetition.registration_deadline)
-                    ) {
-                      toast({
-                        title: "Error",
-                        description: "Date cannot be earlier than the registration deadline.",
-                        variant: "destructive",
-                      });
-                      return;
-                    }
-                    setEditCompetition({ ...editCompetition, date: newDate });
-                  }}
-                  className="w-full px-4 py-3 bg-gray-50/50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all duration-300"
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <label className="text-sm font-semibold text-gray-700">Registration Deadline</label>
-                <input
-                  type="date"
-                  value={editCompetition?.registration_deadline || ""}
-                  onChange={(e) => {
-                    const newDeadline = e.target.value;
-                    if (
-                      editCompetition?.date &&
-                      new Date(newDeadline) > new Date(editCompetition.date)
-                    ) {
-                      toast({
-                        title: "Error",
-                        description: "Registration deadline cannot be later than the event date.",
-                        variant: "destructive",
-                      });
-                      return;
-                    }
-                    setEditCompetition({ ...editCompetition, registration_deadline: newDeadline });
-                  }}
-                  className="w-full px-4 py-3 bg-gray-50/50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all duration-300"
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-700">Competition Image</label>
-              
-              {/* Current Image Preview */}
-              {editCompetition?.image && typeof editCompetition.image === 'string' && (
-                <div className="mb-4">
-                  <label className="text-xs font-medium text-gray-600 mb-2 block">Current Image:</label>
-                  <div className="relative w-48 h-32 bg-gray-100 rounded-lg overflow-hidden border border-gray-200">
-                    <img
-                      src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/uploads/${editCompetition.image}`}
-                      alt="Current competition image"
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        const target = e.target as HTMLImageElement;
-                        target.style.display = 'none';
-                        const parent = target.parentElement;
-                        if (parent) {
-                          parent.innerHTML = '<div class="flex items-center justify-center w-full h-full text-gray-400"><span class="text-sm">Image not found</span></div>';
-                        }
-                      }}
-                    />
-                  </div>
-                  <p className="text-xs text-gray-500 mt-1">Current image path: {editCompetition.image}</p>
-                </div>
-              )}
-
-              {/* New Image Upload */}
-              <div className="relative">
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => {
-                    const file = e.target.files?.[0];
-                    if (file) {
-                      setEditCompetition({ ...editCompetition, image: file });
-                    }
-                  }}
-                  className="w-full px-4 py-3 bg-gray-50/50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all duration-300 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-red-50 file:text-red-600 hover:file:bg-red-100"
-                />
-                <p className="mt-2 text-xs text-gray-500">
-                  Supported formats: JPG, PNG, WebP. Maximum size: 5MB
-                </p>
-              </div>
-
-              {/* New Image Preview */}
-              {editCompetition?.image && editCompetition.image instanceof File && (
-                <div className="mt-4">
-                  <label className="text-xs font-medium text-gray-600 mb-2 block">New Image Preview:</label>
-                  <div className="relative w-48 h-32 bg-gray-100 rounded-lg overflow-hidden border border-gray-200">
-                    <img
-                      src={URL.createObjectURL(editCompetition.image)}
-                      alt="New competition image preview"
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <p className="text-xs text-gray-500 mt-1">
-                    File: {editCompetition.image.name} ({(editCompetition.image.size / 1024 / 1024).toFixed(2)} MB)
-                  </p>
-                </div>
-              )}
-
-              {/* No Image State */}
-              {!editCompetition?.image && (
-                <div className="mt-4">
-                  <label className="text-xs font-medium text-gray-600 mb-2 block">No Image:</label>
-                  <div className="w-48 h-32 bg-gray-100 rounded-lg border border-gray-200 flex items-center justify-center">
-                    <div className="text-center text-gray-400">
-                      <div className="w-8 h-8 mx-auto mb-2">
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                        </svg>
-                      </div>
-                      <span className="text-xs">No image uploaded</span>
-                    </div>
-                  </div>
-                </div>
-              )}
             </div>
           </div>
         </Modal>
