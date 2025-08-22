@@ -80,10 +80,11 @@ export default function UserActivityDashboard() {
 
       if (error) throw error
 
-      // Get user profiles
+      // Get user profiles (exclude deleted users)
       const { data: profilesData, error: profilesError } = await supabase
         .from('profiles')
         .select('id, email, display_name, role')
+        .or('is_deleted.eq.false,is_deleted.is.null')
 
       if (profilesError) throw profilesError
 

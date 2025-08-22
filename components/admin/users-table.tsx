@@ -74,7 +74,11 @@ export function UsersTable() {
   // Fetch users (now fetches all, filtering/pagination client-side)
   const fetchUsers = async () => {
     setLoading(true);
-    let query = supabase.from("profiles").select("*").eq("is_deleted", false).order("created_at", { ascending: false });
+    let query = supabase
+      .from("profiles")
+      .select("*")
+      .or("is_deleted.eq.false,is_deleted.is.null")
+      .order("created_at", { ascending: false });
     const { data, error } = await query;
     if (error) {
       console.error(error);
@@ -481,7 +485,7 @@ export function UsersTable() {
 
   // Filter users based on search and filter criteria
   const filteredUsers = users.filter(user => {
-    // Always exclude deleted users
+    // Always exclude deleted users (is_deleted should be false or null for active users)
     if (user.is_deleted === true) return false;
     
     // Apply search filter
