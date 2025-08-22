@@ -39,6 +39,24 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ exists: false, verified: false })
     }
 
+    // ✅ CRITICAL FIX: Check if user is deleted in profiles table
+    const { data: profile, error: profileError } = await supabaseAdmin
+      .from("profiles")
+      .select("is_deleted")
+      .eq("id", user.id)
+      .single();
+
+    if (profileError) {
+      console.error("Error checking profile:", profileError);
+      // If we can't check profile, assume user exists but not verified
+      return NextResponse.json({ exists: true, verified: Boolean(user.email_confirmed_at) })
+    }
+
+    // If user is deleted, treat as if they don't exist
+    if (profile && profile.is_deleted === true) {
+      return NextResponse.json({ exists: false, verified: false })
+    }
+
     return NextResponse.json({ exists: true, verified: Boolean(user.email_confirmed_at) })
   } catch (e) {
     return NextResponse.json(

@@ -69,6 +69,23 @@ export async function POST(request: NextRequest) {
         )
       }
 
+      // ✅ CRITICAL FIX: Check if user is deleted in profiles table
+      const { data: profile, error: profileError } = await supabaseAdmin
+        .from("profiles")
+        .select("is_deleted")
+        .eq("id", user.id)
+        .single();
+
+      if (profileError) {
+        console.error("Error checking profile:", profileError);
+        // If we can't check profile, continue with normal flow
+      } else if (profile && profile.is_deleted === true) {
+        return NextResponse.json(
+          { error: 'Akun telah dihapus dan tidak dapat digunakan lagi' },
+          { status: 403 }
+        )
+      }
+
       if (user.email_confirmed_at) {
         return NextResponse.json(
           { 

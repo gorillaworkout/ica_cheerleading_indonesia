@@ -24,9 +24,28 @@ export default function AuthCallbackPage() {
       // Cek apakah user sudah ada di profiles
       const { data: existingProfile } = await supabase
         .from("profiles")
-        .select("id")
+        .select("id, is_deleted")
         .eq("id", user.id)
         .single();
+
+      // ✅ CRITICAL FIX: Check if user is deleted before allowing OAuth login
+      if (existingProfile && existingProfile.is_deleted === true) {
+        // Sign out the user immediately
+        await supabase.auth.signOut();
+        // Set flag for toast notification
+        if (typeof window !== 'undefined') {
+          localStorage.setItem("userWasDeleted", "true");
+        }
+        toast({
+          title: "Login Ditolak",
+          description: "Akun kamu telah dihapus dan tidak dapat digunakan lagi.",
+          variant: "destructive",
+        });
+        setTimeout(() => {
+          router.push("/login");
+        }, 2000);
+        return;
+      }
 
       if (!existingProfile) {
         await supabase.from("profiles").insert({

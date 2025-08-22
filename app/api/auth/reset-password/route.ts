@@ -82,6 +82,23 @@ export async function POST(request: NextRequest) {
 
     // console.log('🔄 Processing password reset for:', email)
 
+    // ✅ CRITICAL FIX: Check if user is deleted before allowing password reset
+    const { data: profile, error: profileError } = await supabaseAdmin
+      .from("profiles")
+      .select("is_deleted")
+      .eq("email", email)
+      .single();
+
+    if (profileError) {
+      console.error("Error checking profile:", profileError);
+      // If we can't check profile, continue with normal flow
+    } else if (profile && profile.is_deleted === true) {
+      return NextResponse.json(
+        { error: 'Akun telah dihapus dan tidak dapat digunakan lagi' },
+        { status: 403 }
+      )
+    }
+
     // Create reset URL
     const resetUrl = redirectTo || `${request.nextUrl.origin}/reset-password`
     

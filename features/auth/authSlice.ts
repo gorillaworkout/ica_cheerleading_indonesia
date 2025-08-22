@@ -45,6 +45,17 @@ export const fetchSessionAndProfile = createAsyncThunk("auth/fetchSessionAndProf
       .single();
 
     profile = data;
+    
+    // ✅ CRITICAL FIX: Check if user is deleted and auto logout
+    if (profile && profile.is_deleted === true) {
+      console.log("🚫 User is deleted, auto logging out...");
+      // Set flag for toast notification
+      if (typeof window !== 'undefined') {
+        localStorage.setItem("userWasDeleted", "true");
+      }
+      await supabase.auth.signOut();
+      return { session: null, user: null, profile: null };
+    }
   }
   // console.log(profile, 'profile fetchSessionAndProfile')
   return { session, user: session?.user ?? null, profile };
@@ -60,6 +71,30 @@ export const signInWithEmailThunk = createAsyncThunk(
 
     if (!data.user?.email_confirmed_at) {
       return rejectWithValue("Email belum dikonfirmasi. Silakan cek email kamu untuk aktivasi.")
+    }
+
+    // ✅ CRITICAL FIX: Check if user is deleted before allowing login
+    if (data.user) {
+      const { data: profile, error: profileError } = await supabase
+        .from("profiles")
+        .select("is_deleted")
+        .eq("id", data.user.id)
+        .single();
+
+      if (profileError) {
+        console.error("Error checking user profile:", profileError);
+        return rejectWithValue("Terjadi kesalahan saat memeriksa profil user.");
+      }
+
+      if (profile && profile.is_deleted === true) {
+        // Sign out the user immediately
+        await supabase.auth.signOut();
+        // Set flag for toast notification
+        if (typeof window !== 'undefined') {
+          localStorage.setItem("userWasDeleted", "true");
+        }
+        return rejectWithValue("Akun kamu telah dihapus dan tidak dapat digunakan lagi.");
+      }
     }
 
     return { session: data.session, user: data.user }

@@ -13,11 +13,13 @@ import { fetchCoaches, fetchFeaturedCoaches } from "@/features/coaches/coachesSl
 import { fetchLicenseCourses } from "@/features/license-courses/licenseCoursesSlice"
 import { debugEnvironment, debugSupabaseConnection } from "@/utils/debug"
 import { usePathname } from "next/navigation"
+import { useToast } from "@/hooks/use-toast"
 
 export function AuthInit() {
   const dispatch = useAppDispatch()
   const pathname = usePathname()
   const [isClientMounted, setIsClientMounted] = useState(false)
+  const { toast } = useToast()
 
   useEffect(() => {
     // Debug environment on app start
@@ -93,6 +95,17 @@ export function AuthInit() {
           dispatch(fetchCoaches())
           dispatch(fetchFeaturedCoaches())
         } else if (event === "SIGNED_OUT") {
+          // ✅ CRITICAL FIX: Check if user was auto-logged out due to deletion
+          const wasAutoLoggedOut = localStorage.getItem("userWasDeleted")
+          if (wasAutoLoggedOut === "true") {
+            toast({
+              title: "Akun Dihapus",
+              description: "Akun kamu telah dihapus dan telah di-logout secara otomatis.",
+              variant: "destructive",
+            })
+            localStorage.removeItem("userWasDeleted")
+          }
+          
           dispatch(setAuthState({ session: null, user: null }))
           dispatch(clearProfile())
           dispatch(fetchPublicImages())

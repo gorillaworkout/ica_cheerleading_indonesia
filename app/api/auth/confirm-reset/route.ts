@@ -72,6 +72,23 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // ✅ CRITICAL FIX: Check if user is deleted before allowing password reset
+    const { data: profile, error: profileError } = await supabaseAdmin
+      .from("profiles")
+      .select("is_deleted")
+      .eq("id", user.id)
+      .single();
+
+    if (profileError) {
+      console.error("Error checking profile:", profileError);
+      // If we can't check profile, continue with normal flow
+    } else if (profile && profile.is_deleted === true) {
+      return NextResponse.json(
+        { error: 'Akun telah dihapus dan tidak dapat digunakan lagi' },
+        { status: 403 }
+      )
+    }
+
     // Update user password
     const { error: updateError } = await supabaseAdmin.auth.admin.updateUserById(
       user.id,
