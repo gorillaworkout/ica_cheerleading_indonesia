@@ -21,4 +21,8 @@ export interface Profile {
   is_edit_allowed: boolean;
   is_request_edit:boolean;
   is_deleted: boolean;
+  // Athlete-specific fields (optional)
+  age?: number | null;
+  team_id?: string | null;
+  division_id?: string | null;
 }

@@ -381,10 +381,38 @@ export const signUpWithEmailThunk = createAsyncThunk(
       
 
 
-    } else {
+    } else if (role === 'athlete') {
+      // ✅ CRITICAL FIX: Update profile with athlete-specific data instead of creating separate table
+      if (!profileData || profileData.id !== userId) {
+        console.warn('Skip athlete data update: profileData missing or mismatched with auth userId')
+      } else {
+        // Calculate age from birth_date if available
+        let age = 18; // Default age
+        if (birth_date) {
+          const birthYear = new Date(birth_date).getFullYear();
+          const currentYear = new Date().getFullYear();
+          age = currentYear - birthYear;
+        }
 
+        // Update profile with athlete-specific data
+        const { error: updateError } = await supabase
+          .from("profiles")
+          .update({
+            age: age,
+            team_id: null, // Will be assigned later when joining team
+            division_id: null // Will be assigned later when joining division
+          })
+          .eq("id", profileData.id);
+
+        if (updateError) {
+          console.warn('Athlete data update skipped due to error (will not block registration):', updateError);
+          // Jangan gagalkan registrasi hanya karena update athlete data gagal.
+          // Pengguna bisa lengkapi profil athlete dari halaman profil nanti.
+        } else {
+          console.log('✅ Athlete data added to profile successfully');
+        }
+      }
     }
-
 
 
     // Sign out user after successful registration (don't auto login)

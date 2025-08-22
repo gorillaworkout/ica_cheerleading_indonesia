@@ -59,6 +59,22 @@ export default function AuthCallbackPage() {
           updated_at: now,
           is_edit_allowed: false,
         });
+
+        // ✅ CRITICAL FIX: Update profile with athlete-specific data for OAuth registration
+        const { error: updateError } = await supabase
+          .from("profiles")
+          .update({
+            age: 18, // Default age for OAuth users
+            team_id: null, // Will be assigned later when joining team
+            division_id: null // Will be assigned later when joining division
+          })
+          .eq("id", user.id);
+
+        if (updateError) {
+          console.warn('Athlete data update skipped due to error (will not block OAuth registration):', updateError);
+        } else {
+          console.log('✅ Athlete data added to profile successfully via OAuth');
+        }
       }
 
       toast({

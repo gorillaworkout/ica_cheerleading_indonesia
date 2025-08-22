@@ -21,6 +21,7 @@ const navigation = [
 	{ name: "Manage License", href: "/admin/license/add", icon: GraduationCap },
 	{ name: "User Activity", href: "/admin/userActivity", icon: Activity },
 	{ name: "Manage Users", href: "/admin/users", icon: Users },
+
 	// { name: "Settings", href: "/admin/settings", icon: Settings },
 ]
 

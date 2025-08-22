@@ -94,6 +94,8 @@ export function AuthInit() {
           dispatch(fetchProvinces())
           dispatch(fetchCoaches())
           dispatch(fetchFeaturedCoaches())
+          dispatch(fetchLicenseCourses(true))
+
         } else if (event === "SIGNED_OUT") {
           // ✅ CRITICAL FIX: Check if user was auto-logged out due to deletion
           const wasAutoLoggedOut = localStorage.getItem("userWasDeleted")

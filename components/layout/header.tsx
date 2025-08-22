@@ -64,6 +64,13 @@ const menus = [
         icon: <UserCheck size={16} />,
         description: "Meet our certified coaches"
       },
+      // user release after rakernas
+      // { 
+      //   name: "Athletes", 
+      //   href: "/about/athletes", 
+      //   icon: <Users size={16} />,
+      //   description: "Meet our talented athletes"
+      // },
       { 
         name: "Judges", 
         href: "/about/judges", 

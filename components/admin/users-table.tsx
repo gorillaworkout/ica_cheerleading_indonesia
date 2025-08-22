@@ -43,6 +43,8 @@ export function UsersTable() {
   const [editUser, setEditUser] = useState<Profile | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
+  const [filterRole, setFilterRole] = useState("all");
+  const [filterProvince, setFilterProvince] = useState("all");
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [zoomImageUrl, setZoomImageUrl] = useState<string | null>(null);
@@ -61,40 +63,13 @@ export function UsersTable() {
     fetchDeletedUsers(); // Also fetch deleted users
   }, []); // Only fetch once on component mount
 
-  // Recalculate total pages when filters change
-  useEffect(() => {
-    const filteredCount = users.filter(user => {
-      // Always exclude deleted users
-      if (user.is_deleted === true) return false;
-      
-      if (searchTerm.trim() !== "") {
-        const searchLower = searchTerm.toLowerCase();
-        return (
-          user.display_name?.toLowerCase().includes(searchLower) ||
-          user.email?.toLowerCase().includes(searchLower) ||
-          user.phone_number?.toLowerCase().includes(searchLower) ||
-          user.province_code?.toLowerCase().includes(searchLower)
-        );
-      }
-      if (filterStatus === "verified") {
-        return user.is_verified === true;
-      } else if (filterStatus === "not_verified") {
-        return user.is_verified === false;
-      } else if (filterStatus === "pending_edit") {
-        return user.is_request_edit === true && user.is_edit_allowed === false;
-      }
-      return true;
-    }).length;
-    
-    setTotalPages(Math.ceil(filteredCount / PAGE_SIZE));
-    setPage(1); // Reset to first page when filters change
-  }, [users, searchTerm, filterStatus]);
+
 
   // Separate useEffect for search and filter changes
   useEffect(() => {
     // Reset to first page when search or filter changes
     setPage(1);
-  }, [searchTerm, filterStatus]);
+  }, [searchTerm, filterStatus, filterRole, filterProvince]);
 
   // Fetch users (now fetches all, filtering/pagination client-side)
   const fetchUsers = async () => {
@@ -106,30 +81,6 @@ export function UsersTable() {
       toast({ title: "Error", description: "Failed to fetch users.", variant: "destructive" });
     } else {
       setUsers(data || []);
-      // Calculate total pages based on filtered results (client-side)
-      const filteredCount = (data || []).filter(user => {
-        // Always exclude deleted users
-        if (user.is_deleted === true) return false;
-        
-        if (searchTerm.trim() !== "") {
-          const searchLower = searchTerm.toLowerCase();
-          return (
-            user.display_name?.toLowerCase().includes(searchLower) ||
-            user.email?.toLowerCase().includes(searchLower) ||
-            user.phone_number?.toLowerCase().includes(searchLower) ||
-            user.province_code?.toLowerCase().includes(searchLower)
-          );
-        }
-        if (filterStatus === "verified") {
-          return user.is_verified === true;
-        } else if (filterStatus === "not_verified") {
-          return user.is_verified === false;
-        } else if (filterStatus === "pending_edit") {
-          return user.is_request_edit === true && user.is_edit_allowed === false;
-        }
-        return true;
-      }).length;
-      setTotalPages(Math.ceil(filteredCount / PAGE_SIZE));
     }
     setLoading(false);
   };
@@ -530,12 +481,27 @@ export function UsersTable() {
 
   // Filter users based on search and filter criteria
   const filteredUsers = users.filter(user => {
+    // Always exclude deleted users
+    if (user.is_deleted === true) return false;
+    
     // Apply search filter
     if (searchTerm.trim() !== "") {
       const searchLower = searchTerm.toLowerCase();
       const nameMatch = user.display_name?.toLowerCase().includes(searchLower);
       const emailMatch = user.email.toLowerCase().includes(searchLower);
-      if (!nameMatch && !emailMatch) return false;
+      const phoneMatch = user.phone_number?.toLowerCase().includes(searchLower);
+      const provinceMatch = user.province_code?.toLowerCase().includes(searchLower);
+      if (!nameMatch && !emailMatch && !phoneMatch && !provinceMatch) return false;
+    }
+    
+    // Apply role filter
+    if (filterRole !== "all" && user.role !== filterRole) {
+      return false;
+    }
+    
+    // Apply province filter
+    if (filterProvince !== "all" && user.province_code !== filterProvince) {
+      return false;
     }
     
     // Apply status filter
@@ -550,8 +516,24 @@ export function UsersTable() {
     return true; // "all" filter
   });
 
+  // Debug logging for filter values
+  console.log('Filter values:', {
+    filterRole,
+    filterProvince,
+    filterStatus,
+    searchTerm,
+    totalUsers: users.length,
+    filteredUsersCount: filteredUsers.length
+  });
+
   // Apply pagination to filtered results
   const paginatedUsers = filteredUsers.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+
+  // Recalculate total pages when filteredUsers change
+  useEffect(() => {
+    setTotalPages(Math.ceil(filteredUsers.length / PAGE_SIZE));
+    setPage(1); // Reset to first page when filters change
+  }, [filteredUsers]);
 
   const getProvinceName = (provinceCode: string) => {
     const province = provinces.find(p => p.id_province === provinceCode);
@@ -599,6 +581,27 @@ export function UsersTable() {
               : `Manage and verify user accounts (${users.length} users)`
             }
           </p>
+          
+          {/* Active Filters Display */}
+          {!showDeletedUsers && (filterRole !== "all" || filterProvince !== "all" || filterStatus !== "all") && (
+            <div className="mt-2 flex flex-wrap gap-2">
+              {filterRole !== "all" && (
+                <span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded-full border border-blue-200">
+                  Role: {filterRole}
+                </span>
+              )}
+              {filterProvince !== "all" && (
+                <span className="px-2 py-1 bg-green-100 text-green-700 text-xs font-medium rounded-full border border-green-200">
+                  Province: {provinces.find(p => p.id_province === filterProvince)?.name || filterProvince}
+                </span>
+              )}
+              {filterStatus !== "all" && (
+                <span className="px-2 py-1 bg-orange-100 text-orange-700 text-xs font-medium rounded-full border border-orange-200">
+                  Status: {filterStatus === "verified" ? "Verified" : filterStatus === "not_verified" ? "Not Verified" : "Pending Edit"}
+                </span>
+              )}
+            </div>
+          )}
         </div>
         
         <div className="flex items-center space-x-4">
@@ -654,7 +657,45 @@ export function UsersTable() {
               />
             </div>
             
-            {/* Filter Dropdown */}
+            {/* Role Filter */}
+            <div className="relative">
+              <Shield className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <select
+                value={filterRole}
+                onChange={(e) => {
+                  setFilterRole(e.target.value);
+                  setPage(1);
+                }}
+                className="pl-10 pr-8 py-3 bg-gray-50/50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all duration-300 appearance-none min-w-[150px]"
+              >
+                <option value="all">All Roles</option>
+                <option value="athlete">Athletes</option>
+                <option value="coach">Coaches</option>
+                <option value="admin">Admin</option>
+              </select>
+            </div>
+
+            {/* Province Filter */}
+            <div className="relative">
+              <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <select
+                value={filterProvince}
+                onChange={(e) => {
+                  setFilterProvince(e.target.value);
+                  setPage(1);
+                }}
+                className="pl-10 pr-8 py-3 bg-gray-50/50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all duration-300 appearance-none min-w-[180px]"
+              >
+                <option value="all">All Provinces</option>
+                {provinces.map((province) => (
+                  <option key={province.id_province} value={province.id_province}>
+                    {province.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            
+            {/* Status Filter */}
             <div className="relative">
               <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
               <select
@@ -665,7 +706,7 @@ export function UsersTable() {
                 }}
                 className="pl-10 pr-8 py-3 bg-gray-50/50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all duration-300 appearance-none min-w-[200px]"
               >
-                <option value="all">All Users</option>
+                <option value="all">All Status</option>
                 <option value="verified">Verified</option>
                 <option value="not_verified">Not Verified</option>
                 <option value="pending_edit">Pending Edit Requests</option>
@@ -673,9 +714,28 @@ export function UsersTable() {
             </div>
           </div>
           
-          {/* Results Count */}
-          <div className="mt-4 text-sm text-gray-600">
-            Showing {filteredUsers.length} users (Page {page} of {totalPages})
+          {/* Results Count and Reset Filters */}
+          <div className="mt-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div className="text-sm text-gray-600">
+              Showing {filteredUsers.length} users (Page {page} of {totalPages})
+            </div>
+            
+            {/* Reset Filters Button */}
+            {(filterRole !== "all" || filterProvince !== "all" || filterStatus !== "all" || searchTerm.trim() !== "") && (
+              <button
+                onClick={() => {
+                  setFilterRole("all");
+                  setFilterProvince("all");
+                  setFilterStatus("all");
+                  setSearchTerm("");
+                  setPage(1);
+                }}
+                className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm font-medium transition-colors duration-200 flex items-center space-x-2"
+              >
+                <RotateCcw className="w-4 h-4" />
+                <span>Reset Filters</span>
+              </button>
+            )}
           </div>
         </div>
       )}
@@ -695,6 +755,7 @@ export function UsersTable() {
                 <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                   Role & Status
                 </th>
+
                 <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                   KTP Photo
                 </th>
@@ -706,20 +767,20 @@ export function UsersTable() {
             <tbody className="divide-y divide-gray-100">
               {loading ? (
                 <tr>
-                  <td colSpan={5} className="text-center py-8">
-                    <div className="flex items-center justify-center">
-                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red-600"></div>
-                      <span className="ml-2">Loading...</span>
-                    </div>
-                  </td>
+                                  <td colSpan={6} className="text-center py-8">
+                  <div className="flex items-center justify-center">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red-600"></div>
+                    <span className="ml-2">Loading...</span>
+                  </div>
+                </td>
                 </tr>
               ) : showDeletedUsers ? (
                 // Show deleted users
                 deletedUsers.length === 0 ? (
                   <tr>
-                    <td colSpan={5} className="text-center py-8 text-gray-500">
-                      No deleted users found
-                    </td>
+                                      <td colSpan={6} className="text-center py-8 text-gray-500">
+                    No deleted users found
+                  </td>
                   </tr>
                 ) : (
                   deletedUsers.map((user) => (
@@ -800,6 +861,56 @@ export function UsersTable() {
                         </div>
                       </td>
 
+                      {/* Athlete/Coach Specific Info */}
+                      {/* <td className="px-6 py-6">
+                        <div className="space-y-2">
+                          {user.role === 'athlete' && (
+                            <>
+                              {user.age && (
+                                <div className="flex items-center space-x-2">
+                                  <div className="w-6 h-6 bg-yellow-100 rounded-lg flex items-center justify-center">
+                                    <span className="text-xs font-medium text-yellow-700">{user.age}</span>
+                                  </div>
+                                  <span className="text-xs text-gray-600">Usia</span>
+                                </div>
+                              )}
+                              {user.team_id && (
+                                <div className="flex items-center space-x-2">
+                                  <div className="w-6 h-6 bg-green-100 rounded-lg flex items-center justify-center">
+                                    <span className="text-xs font-medium text-green-700">T</span>
+                                  </div>
+                                  <span className="text-xs text-gray-600">Team</span>
+                                </div>
+                              )}
+                              {user.division_id && (
+                                <div className="flex items-center space-x-2">
+                                  <div className="w-6 h-6 bg-purple-100 rounded-lg flex items-center justify-center">
+                                    <span className="text-xs font-medium text-purple-700">D</span>
+                                  </div>
+                                  <span className="text-xs text-gray-600">Division</span>
+                                </div>
+                              )}
+                            </>
+                          )}
+                          {user.role === 'coach' && (
+                            <div className="flex items-center space-x-2">
+                              <div className="w-6 h-6 bg-indigo-100 rounded-lg flex items-center justify-center">
+                                <span className="text-xs font-medium text-indigo-700">C</span>
+                              </div>
+                              <span className="text-xs text-gray-600">Coach</span>
+                            </div>
+                          )}
+                          {user.role === 'admin' && (
+                            <div className="flex items-center space-x-2">
+                              <div className="w-6 h-6 bg-red-100 rounded-lg flex items-center justify-center">
+                                <span className="text-xs font-medium text-red-700">A</span>
+                              </div>
+                              <span className="text-xs text-gray-600">Admin</span>
+                            </div>
+                          )}
+                        </div>
+                      </td> */}
+
                       {/* KTP Photo */}
                       <td className="px-6 py-6">
                         <div className="flex items-center justify-center">
@@ -857,9 +968,9 @@ export function UsersTable() {
                 // Show active users (existing logic)
                 filteredUsers.length === 0 ? (
                   <tr>
-                    <td colSpan={5} className="text-center py-8 text-gray-500">
-                      No users found
-                    </td>
+                                      <td colSpan={6} className="text-center py-8 text-gray-500">
+                    No users found
+                  </td>
                   </tr>
                 ) : (
                   paginatedUsers.map((user, index) => (
@@ -943,6 +1054,56 @@ export function UsersTable() {
                           </div>
                         </div>
                       </td>
+
+                      {/* Athlete/Coach Specific Info */}
+                      {/* <td className="px-6 py-6">
+                        <div className="space-y-2">
+                          {user.role === 'athlete' && (
+                            <>
+                              {user.age && (
+                                <div className="flex items-center space-x-2">
+                                  <div className="w-6 h-6 bg-yellow-100 rounded-lg flex items-center justify-center">
+                                    <span className="text-xs font-medium text-yellow-700">{user.age}</span>
+                                  </div>
+                                  <span className="text-xs text-gray-600">Usia</span>
+                                </div>
+                              )}
+                              {user.team_id && (
+                                <div className="flex items-center space-x-2">
+                                  <div className="w-6 h-6 bg-green-100 rounded-lg flex items-center justify-center">
+                                    <span className="text-xs font-medium text-green-700">T</span>
+                                  </div>
+                                  <span className="text-xs text-gray-600">Team</span>
+                                </div>
+                              )}
+                              {user.division_id && (
+                                <div className="flex items-center space-x-2">
+                                  <div className="w-6 h-6 bg-purple-100 rounded-lg flex items-center justify-center">
+                                    <span className="text-xs font-medium text-purple-700">D</span>
+                                  </div>
+                                  <span className="text-xs text-gray-600">Division</span>
+                                </div>
+                              )}
+                            </>
+                          )}
+                          {user.role === 'coach' && (
+                            <div className="flex items-center space-x-2">
+                              <div className="w-6 h-6 bg-indigo-100 rounded-lg flex items-center justify-center">
+                                <span className="text-xs font-medium text-indigo-700">C</span>
+                              </div>
+                              <span className="text-xs text-gray-600">Coach</span>
+                            </div>
+                          )}
+                          {user.role === 'admin' && (
+                            <div className="flex items-center space-x-2">
+                              <div className="w-6 h-6 bg-red-100 rounded-lg flex items-center justify-center">
+                                <span className="text-xs font-medium text-red-700">A</span>
+                              </div>
+                              <span className="text-xs text-gray-600">Admin</span>
+                            </div>
+                          )}
+                        </div>
+                      </td> */}
 
                       {/* KTP Photo */}
                       <td className="px-6 py-6">
