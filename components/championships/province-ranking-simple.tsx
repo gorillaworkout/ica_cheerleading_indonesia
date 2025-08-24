@@ -335,30 +335,6 @@ export default function ProvinceRankingSimple({ competitionId }: ProvinceRanking
           <Trophy className="text-yellow-500 w-10 h-10" /> Province Medal Ranking
         </h1>
 
-        {/* Competition Status Info */}
-        {competitionInfo && (
-          <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-            <div className="flex items-center gap-3">
-              <Calendar className="w-5 h-5 text-blue-600" />
-              <div>
-                <h3 className="font-semibold text-blue-800">{competitionInfo.name}</h3>
-                <p className="text-sm text-blue-600">
-                  {competitionInfo.start_date || competitionInfo.end_date ? (
-                    <>
-                      {competitionInfo.start_date ? new Date(competitionInfo.start_date).toLocaleDateString('en-US') : ''}
-                      {competitionInfo.start_date && competitionInfo.end_date ? ' - ' : ''}
-                      {competitionInfo.end_date ? new Date(competitionInfo.end_date).toLocaleDateString('en-US') : ''}
-                    </>
-                  ) : competitionInfo.date ? (
-                    new Date(competitionInfo.date).toLocaleDateString('en-US')
-                  ) : (
-                    'Date TBD'
-                  )}
-                </p>
-              </div>
-            </div>
-          </div>
-        )}
 
         <div className="space-y-6">
           {sortedData.map((provinceData, index) => {

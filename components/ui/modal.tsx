@@ -9,9 +9,10 @@ interface ModalProps {
   onClose: () => void;
   onSave?: () => void;
   isOpen?: boolean;
+  saveDisabled?: boolean;
 }
 
-export const Modal: React.FC<ModalProps> = ({ title, children, onClose, onSave, isOpen = true }) => {
+export const Modal: React.FC<ModalProps> = ({ title, children, onClose, onSave, isOpen = true, saveDisabled = false }) => {
   if (!isOpen) return null;
 
   return (
@@ -59,7 +60,12 @@ export const Modal: React.FC<ModalProps> = ({ title, children, onClose, onSave, 
               {onSave && (
                 <button
                   onClick={onSave}
-                  className="px-6 py-3 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-medium rounded-xl transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl"
+                  disabled={saveDisabled}
+                  className={`px-6 py-3 font-medium rounded-xl transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl ${
+                    saveDisabled 
+                      ? 'bg-gray-300 text-gray-500 cursor-not-allowed' 
+                      : 'bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white hover:shadow-xl'
+                  }`}
                 >
                   Save Changes
                 </button>

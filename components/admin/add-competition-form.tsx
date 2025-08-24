@@ -26,49 +26,229 @@ export function AddCompetitionForm() {
   const [validationError, setValidationError] = useState("")
   const imageInputRef = useRef<HTMLInputElement>(null)
 
+  // Helper function to convert dd/mm/yyyy format to Date object
+  const parseDate = (dateString: string): Date | null => {
+    if (!dateString || dateString.length !== 10) return null;
+    
+    const parts = dateString.split('/');
+    if (parts.length !== 3) return null;
+    
+    const day = parseInt(parts[0], 10);
+    const month = parseInt(parts[1], 10) - 1; // Month is 0-indexed in Date constructor
+    const year = parseInt(parts[2], 10);
+    
+    if (isNaN(day) || isNaN(month) || isNaN(year)) return null;
+    if (day < 1 || day > 31 || month < 0 || month > 11 || year < 1000 || year > 9999) return null;
+    
+    const date = new Date(year, month, day);
+    
+    // Check if the date is valid (handles edge cases like 31/02/2024)
+    if (date.getDate() !== day || date.getMonth() !== month || date.getFullYear() !== year) {
+      return null;
+    }
+    
+    return date;
+  };
+
+  const validateField = (name: string, value: string, formData: any): string => {
+    let error = "";
+    
+    // Parse dates from dd/mm/yyyy format
+    let competitionDate: Date | null = null;
+    let registrationDeadline: Date | null = null;
+    
+    if (name === "date") {
+      competitionDate = parseDate(value);
+      if (!competitionDate) {
+        return "Please enter a valid date in dd/mm/yyyy format (e.g., 25/12/2024)";
+      }
+    }
+    
+    if (name === "registrationDeadline") {
+      registrationDeadline = parseDate(value);
+      if (!registrationDeadline) {
+        return "Please enter a valid date in dd/mm/yyyy format (e.g., 20/12/2024)";
+      }
+    }
+    
+    // Get existing dates for comparison
+    if (!competitionDate && formData.date) {
+      competitionDate = parseDate(formData.date);
+    }
+    
+    if (!registrationDeadline && formData.registrationDeadline) {
+      registrationDeadline = parseDate(formData.registrationDeadline);
+    }
+    
+    // Validation logic for competition date vs registration deadline
+    if (competitionDate && registrationDeadline) {
+      if (competitionDate < registrationDeadline) {
+        error = "Competition date cannot be earlier than registration deadline."
+      } else if (competitionDate.getTime() === registrationDeadline.getTime()) {
+        error = "Competition date should be after registration deadline for better organization."
+      }
+    }
+    
+    // Additional validation: ensure dates are not in the past
+    if (competitionDate) {
+      const today = new Date()
+      today.setHours(0, 0, 0, 0) // Reset time to start of day for fair comparison
+      
+      if (competitionDate < today) {
+        error = "Competition date cannot be in the past."
+      }
+    }
+    
+    if (registrationDeadline) {
+      const today = new Date()
+      today.setHours(0, 0, 0, 0) // Reset time to start of day for fair comparison
+      
+      if (registrationDeadline < today) {
+        error = "Registration deadline cannot be in the past."
+      }
+    }
+    
+    // Additional validation: ensure there's a reasonable gap between deadline and competition
+    if (competitionDate && registrationDeadline) {
+      if (competitionDate > registrationDeadline) {
+        const timeDiff = competitionDate.getTime() - registrationDeadline.getTime()
+        const daysDiff = timeDiff / (1000 * 3600 * 24)
+        
+        if (daysDiff < 1) {
+          error = "There should be at least 1 day between registration deadline and competition date."
+        }
+      }
+    }
+    
+    return error;
+  };
+
+  // Helper function to auto-format date input as dd/mm/yyyy
+  const formatDateInput = (value: string): string => {
+    // Remove all non-numeric characters
+    const numbers = value.replace(/\D/g, '');
+    
+    // Limit to 8 digits (ddmmyyyy)
+    if (numbers.length > 8) return value;
+    
+    // Format as dd/mm/yyyy
+    if (numbers.length >= 4) {
+      return `${numbers.slice(0, 2)}/${numbers.slice(2, 4)}/${numbers.slice(4)}`;
+    } else if (numbers.length >= 2) {
+      return `${numbers.slice(0, 2)}/${numbers.slice(2)}`;
+    }
+    
+    return numbers;
+  };
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
 
     setFormData((prev) => {
-      const updatedFormData = { ...prev, [name]: value }
-
-      if (name === "date" && updatedFormData.registrationDeadline) {
-        const competitionDate = new Date(value)
-        const registrationDeadline = new Date(updatedFormData.registrationDeadline)
-
-        if (competitionDate < registrationDeadline) {
-          setValidationError("Competition date cannot be earlier than registration deadline.")
-        } else {
-          setValidationError("")
+      let updatedValue = value;
+      
+      // Auto-format date fields
+      if (name === "date" || name === "registrationDeadline") {
+        updatedValue = formatDateInput(value);
+      }
+      
+      const updatedFormData = { ...prev, [name]: updatedValue }
+      
+      // Run validation for the changed field
+      let error = validateField(name, updatedValue, updatedFormData);
+      
+      // If no error for the changed field, also validate the other date field to ensure overall consistency
+      if (!error && (name === "date" || name === "registrationDeadline")) {
+        const otherField = name === "date" ? "registrationDeadline" : "date";
+        if (updatedFormData[otherField]) {
+          const otherError = validateField(otherField, updatedFormData[otherField], updatedFormData);
+          if (otherError) {
+            error = otherError;
+          }
         }
       }
-
-      if (name === "registrationDeadline" && updatedFormData.date) {
-        const competitionDate = new Date(updatedFormData.date)
-        const registrationDeadline = new Date(value)
-
-        if (registrationDeadline > competitionDate) {
-          setValidationError("Registration deadline cannot be later than competition date.")
-        } else {
-          setValidationError("")
-        }
-      }
+      
+      setValidationError(error);
 
       return updatedFormData
     })
   }
 
+  const validateForm = () => {
+    // Parse dates from dd/mm/yyyy format
+    const competitionDate = parseDate(formData.date);
+    const registrationDeadline = parseDate(formData.registrationDeadline);
+    
+    if (!competitionDate) {
+      setValidationError("Please enter a valid competition date in dd/mm/yyyy format (e.g., 25/12/2024)");
+      return false;
+    }
+    
+    if (!registrationDeadline) {
+      setValidationError("Please enter a valid registration deadline in dd/mm/yyyy format (e.g., 20/12/2024)");
+      return false;
+    }
+    
+    // Check if competition date is before registration deadline
+    if (competitionDate < registrationDeadline) {
+      setValidationError("Competition date cannot be earlier than registration deadline.")
+      return false
+    }
+    
+    if (competitionDate.getTime() === registrationDeadline.getTime()) {
+      setValidationError("Competition date should be after registration deadline for better organization.")
+      return false
+    }
+    
+    // Additional validation: ensure there's a reasonable gap between deadline and competition
+    const timeDiff = competitionDate.getTime() - registrationDeadline.getTime()
+    const daysDiff = timeDiff / (1000 * 3600 * 24)
+    
+    if (daysDiff < 1) {
+      setValidationError("There should be at least 1 day between registration deadline and competition date.")
+      return false
+    }
+    
+    // Check if dates are not in the past
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+    
+    if (competitionDate < today) {
+      setValidationError("Competition date cannot be in the past.")
+      return false
+    }
+    
+    if (registrationDeadline < today) {
+      setValidationError("Registration deadline cannot be in the past.")
+      return false
+    }
+    
+    setValidationError("")
+    return true
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    
+    // Validate form before submission
+    if (!validateForm()) {
+      return
+    }
+    
     setIsSubmitting(true)
 
     let uploadedImagePath = ""
 
     try {
+      // Parse dates from dd/mm/yyyy format
+      const competitionDate = parseDate(formData.date);
+      const registrationDeadline = parseDate(formData.registrationDeadline);
+      
+      if (!competitionDate || !registrationDeadline) {
+        throw new Error("Invalid date format");
+      }
+      
       const currentDate = new Date()
-      const competitionDate = new Date(formData.date)
-      const registrationDeadline = new Date(formData.registrationDeadline)
-
       const registrationOpen =
         currentDate >= competitionDate && currentDate <= registrationDeadline
 
@@ -101,9 +281,9 @@ export function AddCompetitionForm() {
       const { error } = await supabase.from("competitions").insert({
         name: formData.name,
         description: formData.description,
-        date: formData.date,
+        date: competitionDate.toISOString(),
         location: formData.location,
-        registration_deadline: formData.registrationDeadline,
+        registration_deadline: registrationDeadline.toISOString(),
         registration_open: registrationOpen,
         image: imageUrl,
         created_by: user?.user?.id,
@@ -198,26 +378,43 @@ export function AddCompetitionForm() {
                 <Input
                   id="date"
                   name="date"
-                  type="date"
+                  type="text"
                   value={formData.date}
                   onChange={handleInputChange}
                   required
+                  placeholder="dd/mm/yyyy"
+                  maxLength={10}
+                  className={validationError && validationError.includes("competition date") ? "border-red-500 bg-red-50" : ""}
                 />
+                <p className="text-xs text-gray-500">
+                  Format: dd/mm/yyyy (e.g., 25/12/2024)
+                </p>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="registrationDeadline">Registration Deadline *</Label>
                 <Input
                   id="registrationDeadline"
                   name="registrationDeadline"
-                  type="date"
+                  type="text"
                   value={formData.registrationDeadline}
                   onChange={handleInputChange}
                   required
+                  placeholder="dd/mm/yyyy"
+                  maxLength={10}
+                  className={validationError && validationError.includes("registration deadline") ? "border-red-500 bg-red-50" : ""}
                 />
+                <p className="text-xs text-gray-500">
+                  Format: dd/mm/yyyy (e.g., 20/12/2024)
+                </p>
               </div>
             </div>
             {validationError && (
-              <p className="text-red-600">{validationError}</p>
+              <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
+                <p className="text-red-600 text-sm font-medium flex items-center">
+                  <span className="w-2 h-2 bg-red-500 rounded-full mr-2"></span>
+                  {validationError}
+                </p>
+              </div>
             )}
             <div className="space-y-2">
               <Label htmlFor="image">Competition Image</Label>
