@@ -1,8 +1,8 @@
 import { supabase } from "@/lib/supabase"
 
 export async function getPublicImageUrl(path: string | null | undefined): Promise<string | null> {
-  if (!path) {
-    console.error("Invalid path provided to getPublicImageUrl")
+  if (!path || path === "" || path === "{}" || path === "null" || path === "undefined") {
+    console.warn("Invalid or empty path provided to getPublicImageUrl:", path)
     return null
   }
 
@@ -45,7 +45,7 @@ export async function getPublicImageUrl(path: string | null | undefined): Promis
       }
     }
 
-    console.error("Failed to find image in any folder:", path)
+    console.warn("Failed to find image in any folder:", path)
     return null
   } catch (error) {
     console.error("Error in getPublicImageUrl:", error)
@@ -55,8 +55,8 @@ export async function getPublicImageUrl(path: string | null | undefined): Promis
 
 // Synchronous version for immediate use (tries common patterns)
 export function getPublicImageUrlSync(path: string | null | undefined): string | null {
-  if (!path) {
-    console.error("Invalid path provided to getPublicImageUrlSync")
+  if (!path || path === "" || path === "{}" || path === "null" || path === "undefined") {
+    console.warn("Invalid or empty path provided to getPublicImageUrlSync:", path)
     return null
   }
 
@@ -102,8 +102,27 @@ export function getPublicImageUrlSync(path: string | null | undefined): string |
 
 // Helper function to generate direct URL from storage path
 export function generateStorageUrl(path: string | null | undefined): string {
-  if (!path) {
+  if (!path || path === "" || path === "{}" || path === "null" || path === "undefined") {
     return "/placeholder.svg"
+  }
+
+  // Handle JSON string paths
+  if (path.startsWith('{') && path.endsWith('}')) {
+    try {
+      const parsed = JSON.parse(path)
+      if (parsed && typeof parsed === 'object') {
+        // Check if object is empty
+        if (Object.keys(parsed).length === 0) {
+          console.warn("Path is an empty JSON object:", path)
+          return "/placeholder.svg"
+        }
+        console.warn("Path is a JSON object, cannot resolve:", path)
+        return "/placeholder.svg"
+      }
+    } catch (e) {
+      console.warn("Failed to parse JSON path:", path)
+      return "/placeholder.svg"
+    }
   }
 
   try {
@@ -112,12 +131,43 @@ export function generateStorageUrl(path: string | null | undefined): string {
       return path
     }
 
+    // Clean the path - remove any invalid characters that might cause URL construction to fail
+    let cleanPath = path.trim()
+    
+    // Remove any control characters or invalid URL characters
+    cleanPath = cleanPath.replace(/[\x00-\x1f\x7f]/g, '')
+    
+    // If path is empty after cleaning, return placeholder
+    if (!cleanPath || cleanPath === "") {
+      console.warn("Path is empty after cleaning:", path)
+      return "/placeholder.svg"
+    }
+
     // If path already contains folder structure, use it directly
-    const fullPath = path.includes('/') ? path : `profile-photos/${path}`
+    const fullPath = cleanPath.includes('/') ? cleanPath : `profile-photos/${cleanPath}`
+    
+    // Validate the path before generating URL
+    if (fullPath.includes('..') || fullPath.includes('//') || fullPath.length > 1000) {
+      console.warn("Invalid path detected:", fullPath)
+      return "/placeholder.svg"
+    }
+    
     const { data } = supabase.storage.from("uploads").getPublicUrl(fullPath)
-    return data?.publicUrl || "/placeholder.svg"
+    
+    // Validate the generated URL
+    if (data?.publicUrl) {
+      try {
+        new URL(data.publicUrl) // This will throw if URL is invalid
+        return data.publicUrl
+      } catch (urlError) {
+        console.error("Generated invalid URL:", data.publicUrl, "for path:", fullPath)
+        return "/placeholder.svg"
+      }
+    }
+    
+    return "/placeholder.svg"
   } catch (error) {
-    console.error("Error generating storage URL:", error)
+    console.error("Error generating storage URL:", error, "for path:", path)
     return "/placeholder.svg"
   }
 }

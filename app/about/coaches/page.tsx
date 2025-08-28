@@ -43,6 +43,9 @@ interface Coach {
   sort_order: number
   created_at: string
   updated_at: string
+  user_id?: string
+  created_by?: string
+  updated_by?: string
 }
 export default function Coaches() {
   const coaches = useAppSelector(selectCoaches)

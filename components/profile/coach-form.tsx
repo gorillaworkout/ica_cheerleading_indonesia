@@ -81,6 +81,12 @@ export function CoachForm() {
       if (!user?.id) return
 
       try {
+        // First check if user has coach role
+        if (profile?.role !== 'coach') {
+          console.log('User is not a coach, skipping coach data fetch')
+          return
+        }
+
         const { data, error } = await supabase
           .from("coaches")
           .select("*")
@@ -103,6 +109,9 @@ export function CoachForm() {
               setImagePreview(urlData.publicUrl)
             }
           }
+        } else if (error && error.code !== 'PGRST116') {
+          // PGRST116 is "not found" error, which is expected for new coaches
+          console.error("Error fetching coach data:", error)
         } else if (profile) {
           // Pre-fill with profile data if no coach data exists
           setCoachData(prev => ({
