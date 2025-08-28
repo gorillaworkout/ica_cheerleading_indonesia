@@ -216,7 +216,7 @@ export function JudgesTable({ onEdit, onAdd }: JudgesTableProps) {
                   <TableHead>Experience</TableHead>
                   <TableHead>Competitions</TableHead>
                   <TableHead>Status</TableHead>
-                  <TableHead>Featured</TableHead>
+                  {/* <TableHead>Featured</TableHead> */}
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -266,13 +266,13 @@ export function JudgesTable({ onEdit, onAdd }: JudgesTableProps) {
                         {judge.is_active ? "Active" : "Inactive"}
                       </Badge>
                     </TableCell>
-                    <TableCell>
+                    {/* <TableCell>
                       {judge.is_featured && (
                         <Badge variant="outline" className="border-yellow-200 text-yellow-700 bg-yellow-50">
                           Featured
                         </Badge>
                       )}
-                    </TableCell>
+                    </TableCell> */}
                     <TableCell className="text-right">
                       <div className="flex justify-end space-x-2">
                         <Button
