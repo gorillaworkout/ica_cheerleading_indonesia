@@ -83,19 +83,19 @@ export function CompetitionsTable() {
     }
   };
 
-  // Helper function to convert ISO date string to dd/mm/yyyy format
-  const formatDateForDisplay = (isoDateString: string): string => {
+  // Helper function to convert ISO date string to YYYY-MM-DD format for date input
+  const formatDateForInput = (isoDateString: string): string => {
     if (!isoDateString) return "";
     
     try {
       const date = new Date(isoDateString);
       if (isNaN(date.getTime())) return "";
       
-      const day = date.getDate().toString().padStart(2, '0');
-      const month = (date.getMonth() + 1).toString().padStart(2, '0');
       const year = date.getFullYear();
+      const month = (date.getMonth() + 1).toString().padStart(2, '0');
+      const day = date.getDate().toString().padStart(2, '0');
       
-      return `${day}/${month}/${year}`;
+      return `${year}-${month}-${day}`;
     } catch (error) {
       console.error("Error formatting date:", error);
       return "";
@@ -103,11 +103,11 @@ export function CompetitionsTable() {
   };
 
   const handleEdit = async (competition: Competition) => {
-    // Convert ISO dates to dd/mm/yyyy format for display
+    // Convert ISO dates to YYYY-MM-DD format for date input
     const formattedCompetition = {
       ...competition,
-      date: formatDateForDisplay(competition.date),
-      registration_deadline: competition.registration_deadline ? formatDateForDisplay(competition.registration_deadline) : ""
+      date: formatDateForInput(competition.date),
+      registration_deadline: competition.registration_deadline ? formatDateForInput(competition.registration_deadline) : ""
     };
     
     setEditCompetition(formattedCompetition);
@@ -128,26 +128,12 @@ export function CompetitionsTable() {
     }
   };
 
-  // Helper function to convert dd/mm/yyyy format to Date object
+  // Helper function to convert YYYY-MM-DD format to Date object
   const parseDate = (dateString: string): Date | null => {
-    if (!dateString || dateString.length !== 10) return null;
+    if (!dateString) return null;
     
-    const parts = dateString.split('/');
-    if (parts.length !== 3) return null;
-    
-    const day = parseInt(parts[0], 10);
-    const month = parseInt(parts[1], 10) - 1; // Month is 0-indexed in Date constructor
-    const year = parseInt(parts[2], 10);
-    
-    if (isNaN(day) || isNaN(month) || isNaN(year)) return null;
-    if (day < 1 || day > 31 || month < 0 || month > 11 || year < 1000 || year > 9999) return null;
-    
-    const date = new Date(year, month, day);
-    
-    // Check if the date is valid (handles edge cases like 31/02/2024)
-    if (date.getDate() !== day || date.getMonth() !== month || date.getFullYear() !== year) {
-      return null;
-    }
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return null;
     
     return date;
   };
@@ -155,21 +141,21 @@ export function CompetitionsTable() {
   const validateField = (field: keyof Competition, value: any, updatedCompetition: Competition): string => {
     let error = "";
     
-    // Parse dates from dd/mm/yyyy format
+    // Parse dates from YYYY-MM-DD format
     let competitionDate: Date | null = null;
     let registrationDeadline: Date | null = null;
     
     if (field === "date") {
       competitionDate = parseDate(value);
       if (!competitionDate) {
-        return "Please enter a valid date in dd/mm/yyyy format (e.g., 25/12/2024)";
+        return "Please enter a valid competition date";
       }
     }
     
     if (field === "registration_deadline") {
       registrationDeadline = parseDate(value);
       if (!registrationDeadline) {
-        return "Please enter a valid date in dd/mm/yyyy format (e.g., 20/12/2024)";
+        return "Please enter a valid registration deadline date";
       }
     }
     
@@ -225,31 +211,8 @@ export function CompetitionsTable() {
     return error;
   };
 
-  // Helper function to auto-format date input as dd/mm/yyyy
-  const formatDateInput = (value: string): string => {
-    // Remove all non-numeric characters
-    const numbers = value.replace(/\D/g, '');
-    
-    // Limit to 8 digits (ddmmyyyy)
-    if (numbers.length > 8) return value;
-    
-    // Format as dd/mm/yyyy
-    if (numbers.length >= 4) {
-      return `${numbers.slice(0, 2)}/${numbers.slice(2, 4)}/${numbers.slice(4)}`;
-    } else if (numbers.length >= 2) {
-      return `${numbers.slice(0, 2)}/${numbers.slice(2)}`;
-    }
-    
-    return numbers;
-  };
-
   const handleEditFieldChange = (field: keyof Competition, value: any) => {
     if (!editCompetition) return;
-    
-    // Auto-format date fields
-    if (field === "date" || field === "registration_deadline") {
-      value = formatDateInput(value);
-    }
     
     const updatedCompetition = { ...editCompetition, [field]: value };
     setEditCompetition(updatedCompetition);
@@ -351,14 +314,14 @@ export function CompetitionsTable() {
   };
 
   const validateEditForm = (competition: Partial<Competition>): boolean => {
-    // Parse dates from dd/mm/yyyy format
+    // Parse dates from YYYY-MM-DD format
     let competitionDate: Date | null = null;
     let registrationDeadline: Date | null = null;
     
     if (competition.date) {
       competitionDate = parseDate(competition.date);
       if (!competitionDate) {
-        setValidationError("Please enter a valid competition date in dd/mm/yyyy format (e.g., 25/12/2024)");
+        setValidationError("Please enter a valid competition date");
         return false;
       }
     }
@@ -366,7 +329,7 @@ export function CompetitionsTable() {
     if (competition.registration_deadline) {
       registrationDeadline = parseDate(competition.registration_deadline);
       if (!registrationDeadline) {
-        setValidationError("Please enter a valid registration deadline in dd/mm/yyyy format (e.g., 20/12/2024)");
+        setValidationError("Please enter a valid registration deadline date");
         return false;
       }
     }
@@ -446,7 +409,7 @@ export function CompetitionsTable() {
         ? updatedCompetition.name.toLowerCase().replace(/\s+/g, "-")
         : undefined;
 
-      // Convert dd/mm/yyyy format to ISO string for database storage
+      // Convert YYYY-MM-DD format to ISO string for database storage
       let eventDate: Date | null = null;
       let registrationDeadline: Date | null = null;
       
@@ -735,7 +698,7 @@ export function CompetitionsTable() {
               <div className="space-y-2">
                 <label className="text-sm font-semibold text-gray-700">Competition Date *</label>
                 <input
-                  type="text"
+                  type="date"
                   value={editCompetition?.date || ""}
                   onChange={(e) =>
                     handleEditFieldChange("date", e.target.value)
@@ -745,18 +708,13 @@ export function CompetitionsTable() {
                       ? "border-red-500 bg-red-50" 
                       : "border-gray-200"
                   }`}
-                  placeholder="dd/mm/yyyy"
-                  maxLength={10}
                 />
-                <p className="text-xs text-gray-500">
-                  Format: dd/mm/yyyy (e.g., 25/12/2024)
-                </p>
               </div>
               
               <div className="space-y-2">
                 <label className="text-sm font-semibold text-gray-700">Registration Deadline</label>
                 <input
-                  type="text"
+                  type="date"
                   value={editCompetition?.registration_deadline || ""}
                   onChange={(e) =>
                     handleEditFieldChange("registration_deadline", e.target.value)
@@ -766,12 +724,7 @@ export function CompetitionsTable() {
                       ? "border-red-500 bg-red-50" 
                       : "border-gray-200"
                   }`}
-                  placeholder="dd/mm/yyyy"
-                  maxLength={10}
                 />
-                <p className="text-xs text-gray-500">
-                  Format: dd/mm/yyyy (e.g., 20/12/2024)
-                </p>
               </div>
             </div>
             
