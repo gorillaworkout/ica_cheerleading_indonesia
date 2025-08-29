@@ -24,6 +24,23 @@ import { CoachForm } from "./coach-form"
 import { AuditService, getClientInfo } from "@/lib/audit"
 import { AccountHistory } from "./account-history"
 import { IDCardSection } from "./id-card-section"
+import { PhotoHistory } from "./photo-history"
+import { createHash } from "crypto"
+
+// Interface untuk photo history
+interface PhotoHistoryEntry {
+  user_id: string
+  photo_type: 'profile_photo' | 'id_photo'
+  old_photo_url?: string | null
+  new_photo_url: string
+  file_hash: string
+  file_size: number
+  file_name: string
+  file_type: string
+  change_reason?: string
+  ip_address?: string | null
+  user_agent?: string
+}
 
 export function ProfileForm() {
   const { user, profile } = useAppSelector((state) => state.auth)
@@ -34,7 +51,7 @@ export function ProfileForm() {
   const [localError, setLocalError] = useState<string | null>(null)
   const [profilePhotoUrl, setProfilePhotoUrl] = useState<string>("/placeholder.svg")
   const [idPhotoUrl, setIdPhotoUrl] = useState<string>("/placeholder.svg")
-  const [activeTab, setActiveTab] = useState<'profile' | 'history'>('profile')
+  const [activeTab, setActiveTab] = useState<'profile' | 'history' | 'photo-history'>('profile')
   const [formData, setFormData] = useState({
     displayName: "",
     phoneNumber: "",
@@ -158,10 +175,17 @@ export function ProfileForm() {
 
       let idPhotoUrl = formData.id_photo_file
       let profilePhotoUrl = formData.profile_photo_file
+      const photoHistoryEntries: PhotoHistoryEntry[] = []
+      const clientInfo = getClientInfo()
 
       // Upload ID photo if it's a new file
       if (formData.id_photo_file instanceof File) {
         console.log("Uploading ID photo:", formData.id_photo_file.name)
+        
+        // Generate file hash for tracking
+        const fileBuffer = await formData.id_photo_file.arrayBuffer()
+        const fileHash = createHash('sha256').update(new Uint8Array(fileBuffer)).digest('hex')
+        
         const fileExt = formData.id_photo_file.name.split('.').pop()
         const fileName = `id-photo-${user.id}-${Date.now()}.${fileExt}`
         const filePath = `id-photos/${fileName}`
@@ -174,8 +198,24 @@ export function ProfileForm() {
           console.error("ID photo upload error:", uploadError)
           throw new Error(`Failed to upload ID photo: ${uploadError.message}`)
         }
+        
         idPhotoUrl = uploadData.path
         console.log("ID photo uploaded successfully:", uploadData.path)
+        
+        // Record photo history
+        photoHistoryEntries.push({
+          user_id: user.id,
+          photo_type: 'id_photo',
+          old_photo_url: currentProfile?.id_photo_url || undefined,
+          new_photo_url: uploadData.path,
+          file_hash: fileHash,
+          file_size: formData.id_photo_file.size,
+          file_name: formData.id_photo_file.name,
+          file_type: formData.id_photo_file.type,
+          change_reason: 'User uploaded new ID photo',
+          ip_address: clientInfo.ip_address,
+          user_agent: clientInfo.user_agent
+        })
       } else if (typeof formData.id_photo_file === 'string') {
         // If it's a string, validate it's not empty or invalid
         if (!formData.id_photo_file || formData.id_photo_file === '{}' || formData.id_photo_file === 'null') {
@@ -188,6 +228,11 @@ export function ProfileForm() {
       // Upload profile photo if it's a new file
       if (formData.profile_photo_file instanceof File) {
         console.log("Uploading profile photo:", formData.profile_photo_file.name)
+        
+        // Generate file hash for tracking
+        const fileBuffer = await formData.profile_photo_file.arrayBuffer()
+        const fileHash = createHash('sha256').update(new Uint8Array(fileBuffer)).digest('hex')
+        
         const fileExt = formData.profile_photo_file.name.split('.').pop()
         const fileName = `profile-${user.id}-${Date.now()}.${fileExt}`
         const filePath = `profile-photos/${fileName}`
@@ -200,8 +245,24 @@ export function ProfileForm() {
           console.error("Profile photo upload error:", uploadError)
           throw new Error(`Failed to upload profile photo: ${uploadError.message}`)
         }
+        
         profilePhotoUrl = uploadData.path
         console.log("Profile photo uploaded successfully:", uploadData.path)
+        
+        // Record photo history
+        photoHistoryEntries.push({
+          user_id: user.id,
+          photo_type: 'profile_photo',
+          old_photo_url: currentProfile?.profile_photo_url || undefined,
+          new_photo_url: uploadData.path,
+          file_hash: fileHash,
+          file_size: formData.profile_photo_file.size,
+          file_name: formData.profile_photo_file.name,
+          file_type: formData.profile_photo_file.type,
+          change_reason: 'User uploaded new profile photo',
+          ip_address: clientInfo.ip_address,
+          user_agent: clientInfo.user_agent
+        })
       } else if (typeof formData.profile_photo_file === 'string') {
         // If it's a string, validate it's not empty or invalid
         if (!formData.profile_photo_file || formData.profile_photo_file === '{}' || formData.profile_photo_file === 'null') {
@@ -239,9 +300,25 @@ export function ProfileForm() {
 
       console.log("Profile updated successfully")
 
+      // Log photo history entries
+      if (photoHistoryEntries.length > 0) {
+        try {
+          const { error: photoHistoryError } = await supabase
+            .from("photo_history")
+            .insert(photoHistoryEntries)
+
+          if (photoHistoryError) {
+            console.error("Failed to log photo history:", photoHistoryError)
+          } else {
+            console.log("Photo history logged successfully")
+          }
+        } catch (photoHistoryError) {
+          console.error("Error logging photo history:", photoHistoryError)
+        }
+      }
+
       // Log the audit trail (with error handling)
       try {
-        const clientInfo = getClientInfo()
         const changedFields = AuditService.getChangedFields(currentProfile, updatedData)
         
         await AuditService.logChange({
@@ -449,6 +526,17 @@ export function ProfileForm() {
                   <History className="h-4 w-4" />
                   <span>History</span>
                 </button>
+                {/* <button
+                  onClick={() => setActiveTab('photo-history')}
+                  className={`px-4 py-2 rounded-lg font-medium transition-colors flex items-center space-x-2 ${
+                    activeTab === 'photo-history'
+                      ? 'bg-white/30 text-white shadow-lg'
+                      : 'bg-white/10 text-red-100 hover:bg-white/20'
+                  }`}
+                >
+                  <Camera className="h-4 w-4" />
+                  <span>Photo History</span>
+                </button> */}
               </div>
             </div>
           </div>
@@ -768,22 +856,76 @@ export function ProfileForm() {
                   
                   <div className="flex justify-between items-center py-3 border-b border-gray-100">
                     <span className="text-gray-600 font-medium">ID Document</span>
-                    {(profile?.id_photo_url || formData.id_photo_file) ? (
-                      formData.id_photo_file instanceof File ? (
-                        <span className="text-green-600 text-sm font-medium">✓ New file selected</span>
+                    <div className="flex items-center space-x-2">
+                      {(profile?.id_photo_url || formData.id_photo_file) ? (
+                        formData.id_photo_file instanceof File ? (
+                          <span className="text-green-600 text-sm font-medium">✓ New file selected</span>
+                        ) : (
+                          <>
+                            <div className="relative">
+                              <Image
+                                src={idPhotoUrl}
+                                alt="ID Photo"
+                                width={40}
+                                height={30}
+                                className="rounded-md object-cover border border-gray-200"
+                                onError={(e) => {
+                                  e.currentTarget.style.display = 'none'
+                                }}
+                              />
+                              <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></div>
+                            </div>
+                            <a
+                              href={idPhotoUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="bg-blue-600 text-white px-3 py-1 rounded-lg text-sm hover:bg-blue-700 transition-colors font-medium"
+                            >
+                              View
+                            </a>
+                          </>
+                        )
                       ) : (
-                        <a
-                          href={idPhotoUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="bg-blue-600 text-white px-3 py-1 rounded-lg text-sm hover:bg-blue-700 transition-colors font-medium"
-                        >
-                          View Document
-                        </a>
-                      )
-                    ) : (
-                      <span className="text-gray-400 italic text-sm">Not uploaded</span>
-                    )}
+                        <span className="text-gray-400 italic text-sm">Not uploaded</span>
+                      )}
+                    </div>
+                  </div>
+                  
+                  <div className="flex justify-between items-center py-3 border-b border-gray-100">
+                    <span className="text-gray-600 font-medium">Profile Photo</span>
+                    <div className="flex items-center space-x-2">
+                      {(profile?.profile_photo_url || formData.profile_photo_file) ? (
+                        formData.profile_photo_file instanceof File ? (
+                          <span className="text-green-600 text-sm font-medium">✓ New file selected</span>
+                        ) : (
+                          <>
+                            <div className="relative">
+                              <Image
+                                src={tempProfilePhotoUrl || profilePhotoUrl}
+                                alt="Profile Photo"
+                                width={40}
+                                height={40}
+                                className="rounded-full object-cover border border-gray-200"
+                                onError={(e) => {
+                                  e.currentTarget.style.display = 'none'
+                                }}
+                              />
+                              <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></div>
+                            </div>
+                            <a
+                              href={tempProfilePhotoUrl || profilePhotoUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="bg-blue-600 text-white px-3 py-1 rounded-lg text-sm hover:bg-blue-700 transition-colors font-medium"
+                            >
+                              View
+                            </a>
+                          </>
+                        )
+                      ) : (
+                        <span className="text-gray-400 italic text-sm">Not uploaded</span>
+                      )}
+                    </div>
                   </div>
                   
                   <div className="flex justify-between items-center py-3 border-b border-gray-100">
@@ -853,10 +995,15 @@ export function ProfileForm() {
               </Card>
             </div>
           </div>
-        ) : (
+        ) : activeTab === 'history' ? (
           // History Tab Content
           <div className="max-w-4xl mx-auto">
             <AccountHistory />
+          </div>
+        ) : (
+          // Photo History Tab Content
+          <div className="max-w-4xl mx-auto">
+            <PhotoHistory userId={user.id} />
           </div>
         )}
       </div>

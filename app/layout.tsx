@@ -233,7 +233,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="dns-prefetch" href="//indonesiancheer.org" />
         <link rel="preconnect" href="https://indonesiancheer.org" />
       </head>
-      <body className={inter.className}>
+      <body className={inter.className} suppressHydrationWarning={true}>
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
           <ReduxProvider>
             <AuthInitWrapper>

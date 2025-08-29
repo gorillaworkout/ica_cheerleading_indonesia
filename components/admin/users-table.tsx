@@ -790,7 +790,7 @@ export function UsersTable() {
                   deletedUsers.map((user) => (
                     <tr key={user.id} className="hover:bg-gray-50/50 transition-colors duration-200 group">
                       {/* User Info */}
-                      <td className="px-6 py-6">
+                      <td className="px-2 py-6">
                         <div className="flex items-center space-x-4">
                           <div className="w-12 h-12 bg-gradient-to-br from-blue-500/20 to-blue-600/20 rounded-xl flex items-center justify-center">
                             <User className="w-6 h-6 text-blue-600" />
@@ -807,7 +807,7 @@ export function UsersTable() {
                       </td>
 
                       {/* Contact Details */}
-                      <td className="px-6 py-6">
+                      <td className="px-2 py-6">
                         <div className="space-y-2">
                           <div className="flex items-center space-x-2">
                             <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
@@ -844,12 +844,12 @@ export function UsersTable() {
                       </td>
 
                       {/* Role & Status */}
-                      <td className="px-6 py-6">
+                      <td className="px-2 py-6">
                         <div className="space-y-3">
                           <div className="flex items-center space-x-2">
-                            <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                            {/* <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
                               <Shield className="w-4 h-4 text-blue-600" />
-                            </div>
+                            </div> */}
                             <div className="space-y-1">
                               {getRoleBadge(user.role)}
                             </div>
@@ -866,7 +866,7 @@ export function UsersTable() {
                       </td>
 
                       {/* Athlete/Coach Specific Info */}
-                      {/* <td className="px-6 py-6">
+                      {/* <td className="px-2 py-6">
                         <div className="space-y-2">
                           {user.role === 'athlete' && (
                             <>
@@ -916,7 +916,7 @@ export function UsersTable() {
                       </td> */}
 
                       {/* KTP Photo */}
-                      <td className="px-6 py-6">
+                      <td className="px-2 py-6">
                         <div className="flex items-center justify-center">
                           {user.id_photo_url ? (
                             <div className="relative group/img">
@@ -943,7 +943,7 @@ export function UsersTable() {
                       </td>
 
                       {/* Actions */}
-                      <td className="px-6 py-6">
+                      <td className="px-2 py-6">
                         <div className="flex items-center justify-center space-x-2">
                           {/* Restore Button */}
                           <button
@@ -980,7 +980,7 @@ export function UsersTable() {
                   paginatedUsers.map((user, index) => (
                     <tr key={user.id} className="hover:bg-gray-50/50 transition-colors duration-200 group">
                       {/* User Info */}
-                      <td className="px-6 py-6">
+                      <td className="px-2 py-6">
                         <div className="flex items-center space-x-4">
                           <div className="w-12 h-12 bg-gradient-to-br from-blue-500/20 to-blue-600/20 rounded-xl flex items-center justify-center">
                             <User className="w-6 h-6 text-blue-600" />
@@ -997,7 +997,7 @@ export function UsersTable() {
                       </td>
 
                       {/* Contact Details */}
-                      <td className="px-6 py-6">
+                      <td className="px-2 py-6">
                         <div className="space-y-2">
                           <div className="flex items-center space-x-2">
                             <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
@@ -1034,24 +1034,24 @@ export function UsersTable() {
                       </td>
 
                       {/* Role & Status */}
-                      <td className="px-6 py-6">
+                      <td className="px-2 py-6">
                         <div className="space-y-3">
                           <div className="flex items-center space-x-2">
-                            <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                            {/* <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
                               <Shield className="w-4 h-4 text-blue-600" />
-                            </div>
+                            </div> */}
                             <div className="space-y-1">
                               {getRoleBadge(user.role)}
                             </div>
                           </div>
                           <div className="flex items-center space-x-2">
-                            <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
+                            {/* <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
                               {user.is_verified ? (
                                 <CheckCircle className="w-4 h-4 text-green-600" />
                               ) : (
                                 <XCircle className="w-4 h-4 text-red-600" />
                               )}
-                            </div>
+                            </div> */}
                             <div className="space-y-1">
                               {getStatusBadge(user)}
                             </div>
@@ -1060,7 +1060,7 @@ export function UsersTable() {
                       </td>
 
                       {/* Athlete/Coach Specific Info */}
-                      {/* <td className="px-6 py-6">
+                      {/* <td className="px-2 py-6">
                         <div className="space-y-2">
                           {user.role === 'athlete' && (
                             <>
@@ -1110,7 +1110,7 @@ export function UsersTable() {
                       </td> */}
 
                       {/* KTP Photo */}
-                      <td className="px-6 py-6">
+                      <td className="px-2 py-6">
                         <div className="flex items-center justify-center">
                           {user.id_photo_url ? (
                             <div className="relative group/img">
@@ -1137,7 +1137,7 @@ export function UsersTable() {
                       </td>
 
                       {/* Actions */}
-                      <td className="px-6 py-6">
+                      <td className="px-2 py-6">
                         <div className="flex items-center justify-center space-x-2">
                           {/* View User Button - Always visible */}
                           <button

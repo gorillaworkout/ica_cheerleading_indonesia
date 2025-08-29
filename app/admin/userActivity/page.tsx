@@ -326,7 +326,7 @@ export default function UserActivityDashboard() {
                         <th className="text-center py-4 px-6 font-medium text-gray-700">Coach Changes</th>
                         <th className="text-left py-4 px-6 font-medium text-gray-700">Most Changed Field</th>
                         <th className="text-left py-4 px-6 font-medium text-gray-700">Last Activity</th>
-                        <th className="text-center py-4 px-6 font-medium text-gray-700">Trend</th>
+                        {/* <th className="text-center py-4 px-6 font-medium text-gray-700">Trend</th> */}
                         <th className="text-center py-4 px-6 font-medium text-gray-700">Actions</th>
                       </tr>
                     </thead>
@@ -377,7 +377,7 @@ export default function UserActivityDashboard() {
                               <span className="text-sm text-gray-400">No activity</span>
                             )}
                           </td>
-                          <td className="py-4 px-6 text-center">
+                          {/* <td className="py-4 px-6 text-center">
                             <Badge 
                               variant="outline"
                               className={
@@ -388,7 +388,7 @@ export default function UserActivityDashboard() {
                             >
                               {activity.activity_trend}
                             </Badge>
-                          </td>
+                          </td> */}
                           <td className="py-4 px-6 text-center">
                             <Button
                               variant="ghost"
